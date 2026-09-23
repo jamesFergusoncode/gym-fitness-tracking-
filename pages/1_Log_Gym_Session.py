@@ -1,0 +1,111 @@
+"""
+Log Gym Session - pick a session, fill in weight x reps for each set, save.
+
+The table is pre-filled with what you lifted the last time you did the same
+session, so most days you only need to change a few numbers.
+"""
+
+from datetime import date
+
+import pandas as pd
+import streamlit as st
+
+import analysis
+import plan
+import storage
+
+st.set_page_config(page_title="Log Gym Session", page_icon="🏋️", layout="wide")
+st.title("🏋️ Log Gym Session")
+
+gym = storage.load("gym")
+
+# ---------------------------------------------------------------------------
+# 1. Which day and which session?
+# ---------------------------------------------------------------------------
+col1, col2 = st.columns(2)
+log_date = col1.date_input("Date", value=date.today())
+
+session_names = list(plan.GYM_SESSIONS.keys())
+planned = plan.gym_for_date(log_date)
+default_index = session_names.index(planned) if planned in session_names else 0
+session = col2.selectbox("Session", session_names, index=default_index)
+
+phase = plan.phase_for_date(log_date)
+st.caption(f"{log_date:%A %d %b} · {phase['name']} phase · planned session: {planned}")
+
+# ---------------------------------------------------------------------------
+# 2. Build the table to fill in
+# ---------------------------------------------------------------------------
+# Find the most recent time this session was logged (before the chosen date).
+previous = gym[(gym["session"] == session) & (gym["date"] < log_date)]
+last_time = previous[previous["date"] == previous["date"].max()] if not previous.empty else previous
+
+# If this exact date + session was already saved, load it so it can be edited.
+already_saved = gym[(gym["session"] == session) & (gym["date"] == log_date)]
+source = already_saved if not already_saved.empty else last_time
+
+rows = []
+for exercise in plan.GYM_SESSIONS[session]:
+    saved_sets = source[source["exercise"] == exercise]
+    n_sets = max(plan.default_sets(exercise, phase["name"]), len(saved_sets))
+    for set_number in range(1, n_sets + 1):
+        match = saved_sets[saved_sets["set_number"] == set_number]
+        rows.append({
+            "Exercise": exercise,
+            "Set": set_number,
+            "Weight (kg)": float(match["weight_kg"].iloc[0]) if not match.empty else None,
+            "Reps": int(match["reps"].iloc[0]) if not match.empty else None,
+        })
+
+if not already_saved.empty:
+    st.info("This session is already saved for this date. Saving again will replace it.")
+elif not last_time.empty:
+    st.caption(f"Pre-filled from your last {session} on {last_time['date'].iloc[0]:%d %b}. "
+               "Leave reps empty for any set you skip.")
+else:
+    st.caption("First time logging this session. Leave reps empty for any set you skip. "
+               "Bodyweight moves (pull-ups): weight 0. Bike: put minutes in reps.")
+
+edited = st.data_editor(
+    pd.DataFrame(rows),
+    num_rows="dynamic",              # lets you add an extra set if you did one
+    hide_index=True,
+    width="stretch",
+    column_config={
+        "Exercise": st.column_config.SelectboxColumn(options=plan.ALL_EXERCISES, required=True),
+        "Set": st.column_config.NumberColumn(min_value=1, step=1, format="%d"),
+        "Weight (kg)": st.column_config.NumberColumn(min_value=0, step=0.5, format="%.1f"),
+        "Reps": st.column_config.NumberColumn(min_value=0, step=1, format="%d"),
+    },
+)
+
+# ---------------------------------------------------------------------------
+# 3. Save
+# ---------------------------------------------------------------------------
+if st.button("Save session", type="primary"):
+    filled = edited.dropna(subset=["Reps"])
+    filled = filled[filled["Reps"] > 0]
+
+    if filled.empty:
+        st.warning("Nothing to save. Enter reps for at least one set.")
+    else:
+        new_rows = pd.DataFrame({
+            "date": log_date,
+            "session": session,
+            "exercise": filled["Exercise"],
+            "set_number": filled["Set"].fillna(0).astype(int),
+            "weight_kg": filled["Weight (kg)"].fillna(0).astype(float),
+            "reps": filled["Reps"].astype(int),
+        })
+
+        # Remove any earlier copy of this date + session, then add the new rows.
+        keep = gym[~((gym["session"] == session) & (gym["date"] == log_date))]
+        storage.save("gym", pd.concat([keep, new_rows], ignore_index=True))
+        st.success(f"Saved {len(new_rows)} sets for {session} on {log_date:%d %b}.")
+
+        # Celebrate any new bests from this session.
+        top = analysis.top_sets(storage.load("gym"))
+        todays_pbs = top[(top["date"] == log_date) & top["is_pb"]]
+        for _, row in todays_pbs.iterrows():
+            st.balloons()
+            st.markdown(f"🏆 New best: **{row['exercise']}** {row['weight_kg']:.1f} kg x {row['reps']:.0f}")
