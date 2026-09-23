@@ -53,8 +53,8 @@ for exercise in plan.GYM_SESSIONS[session]:
         rows.append({
             "Exercise": exercise,
             "Set": set_number,
-            "Weight (kg)": float(match["weight_kg"].iloc[0]) if not match.empty else None,
-            "Reps": int(match["reps"].iloc[0]) if not match.empty else None,
+            "Weight (kg)": float(match["weight_kg"].iloc[0]) if not match.empty else float("nan"),
+            "Reps": int(match["reps"].iloc[0]) if not match.empty else float("nan"),
         })
 
 if not already_saved.empty:
