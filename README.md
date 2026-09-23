@@ -46,3 +46,10 @@ data/             Your CSV files (created automatically on first run)
 - Bike: put the minutes in the reps column and leave weight at 0.
 - Leave reps empty for any set you skipped; only sets with reps are saved.
 - A "new best" is a heavier top set, or the same weight for more reps than ever before.
+
+## Web version (no Python needed)
+
+`web/road-to-new-year.html` is the same dashboard as a single web page. It is
+published as a Claude artifact so it can be used straight from the Claude app,
+where logs are saved to the artifact's database. Opened as a plain file it still
+works, saving to the browser's local storage instead.
