@@ -6,19 +6,19 @@
   --bg:#f4f3ef; --surface:#ffffff; --surface-2:#ebeae5; --text:#191b1f; --muted:#626a75; --border:#dedcd6;
   --accent:#2a78d6; --accent-ink:#ffffff; --accent-soft:#e6f0fb;
   --orange:#eb6834; --grey:#8a8983; --good:#0ca30c; --good-soft:#e5f5e5; --warn:#b45309; --warn-soft:#fbeedd; --bad:#d03b3b; --bad-soft:#fbe7e7;
-  --grid:rgba(25,27,31,.09);
+  --grid:rgba(25,27,31,.09); --aqua:#1baf7a;
   --display:'Barlow Condensed','Arial Narrow',Impact,sans-serif; --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){ color-scheme:dark;
     --bg:#151618; --surface:#1e2023; --surface-2:#282b2f; --text:#f0efec; --muted:#a3a8b1; --border:#33363b;
     --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#1d2d42; --orange:#d95926; --grey:#8f8e89;
-    --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); }
+    --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); --aqua:#199e70; }
 }
 :root[data-theme="dark"]{ color-scheme:dark;
   --bg:#151618; --surface:#1e2023; --surface-2:#282b2f; --text:#f0efec; --muted:#a3a8b1; --border:#33363b;
   --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#1d2d42; --orange:#d95926; --grey:#8f8e89;
-  --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); }
+  --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); --aqua:#199e70; }
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.45;padding-inline:16px}
@@ -102,6 +102,19 @@ summary{cursor:pointer;font-weight:500}
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .compare img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;display:block}
 .compare .cap{font-size:13px;color:var(--muted);margin-top:6px}
+.tbl tr.hint td{padding:2px 8px 10px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted)}
+.tbl tr.hint td b{color:var(--text);font-weight:600}
+.tbl tr.hint .apply{margin-left:6px;padding:1px 8px;font-size:12px}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:calc(env(safe-area-inset-top,0px) + 42px);z-index:4;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-top:12px}
+.timer .clock{font-family:var(--display);font-size:26px;font-weight:700;min-width:64px;font-variant-numeric:tabular-nums}
+.timer.running .clock{color:var(--accent)}
+.timer.done .clock{color:var(--good)}
+.timer select{width:auto}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:end}
+.quick .field{flex:none}
+.adh{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.adh .bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:6px}
+.adh .bar i{display:block;height:100%;background:var(--accent)}
 .feel{display:flex;align-items:center;gap:10px}
 .feel output{font-family:var(--display);font-size:26px;font-weight:700;min-width:32px;text-align:center}
 @media (prefers-reduced-motion: reduce){ .toast{transition:none} }
@@ -190,13 +203,32 @@ const PLAN = {
   runNotes: ['Warm-up: 10 min easy jog + leg swings.', 'Cool-down: 10 min easy jog.', 'Every session is 30+ minutes including warm-up and cool-down.', 'Shuttle round: sprint 10 m, turn, back, turn, 10 m.', 'Easy runs: if you can\'t chat, slow down.'],
 };
 PLAN.end = addDays(PLAN.start, PLAN.weeks * 7 - 1);
+// How many reps of each hard run the plan asks for, per phase.
+PLAN.runReps = {
+  Build:    { Sprints: 8,  Intervals: 6, Shuttles: 6 },
+  Sharpen:  { Sprints: 10, Intervals: 8, Shuttles: 8 },
+  Maintain: { Sprints: 8,  Intervals: 8, Shuttles: 6 },
+};
+// Progression rules: rep range to work in and the jump to make once you own the top of it.
+const ISOLATION = ['Chest fly', 'Cable lateral raise', 'Lateral raise', 'Face pulls', 'Tricep pushdown', 'Tricep overhead', 'Bicep curl', 'Hammer curl', 'Cable curl', 'Cable pullovers', 'Leg extension', 'Hamstring curl'];
+const repRange = ex => ex === 'Barbell squats' ? [5, 8] : [8, 12];
+const increment = ex => ex === 'Pull-ups' ? 0 : (ISOLATION.includes(ex) ? 1 : 2.5);
 PLAN.allExercises = [...new Set(Object.values(PLAN.sessions).flat())];
 const WD = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const weekNumber = s => s < PLAN.start ? 0 : Math.min(Math.floor(diffDays(s, PLAN.start) / 7) + 1, PLAN.weeks + 1);
 const weekDates = w => { const a = addDays(PLAN.start, (w - 1) * 7); return [a, addDays(a, 6)]; };
 const phaseForWeek = w => w < 1 ? PLAN.phases[0] : (PLAN.phases.find(p => w >= p.first && w <= p.last) || PLAN.phases[PLAN.phases.length - 1]);
-const phaseForDate = s => phaseForWeek(weekNumber(s));
+function phaseForDate(s) {
+  const ms = state.settings.maintainStart, w = weekNumber(s);
+  if (ms && w >= 1) { if (s >= ms) return PLAN.phases[2]; return w <= 2 ? PLAN.phases[0] : PLAN.phases[1]; }
+  return phaseForWeek(w);
+}
+// Where each phase starts on the calendar, honouring the override.
+function phaseStarts() {
+  const ms = state.settings.maintainStart;
+  return [{ name: 'Build', date: PLAN.start }, { name: 'Sharpen', date: weekDates(3)[0] }, { name: 'Maintain', date: ms || weekDates(5)[0] }];
+}
 const planStatus = s => s < PLAN.start ? 'before' : (s > PLAN.end ? 'after' : 'during');
 const targetKg = s => PLAN.startKg + PLAN.gainPerWeek * Math.max(0, diffDays(s, PLAN.start)) / 7;
 const gymFor = s => PLAN.gymSchedule[weekday(s)];
@@ -211,8 +243,9 @@ const planOrder = ex => { const i = PLAN.allExercises.indexOf(ex); return i < 0 
 // state.runs: [ {id, date, type, min, feel, notes} ]
 // state.gym : { "2026-09-28_Push-A": {date, session, sets:[{exercise, set, kg, reps}]} }
 // state.photos: { "2026-10-12": {assetId | dataUrl, taken, kg, notes} }  keyed by checkpoint date
-const state = { bw: {}, runs: [], gym: {}, photos: {} };
-const store = { db: null, assets: null, ready: false };
+// state.bw entries may also carry sleep (hours) and sore (1-5); runs may carry done/planned reps.
+const state = { bw: {}, runs: [], gym: {}, photos: {}, settings: { maintainStart: null } };
+const store = { db: null, assets: null, downloads: null, ready: false };
 const LS_KEY = 'road-to-new-year-v1';
 
 function setChip(on, text) {
@@ -222,6 +255,7 @@ function setChip(on, text) {
 }
 function loadLocal() {
   try { const raw = localStorage.getItem(LS_KEY); if (raw) Object.assign(state, JSON.parse(raw)); } catch (e) {}
+  state.settings = Object.assign({ maintainStart: null }, state.settings || {});
 }
 function saveLocal() {
   try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
@@ -242,7 +276,9 @@ async function initStore() {
   db.doc('log/runs').onSnapshot(s => { state.runs = (s.exists && s.data().entries) || []; refresh(); }, onErr);
   db.collection('gym').onSnapshot(qs => { const g = {}; qs.docs.forEach(d => { g[d.id] = d.data(); }); state.gym = g; refresh(); }, onErr);
   db.doc('log/photos').onSnapshot(s => { state.photos = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
+  db.doc('log/settings').onSnapshot(s => { state.settings = Object.assign({ maintainStart: null }, s.exists ? s.data() : {}); refresh(true); }, onErr);
   try { store.assets = await window.claude.use('assets'); } catch (e) { store.assets = null; }
+  try { store.downloads = await window.claude.use('downloads'); } catch (e) { store.downloads = null; }
   if (activeTab === 'photos') renderPhotos();
 }
 async function persist(kind, id) {
@@ -251,6 +287,7 @@ async function persist(kind, id) {
     if (kind === 'bw') await store.db.doc('log/bodyweight').set({ entries: state.bw });
     else if (kind === 'runs') await store.db.doc('log/runs').set({ entries: state.runs });
     else if (kind === 'photos') await store.db.doc('log/photos').set({ entries: state.photos });
+    else if (kind === 'settings') await store.db.doc('log/settings').set(state.settings);
     else if (kind === 'gym') {
       const ref = store.db.collection('gym').doc(id);
       if (state.gym[id]) await ref.set(state.gym[id]); else await ref.delete();
@@ -313,6 +350,54 @@ function allTimeBests(top) {
   return Object.values(m).sort((a, b) => planOrder(a.exercise) - planOrder(b.exercise));
 }
 const recentPbs = (top, today, days = 7) => top.filter(r => r.isPb && r.date >= addDays(today, -(days - 1))).sort((a, b) => b.date.localeCompare(a.date));
+// What to aim for next time, from the last time you did this exercise.
+function progression(exercise, lastSets) {
+  if (!lastSets || !lastSets.length || exercise === 'Bike') return null;
+  const [lo, hi] = repRange(exercise), inc = increment(exercise);
+  const kg = Math.max(...lastSets.map(x => +x.kg || 0));
+  const top = lastSets.filter(x => (+x.kg || 0) === kg);
+  if (top.every(x => x.reps >= hi)) return inc ? { kg: kg + inc, text: `Try ${n1(kg + inc)} kg × ${lo}-${hi}` } : { kg, text: `Add a rep: aim for ${hi + 1}+` };
+  if (top.some(x => x.reps < lo)) return { kg, text: `Stay at ${n1(kg)} kg, get every set to ${lo}+` };
+  return { kg, text: `Stay at ${n1(kg)} kg, push toward ${hi} reps` };
+}
+// Weekly sets by session type (push / pull / legs).
+function weeklyVolume() {
+  return Array.from({ length: PLAN.weeks }, (_, i) => {
+    const [a, b] = weekDates(i + 1), v = { week: i + 1, Push: 0, Pull: 0, Legs: 0 };
+    Object.values(state.gym).forEach(sess => { if (sess.date >= a && sess.date <= b) { const g = (sess.session || '').split(' ')[0]; if (v[g] != null) v[g] += (sess.sets || []).filter(x => x.reps > 0).length; } });
+    return v;
+  });
+}
+// Sessions and runs done against planned, per phase, counting only days up to today.
+function adherence(today) {
+  const starts = phaseStarts(), done = sessionsDone();
+  return starts.map((ph, i) => {
+    const a = ph.date, b = i + 1 < starts.length ? addDays(starts[i + 1].date, -1) : PLAN.end;
+    const upto = today < b ? today : b;
+    if (a > today) return { name: ph.name, a, b, started: false };
+    let gymPlanned = 0, runPlanned = 0;
+    for (let d = a; d <= upto; d = addDays(d, 1)) { if (gymFor(d) !== 'Rest') gymPlanned++; if (runFor(d)) runPlanned++; }
+    const gymDone = [...done].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= upto && sess !== 'Rest'; }).length;
+    const runDone = state.runs.filter(r => r.date >= a && r.date <= upto).length;
+    return { name: ph.name, a, b, started: true, gymPlanned, gymDone, runPlanned, runDone };
+  });
+}
+// Latest hard-run result of a type, for the "ready for Maintain?" check.
+function lastRun(type) { return [...state.runs].filter(r => r.type === type).sort((a, b) => b.date.localeCompare(a.date))[0] || null; }
+function weighStreak(today) {
+  let n = 0; for (let d = today; state.bw[d]; d = addDays(d, -1)) n++;
+  if (!n && state.bw[addDays(today, -1)]) { for (let d = addDays(today, -1); state.bw[d]; d = addDays(d, -1)) n++; }
+  return n;
+}
+// Where the 7-day average lands on 3 Jan if the last two weeks' rate continues.
+function projection(rows, today) {
+  if (rows.length < 8) return null;
+  const last = rows[rows.length - 1];
+  const ago = rows.filter(r => r.date <= addDays(last.date, -7)).pop();
+  if (!ago) return null;
+  const perWeek = (last.avg7 - ago.avg7) / (diffDays(last.date, ago.date) / 7);
+  return { perWeek, final: last.avg7 + perWeek * diffDays(PLAN.end, last.date) / 7 };
+}
 function sessionsDone() {
   const set = new Set();
   Object.values(state.gym).forEach(s => { if (s.session === 'Rest' || (s.sets || []).some(x => x.reps > 0)) set.add(s.date + '|' + s.session); });
@@ -321,7 +406,7 @@ function sessionsDone() {
 function weeklyReview() {
   const done = sessionsDone(); let prev = null; const rows = [];
   for (let w = 1; w <= PLAN.weeks; w++) {
-    const [a, b] = weekDates(w), phase = phaseForWeek(w);
+    const [a, b] = weekDates(w), phase = phaseForDate(a);
     const avg = avgBetween(a, b);
     const change = avg != null && prev != null ? avg - prev : null;
     if (avg != null) prev = avg;
@@ -367,8 +452,8 @@ const phasePlugin = {
     const { ctx, chartArea: area, scales: { x } } = chart;
     ctx.save(); ctx.font = `11px ${css('--body')}`; ctx.fillStyle = css('--muted'); ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
     let lastLabelEnd = -Infinity;
-    PLAN.phases.forEach(p => {
-      const px = x.getPixelForValue(xOf(weekDates(p.first)[0]));
+    phaseStarts().forEach(p => {
+      const px = x.getPixelForValue(xOf(p.date));
       if (px < area.left || px > area.right) return;
       ctx.beginPath(); ctx.moveTo(px, area.top); ctx.lineTo(px, area.bottom); ctx.stroke();
       const w = ctx.measureText(p.name).width;
@@ -398,6 +483,14 @@ function exerciseChart(id, rows, metric) {
     { label: metric === 'kg' ? 'Top set' : 'Est. 1RM', data: pts, borderColor: css('--accent'), backgroundColor: css('--accent'), borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, tension: .15 },
     { label: 'New best', data: pbs, showLine: false, pointStyle: 'star', pointRadius: 9, pointHoverRadius: 11, borderWidth: 2, borderColor: css('--good'), backgroundColor: css('--good') },
   ] }, options: o });
+}
+function volumeChart(id, vol) {
+  const rows = vol.filter(v => v.Push + v.Pull + v.Legs > 0);
+  const o = baseOptions('Sets per week');
+  o.scales.x = { type: 'category', grid: { display: false }, border: { color: css('--grid') }, ticks: { color: css('--muted'), font: { family: css('--body'), size: 11 } } };
+  o.plugins.tooltip.callbacks = { label: c => `${c.dataset.label}: ${c.parsed.y} sets` };
+  const ds = (label, color) => ({ label, data: rows.map(r => r[label]), backgroundColor: css(color), borderRadius: 3, maxBarThickness: 22 });
+  mount(id, { type: 'bar', data: { labels: rows.map(r => 'Wk ' + r.week), datasets: [ds('Push', '--accent'), ds('Pull', '--orange'), ds('Legs', '--aqua')] }, options: o });
 }
 function weeklyChart(id, review) {
   const rows = review.filter(r => r.change != null);
@@ -457,7 +550,9 @@ function renderDashboard() {
   const session = gymFor(today), run = runFor(today);
   const gymDone = done.has(today + '|' + session), runDone = state.runs.some(r => r.date === today);
   const rows = bwSeries(), latest = rows[rows.length - 1];
-  const sug = calorieSuggestion(today);
+  const sug = calorieSuggestion(today), proj = projection(rows, today), streak = weighStreak(today);
+  const todayBw = state.bw[today] || {};
+  const lastHard = run && run[0] !== 'Easy' ? lastRun(run[0]) : null;
   $('subline').textContent = `28 Sep 2026 to 3 Jan 2027 · 14 weeks · today is ${fLong(today)}`;
 
   let kpis;
@@ -475,6 +570,17 @@ function renderDashboard() {
   $('view-dashboard').innerHTML = `
     <div class="kpis">${kpis.map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="value">${v}</div></div>`).join('')}</div>
     ${status === 'before' ? `<p class="note" style="margin-top:12px">The plan starts on Monday ${fShort(PLAN.start)}. Log weigh-ins now so the chart has a baseline.</p>` : ''}
+    ${state.settings.maintainStart ? `<p class="sub" style="margin-top:8px">Maintain phase set to start ${fDay(state.settings.maintainStart)} (change on the Data tab).</p>` : ''}
+
+    <div class="card" style="margin-top:14px">
+      <div class="exhead"><h3 style="margin:0">Quick log · ${fDay(today)}</h3>${todayBw.kg ? '<span class="pill good">weighed in</span>' : ''}</div>
+      <div class="quick">
+        <div class="field"><label for="qKg">Weight (kg)</label><input type="number" id="qKg" step="0.1" min="40" max="200" inputmode="decimal" value="${todayBw.kg ? n1(todayBw.kg) : (latest ? n1(latest.kg) : n1(PLAN.startKg))}"></div>
+        <div class="field"><label for="qSleep">Sleep (h)</label><input type="number" id="qSleep" step="0.5" min="0" max="14" inputmode="decimal" value="${todayBw.sleep ?? ''}" placeholder="7.5"></div>
+        <div class="field"><label for="qSore">Soreness</label><select id="qSore">${['', 1, 2, 3, 4, 5].map(v => `<option value="${v}" ${String(todayBw.sore ?? '') === String(v) ? 'selected' : ''}>${v === '' ? '–' : v + (v === 1 ? ' fresh' : v === 5 ? ' wrecked' : '')}</option>`).join('')}</select></div>
+        <div class="field"><button class="btn primary" id="qSave">${todayBw.kg ? 'Update' : 'Save'}</button></div>
+      </div>
+    </div>
 
     <h2>Today</h2>
     <div class="grid2">
@@ -486,6 +592,7 @@ function renderDashboard() {
       <div class="card">
         <h3>Run: ${run ? run[0] : 'none today'} ${runDone ? '<span class="pill good">logged</span>' : ''}</h3>
         ${run ? `<p style="margin:4px 0 0;font-weight:600">${run[1]}</p><p class="sub" style="margin:4px 0 0">Warm-up 10 min easy jog + leg swings · cool-down 10 min easy jog</p>
+        ${lastHard ? `<p class="sub" style="margin:6px 0 0">Last ${lastHard.type.toLowerCase()} (${fShort(lastHard.date)}): ${lastHard.done != null ? `${lastHard.done}/${lastHard.planned} done · ` : ''}felt ${lastHard.feel}/10</p>` : ''}
         <div class="actions"><button class="btn primary" onclick="showTab('run', true)">Log this run</button></div>` : '<p class="sub">No run planned. Legs get a break.</p>'}
       </div>
     </div>
@@ -502,6 +609,8 @@ function renderDashboard() {
       <div class="kpi"><div class="label">7-day average</div><div class="value">${n2(latest.avg7)} <small>kg</small></div></div>
       <div class="kpi"><div class="label">Target today</div><div class="value">${n2(targetKg(today))} <small>kg</small></div></div>
       <div class="kpi"><div class="label">Avg vs target</div><div class="value">${signed(latest.avg7 - targetKg(today))} <small>kg</small></div></div>
+      <div class="kpi"><div class="label">On pace for 3 Jan</div><div class="value">${proj ? n1(proj.final) + ' <small>kg</small>' : '–'}</div><div class="delta">${proj ? `${signed(proj.perWeek)} kg/week lately · plan says 89-90` : 'needs two weeks of data'}</div></div>
+      <div class="kpi"><div class="label">Weigh-in streak</div><div class="value">${streak} <small>days</small></div></div>
     </div>`}
     <div class="card" style="margin-top:12px"><div class="chart"><canvas id="bwChart"></canvas></div></div>
 
@@ -525,6 +634,16 @@ function renderDashboard() {
       : '<p class="sub">None yet. New bests appear here automatically when a top set beats your previous best.</p>'}
   `;
   bodyweightChart('bwChart', rows);
+  $('qSave').addEventListener('click', async () => {
+    const kg = +$('qKg').value; if (!(kg > 0)) { toast('Enter a weight.'); return; }
+    const entry = Object.assign({}, state.bw[today] || { notes: '' }, { kg: Math.round(kg * 10) / 10 });
+    const sleep = $('qSleep').value, sore = $('qSore').value;
+    if (sleep !== '') entry.sleep = +sleep; else delete entry.sleep;
+    if (sore !== '') entry.sore = +sore; else delete entry.sore;
+    state.bw[today] = entry;
+    try { await persist('bw'); } catch (e) { return; }
+    toast(`Saved ${n1(kg)} kg for today.`); renderDashboard();
+  });
 }
 
 /* ---------- Log gym ---------- */
@@ -544,6 +663,7 @@ function buildGymForm() {
         <div class="field"><label for="gSession">Session</label><select id="gSession">${[...Object.keys(PLAN.sessions), 'Rest'].map(s => `<option ${s === gymForm.session ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
       </div>
       <p class="sub" id="gInfo" style="margin:10px 0 0"></p>
+      <div class="timer" id="timer"><span class="clock" id="tClock">1:30</span><button class="btn small" id="tStart">Start rest</button><select id="tLen"><option value="60">60 s</option><option value="90" selected>90 s</option><option value="120">2 min</option><option value="180">3 min</option></select><span class="sub">Starts by itself when you enter reps.</span></div>
       <div class="tblwrap" id="gTable" style="margin-top:12px"></div>
       <div class="actions"><button class="btn primary" id="gSave">Save session</button><span class="sub">Only sets with reps are saved. Pull-ups: weight 0. Bike: minutes in reps.</span></div>
       <div id="gResult" class="stack" style="margin-top:12px"></div>
@@ -569,7 +689,28 @@ function buildGymForm() {
     fillGymRows();
   });
   $('gSave').addEventListener('click', saveGym);
+  $('tStart').addEventListener('click', () => timer.running ? stopTimer() : startTimer());
   fillGymRows();
+}
+// ---- Rest timer ----
+const timer = { running: false, left: 0, handle: null };
+function fmtClock(sec) { return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
+function startTimer() {
+  const el = $('timer'); if (!el) return;
+  clearInterval(timer.handle); timer.left = +$('tLen').value; timer.running = true;
+  el.classList.add('running'); el.classList.remove('done'); $('tStart').textContent = 'Stop'; $('tClock').textContent = fmtClock(timer.left);
+  timer.handle = setInterval(() => {
+    timer.left--; const c = $('tClock'); if (!c) { clearInterval(timer.handle); timer.running = false; return; }
+    c.textContent = fmtClock(Math.max(0, timer.left));
+    if (timer.left <= 0) { stopTimer(true); }
+  }, 1000);
+}
+function stopTimer(finished) {
+  clearInterval(timer.handle); timer.running = false;
+  const el = $('timer'); if (!el) return;
+  el.classList.remove('running'); $('tStart').textContent = 'Start rest';
+  if (finished) { el.classList.add('done'); $('tClock').textContent = 'Go'; toast('Rest over. Next set.'); try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {} }
+  else $('tClock').textContent = fmtClock(+$('tLen').value);
 }
 function fillGymRows() {
   const { date, session } = gymForm, phase = phaseForDate(date);
@@ -584,9 +725,10 @@ function fillGymRows() {
   }
   $('gSave').textContent = 'Save session';
   let source = saved, sourceLabel = '';
+  const prev = Object.values(state.gym).filter(s => s.session === session && s.date < date).sort((a, b) => b.date.localeCompare(a.date))[0];
+  gymForm.last = prev || null;
   if (!source) {
-    const prev = Object.values(state.gym).filter(s => s.session === session && s.date < date).sort((a, b) => b.date.localeCompare(a.date))[0];
-    if (prev) { source = prev; sourceLabel = `Pre-filled from your last ${session} on ${fShort(prev.date)}. Change what's different.`; }
+    if (prev) { source = prev; sourceLabel = `Pre-filled from your last ${session} on ${fShort(prev.date)}. Targets below each exercise.`; }
     else sourceLabel = `First time logging ${session}. Fill in what you lift.`;
   } else sourceLabel = `This session is already saved for ${fShort(date)}. Saving again replaces it.`;
   $('gInfo').textContent = `${fDay(date)} · ${phase.name} phase · planned session: ${gymFor(date)}. ${sourceLabel}`;
@@ -603,12 +745,30 @@ function renderGymRows() {
   gymForm.rows.forEach((r, i) => {
     const firstOfEx = i === 0 || gymForm.rows[i - 1].exercise !== r.exercise;
     const lastOfEx = i === gymForm.rows.length - 1 || gymForm.rows[i + 1].exercise !== r.exercise;
+    if (firstOfEx && gymForm.last) {
+      // "Last time" and the target for this exercise, from the most recent time you did this session.
+      const lastSets = (gymForm.last.sets || []).filter(x => x.exercise === r.exercise && x.reps > 0);
+      const target = progression(r.exercise, lastSets);
+      if (lastSets.length) html += `<tr class="hint"><td colspan="4">Last (${fShort(gymForm.last.date)}): ${lastSets.map(x => `${n1(x.kg)}×${x.reps}`).join(' · ')}${target ? ` &nbsp;→&nbsp; <b>${target.text}</b>${target.kg > Math.max(...lastSets.map(x => +x.kg || 0)) ? `<button class="btn small apply" data-apply="${esc(r.exercise)}" data-kg="${target.kg}">Use ${n1(target.kg)}</button>` : ''}` : ''}</td></tr>`;
+    }
     html += `<tr><td class="exname">${firstOfEx ? esc(r.exercise) : ''}</td><td class="num">${r.set}${lastOfEx ? ` <button class="btn small" data-add="${esc(r.exercise)}" title="Add a set">+</button>` : ''}</td>
       <td><input type="number" inputmode="decimal" step="0.5" min="0" data-i="${i}" data-k="kg" value="${r.kg === '' ? '' : r.kg}" placeholder="kg"></td>
       <td><input type="number" inputmode="numeric" step="1" min="0" data-i="${i}" data-k="reps" value="${r.reps === '' ? '' : r.reps}" placeholder="reps"></td></tr>`;
   });
   $('gTable').innerHTML = html + '</tbody></table>';
-  $('gTable').querySelectorAll('input').forEach(inp => inp.addEventListener('input', e => { gymForm.rows[+e.target.dataset.i][e.target.dataset.k] = e.target.value; gymForm.dirty = true; }));
+  $('gTable').querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', e => { gymForm.rows[+e.target.dataset.i][e.target.dataset.k] = e.target.value; gymForm.dirty = true; });
+    // Entering reps means the set is done: start the rest clock.
+    inp.addEventListener('change', e => { if (e.target.dataset.k === 'reps' && +e.target.value > 0) startTimer(); });
+    // Enter jumps to the next box, like a spreadsheet.
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); const all = [...$('gTable').querySelectorAll('input')], j = all.indexOf(e.target); if (j >= 0 && j + 1 < all.length) all[j + 1].focus(); } });
+  });
+  $('gTable').querySelectorAll('[data-apply]').forEach(b => b.addEventListener('click', () => {
+    const ex = b.dataset.apply, kg = +b.dataset.kg;
+    gymForm.rows.forEach(r => { if (r.exercise === ex) r.kg = kg; }); gymForm.dirty = true;
+    $('gTable').querySelectorAll(`input[data-k="kg"]`).forEach(inp => { if (gymForm.rows[+inp.dataset.i].exercise === ex) inp.value = kg; });
+    toast(`${ex}: set to ${n1(kg)} kg.`);
+  }));
   $('gTable').querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
     const ex = b.dataset.add, idx = gymForm.rows.map(r => r.exercise).lastIndexOf(ex);
     gymForm.rows.splice(idx + 1, 0, { exercise: ex, set: gymForm.rows[idx].set + 1, kg: gymForm.rows[idx].kg, reps: '' });
@@ -649,6 +809,8 @@ function buildWeightForm() {
       <div class="row">
         <div class="field"><label for="wDate">Date</label><input type="date" id="wDate" value="${todayIso()}"></div>
         <div class="field"><label for="wKg">Weight (kg)</label><input type="number" id="wKg" step="0.1" min="40" max="200" inputmode="decimal" value="${n1(last)}"></div>
+        <div class="field"><label for="wSleep">Sleep (h)</label><input type="number" id="wSleep" step="0.5" min="0" max="14" inputmode="decimal" placeholder="7.5"></div>
+        <div class="field"><label for="wSore">Soreness 1-5</label><select id="wSore"><option value="">–</option><option value="1">1 fresh</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 wrecked</option></select></div>
         <div class="field grow"><label for="wNotes">Notes (optional)</label><input type="text" id="wNotes" placeholder="e.g. after a big dinner"></div>
       </div>
       <div class="actions"><button class="btn primary" id="wSave">Save weigh-in</button></div>
@@ -658,7 +820,10 @@ function buildWeightForm() {
   $('wSave').addEventListener('click', async () => {
     const date = $('wDate').value, kg = +$('wKg').value;
     if (!date || !(kg > 0)) { toast('Enter a date and a weight.'); return; }
-    state.bw[date] = { kg: Math.round(kg * 10) / 10, notes: $('wNotes').value.trim() };
+    const entry = { kg: Math.round(kg * 10) / 10, notes: $('wNotes').value.trim() };
+    if ($('wSleep').value !== '') entry.sleep = +$('wSleep').value;
+    if ($('wSore').value !== '') entry.sore = +$('wSore').value;
+    state.bw[date] = entry;
     try { await persist('bw'); } catch (e) { return; }
     toast(`Saved ${n1(kg)} kg for ${fDay(date)}.`);
     $('wNotes').value = '';
@@ -667,8 +832,8 @@ function buildWeightForm() {
 }
 function renderWeightRecent() {
   const rows = bwSeries().slice(-7).reverse();
-  $('wRecent').innerHTML = rows.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th>Notes</th></tr></thead><tbody>
-    ${rows.map(r => `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="num">${n2(r.avg7)}</td><td class="num">${n2(r.target)}</td><td class="sub">${esc(r.notes)}</td></tr>`).join('')}</tbody></table></div>`
+  $('wRecent').innerHTML = rows.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">Sleep</th><th class="num">Sore</th><th>Notes</th></tr></thead><tbody>
+    ${rows.map(r => { const e = state.bw[r.date] || {}; return `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="num">${n2(r.avg7)}</td><td class="num">${n2(r.target)}</td><td class="num">${e.sleep != null ? e.sleep + ' h' : ''}</td><td class="num">${e.sore != null ? e.sore : ''}</td><td class="sub">${esc(r.notes)}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<p class="empty">No weigh-ins yet.</p>';
 }
 
@@ -682,6 +847,10 @@ function buildRunForm() {
         <div class="field"><label for="rType">Type</label><select id="rType">${PLAN.runTypes.map(t => `<option>${t}</option>`).join('')}</select></div>
         <div class="field"><label for="rMin">Minutes (incl. warm-up + cool-down)</label><input type="number" id="rMin" min="1" max="300" step="1" inputmode="numeric" value="30"></div>
       </div>
+      <div class="row" id="rRepsRow" style="margin-top:10px">
+        <div class="field"><label for="rDone">Reps completed</label><input type="number" id="rDone" min="0" max="30" step="1" inputmode="numeric"></div>
+        <div class="field"><label for="rPlanned">Reps planned</label><input type="number" id="rPlanned" min="1" max="30" step="1" inputmode="numeric"></div>
+      </div>
       <p class="sub" id="rInfo" style="margin:10px 0 0"></p>
       <div class="row" style="margin-top:12px">
         <div class="field grow"><label for="rFeel">How did it feel? 1 = terrible, 10 = amazing</label><div class="feel"><input type="range" id="rFeel" min="1" max="10" value="7"><output id="rFeelOut">7</output></div></div>
@@ -691,16 +860,23 @@ function buildRunForm() {
     </div>
     <h2>Recent runs</h2>
     <div id="rRecent"></div>`;
+  const setReps = () => {
+    const d = $('rDate').value || todayIso(), type = $('rType').value, planned = PLAN.runReps[phaseForDate(d).name][type];
+    $('rRepsRow').hidden = !planned;
+    if (planned) { $('rPlanned').value = planned; $('rDone').value = planned; }
+  };
   const setInfo = () => {
     const d = $('rDate').value || todayIso(), r = runFor(d);
     $('rInfo').textContent = r ? `${fDay(d)}: planned run is ${r[0]} (${r[1]}).` : `${fDay(d)}: no run planned. Log one anyway if you went out.`;
     if (r) $('rType').value = r[0];
+    setReps();
   };
-  $('rDate').addEventListener('change', setInfo); setInfo();
+  $('rDate').addEventListener('change', setInfo); $('rType').addEventListener('change', setReps); setInfo();
   $('rFeel').addEventListener('input', e => { $('rFeelOut').value = e.target.value; });
   $('rSave').addEventListener('click', async () => {
     const date = $('rDate').value; if (!date) { toast('Pick a date.'); return; }
     const entry = { id: Date.now().toString(36), date, type: $('rType').value, min: Math.round(+$('rMin').value) || 0, feel: +$('rFeel').value, notes: $('rNotes').value.trim() };
+    if (!$('rRepsRow').hidden && $('rPlanned').value) { entry.planned = +$('rPlanned').value; entry.done = +$('rDone').value || 0; }
     state.runs.push(entry);
     try { await persist('runs'); } catch (e) { state.runs.pop(); return; }
     toast(`Saved ${entry.type} run, ${entry.min} min, felt ${entry.feel}/10.`);
@@ -713,8 +889,8 @@ function renderRunRecent() {
   const thisWeek = state.runs.filter(r => r.date >= monday && r.date <= addDays(monday, 6)).length;
   const rows = [...state.runs].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
   $('rRecent').innerHTML = `<div class="kpis" style="margin:0 0 12px"><div class="kpi"><div class="label">Runs this week</div><div class="value">${thisWeek} <small>/ ${phase.runs}</small></div></div></div>` +
-    (rows.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th></tr></thead><tbody>
-    ${rows.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">No runs logged yet.</p>');
+    (rows.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Reps</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.planned ? `${r.done}/${r.planned}` : '—'}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">No runs logged yet.</p>');
 }
 
 /* ---------- Exercise progress ---------- */
@@ -757,9 +933,27 @@ function renderWeekly() {
       ${review.map(r => `<tr class="${r.w === wk ? 'current' : ''}"><td>${r.w}${r.w === wk ? ' ◀' : ''}</td><td>${fShort(r.a)} – ${fShort(r.b)}</td><td>${r.phase}</td><td class="num">${cell(r.avg == null ? null : n2(r.avg))}</td><td class="num">${cell(r.change == null ? null : signed(r.change))}</td><td class="num">${n2(r.target)}</td><td class="num">${r.gymN} / 6</td><td class="num">${r.runN} / ${r.runPlan}</td><td class="num">${cell(r.feel == null ? null : n1(r.feel))}</td></tr>`).join('')}
     </tbody></table></div>
     <p class="sub">Gym sessions count once per day per session. Runs count against the phase's plan: 5 a week in Build and Sharpen, 3 in Maintain.</p>
+
+    <h2>Adherence by phase</h2>
+    <div class="adh">${adherence(today).map(a => a.started ? `<div class="card">
+        <div class="exhead"><h3 style="margin:0">${a.name}</h3><span class="sub">${fShort(a.a)} – ${fShort(a.b)}</span></div>
+        <div class="sub">Gym ${a.gymDone} / ${a.gymPlanned}${a.gymPlanned ? ` · ${Math.round(100 * a.gymDone / a.gymPlanned)}%` : ''}</div><div class="bar"><i style="width:${a.gymPlanned ? Math.min(100, 100 * a.gymDone / a.gymPlanned) : 0}%"></i></div>
+        <div class="sub" style="margin-top:8px">Runs ${a.runDone} / ${a.runPlanned}${a.runPlanned ? ` · ${Math.round(100 * a.runDone / a.runPlanned)}%` : ''}</div><div class="bar"><i style="width:${a.runPlanned ? Math.min(100, 100 * a.runDone / a.runPlanned) : 0}%;background:var(--orange)"></i></div>
+      </div>` : `<div class="card soft"><h3 style="margin:0">${a.name}</h3><div class="sub">Starts ${fShort(a.a)}</div></div>`).join('')}</div>
+    <p class="sub">Planned counts only the days up to today, so a phase you're halfway through isn't marked down for the days still to come.</p>
+
+    ${(() => { const iv = lastRun('Intervals'), sp = lastRun('Sprints'); if (!iv && !sp) return '';
+      const ready = iv && iv.planned && iv.done >= 8 && iv.feel >= 6;
+      return `<h2>Ready for Maintain?</h2><p class="note ${ready ? 'good' : ''}">${ready ? '✅ Last intervals: all 8 done and it felt OK. The plan says you can move to Maintain.' : 'The plan\'s test: finish 8 intervals without dying and recover quickly between sprints.'}
+      ${iv ? `<br>Last intervals (${fShort(iv.date)}): ${iv.planned ? `${iv.done}/${iv.planned} done, ` : ''}felt ${iv.feel}/10.` : ''}${sp ? `<br>Last sprints (${fShort(sp.date)}): ${sp.planned ? `${sp.done}/${sp.planned} done, ` : ''}felt ${sp.feel}/10.` : ''}
+      ${state.settings.maintainStart ? `<br>Maintain set to start ${fDay(state.settings.maintainStart)}.` : '<br>When you\'re ready, set the Maintain start date on the Data tab.'}</p>`; })()}
+
+    <h2>Sets per week by session</h2>
+    ${weeklyVolume().some(v => v.Push + v.Pull + v.Legs) ? '<div class="card"><div class="chart sm"><canvas id="volChart"></canvas></div></div><p class="sub">Legs should dip in Build and Sharpen (3 sets of squats, no bike) and come back in Maintain.</p>' : '<p class="note">Appears once you have logged gym sessions.</p>'}
     <h2>Weekly weight change vs target</h2>
     ${review.some(r => r.change != null) ? '<div class="card"><div class="chart sm"><canvas id="wkChart"></canvas></div></div>' : '<p class="note">This chart appears once you have weigh-ins in two different plan weeks.</p>'}`;
   if (review.some(r => r.change != null)) weeklyChart('wkChart', review);
+  if (weeklyVolume().some(v => v.Push + v.Pull + v.Legs)) volumeChart('volChart', weeklyVolume());
 }
 
 /* ---------- Progress photos (every two weeks) ---------- */
@@ -863,6 +1057,22 @@ function renderData() {
   const runs = [...state.runs].sort((a, b) => b.date.localeCompare(a.date));
   const gym = Object.entries(state.gym).sort((a, b) => b[1].date.localeCompare(a[1].date));
   $('view-data').innerHTML = `
+    <h2>Plan settings</h2>
+    <div class="card">
+      <div class="row">
+        <div class="field"><label for="sMaintain">Maintain phase starts</label><input type="date" id="sMaintain" value="${state.settings.maintainStart || ''}" min="${weekDates(3)[0]}" max="${PLAN.end}"></div>
+        <div class="field"><button class="btn primary" id="sSave">Save</button></div>
+        <div class="field"><button class="btn" id="sClear" ${state.settings.maintainStart ? '' : 'disabled'}>Back to calendar (26 Oct)</button></div>
+      </div>
+      <p class="sub" style="margin:10px 0 0">The plan moves to Maintain on 26 Oct, but says to stay in Sharpen longer if you can't yet finish 8 intervals. Set the date you actually switch and the schedule, run targets, squat sets and tips follow it.</p>
+    </div>
+
+    <h2>Export</h2>
+    <div class="card">
+      <div class="actions" style="margin-top:0"><button class="btn" data-export="bodyweight">Weigh-ins CSV</button><button class="btn" data-export="gym">Gym sets CSV</button><button class="btn" data-export="runs">Runs CSV</button></div>
+      <p class="sub" style="margin:10px 0 0">Plain CSV files that open in Excel or Numbers, and load straight into the Python version of this dashboard. Tip: add this page to your phone's home screen from the browser's share menu and it works like an app.</p>
+    </div>
+
     <h2>Your data</h2>
     <p class="sub">Everything you have logged. Delete a wrong entry here, then log it again. To change a gym session, open it and save again.</p>
     <h3 style="margin-top:18px">Gym sessions (${gym.length})</h3>
@@ -878,10 +1088,37 @@ function renderData() {
       ${runs.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td><td class="num"><button class="btn small danger" data-del-run="${esc(r.id)}">Delete</button></td></tr>`).join('')}
     </tbody></table></div>` : '<p class="empty">No runs yet.</p>'}`;
   const v = $('view-data');
+  $('sSave').addEventListener('click', async () => {
+    const d = $('sMaintain').value; if (!d) { toast('Pick a date.'); return; }
+    state.settings.maintainStart = d; try { await persist('settings'); } catch (e) { return; }
+    toast(`Maintain starts ${fDay(d)}.`); refresh(true);
+  });
+  $('sClear').addEventListener('click', async () => { state.settings.maintainStart = null; try { await persist('settings'); } catch (e) { return; } toast('Back to the calendar phases.'); refresh(true); });
+  v.querySelectorAll('[data-export]').forEach(b => b.addEventListener('click', () => exportCsv(b.dataset.export)));
   v.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => { const s = state.gym[b.dataset.open]; gymForm.date = s.date; gymForm.session = s.session; built.gym = false; showTab('gym', true); }));
   v.querySelectorAll('[data-del-gym]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => { const id = b.dataset.delGym; delete state.gym[id]; await persist('gym', id); toast('Session deleted.'); renderData(); })));
   v.querySelectorAll('[data-del-bw]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => { delete state.bw[b.dataset.delBw]; await persist('bw'); toast('Weigh-in deleted.'); renderData(); })));
   v.querySelectorAll('[data-del-run]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => { state.runs = state.runs.filter(r => r.id !== b.dataset.delRun); await persist('runs'); toast('Run deleted.'); renderData(); })));
+}
+// ---- CSV export ----
+function csvOf(kind) {
+  const q = v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+  const line = arr => arr.map(q).join(',');
+  if (kind === 'bodyweight') return [line(['date', 'weight_kg', 'sleep_h', 'soreness', 'notes'])].concat(Object.keys(state.bw).sort().map(d => line([d, state.bw[d].kg, state.bw[d].sleep ?? '', state.bw[d].sore ?? '', state.bw[d].notes]))).join('\n');
+  if (kind === 'runs') return [line(['date', 'run_type', 'duration_min', 'feel', 'reps_done', 'reps_planned', 'notes'])].concat([...state.runs].sort((a, b) => a.date.localeCompare(b.date)).map(r => line([r.date, r.type, r.min, r.feel, r.done ?? '', r.planned ?? '', r.notes]))).join('\n');
+  const rows = [line(['date', 'session', 'exercise', 'set_number', 'weight_kg', 'reps'])];
+  Object.values(state.gym).sort((a, b) => a.date.localeCompare(b.date)).forEach(sess => (sess.sets || []).forEach(x => rows.push(line([sess.date, sess.session, x.exercise, x.set, x.kg, x.reps]))));
+  return rows.join('\n');
+}
+async function exportCsv(kind) {
+  const filename = { bodyweight: 'bodyweight.csv', gym: 'gym_sets.csv', runs: 'runs.csv' }[kind], data = csvOf(kind);
+  if (store.downloads) {
+    try { await store.downloads.save({ filename, data }); toast(`Saved ${filename}.`); }
+    catch (e) { if (e && e.code === 'declined') return; toast(e && e.code === 'unavailable' ? 'Downloads are not available in this view.' : 'Could not save the file.'); }
+    return;
+  }
+  // Outside the Claude viewer: an ordinary browser download.
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'text/csv' })); a.download = filename; document.body.appendChild(a); a.click(); a.remove();
 }
 // Two-tap delete: the first tap turns the button into "Confirm", the second deletes.
 function confirmRow(btn, fn) {
