@@ -6,7 +6,24 @@ dates, phases, gym sessions, run prescriptions and macro targets.
 If the plan ever changes, this is the only file you need to edit.
 """
 
+import json
 from datetime import date, timedelta
+from pathlib import Path
+
+SETTINGS_FILE = Path(__file__).resolve().parent / "data" / "settings.json"
+
+
+def load_settings():
+    """Small JSON file of things you can change: for now, when Maintain starts."""
+    try:
+        return json.loads(SETTINGS_FILE.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def save_settings(settings):
+    SETTINGS_FILE.parent.mkdir(exist_ok=True)
+    SETTINGS_FILE.write_text(json.dumps(settings, indent=2))
 
 # ---------------------------------------------------------------------------
 # Key dates and numbers
@@ -152,6 +169,30 @@ RUN_SCHEDULE = {
     },
 }
 
+# How many reps of each hard run the plan asks for, per phase.
+RUN_REPS = {
+    "Build":    {"Sprints": 8,  "Intervals": 6, "Shuttles": 6},
+    "Sharpen":  {"Sprints": 10, "Intervals": 8, "Shuttles": 8},
+    "Maintain": {"Sprints": 8,  "Intervals": 8, "Shuttles": 6},
+}
+
+# Progression: the rep range to work in, and the jump to make once you own the top of it.
+ISOLATION = ["Chest fly", "Cable lateral raise", "Lateral raise", "Face pulls", "Tricep pushdown",
+             "Tricep overhead", "Bicep curl", "Hammer curl", "Cable curl", "Cable pullovers",
+             "Leg extension", "Hamstring curl"]
+
+
+def rep_range(exercise):
+    return (5, 8) if exercise == "Barbell squats" else (8, 12)
+
+
+def increment(exercise):
+    """Weight jump when you hit the top of the rep range on every set."""
+    if exercise == "Pull-ups":
+        return 0            # bodyweight: progress by reps
+    return 1.0 if exercise in ISOLATION else 2.5
+
+
 RUN_NOTES = [
     "Warm-up: 10 min easy jog + leg swings.",
     "Cool-down: 10 min easy jog.",
@@ -188,8 +229,30 @@ def phase_for_week(week):
     return PHASES[-1]
 
 
+def maintain_start():
+    """The date Maintain actually starts: the calendar's 26 Oct, unless you set your own."""
+    value = load_settings().get("maintain_start")
+    if value:
+        try:
+            return date.fromisoformat(value)
+        except ValueError:
+            pass
+    return week_dates(PHASES[2]["first_week"])[0]
+
+
 def phase_for_date(d):
-    return phase_for_week(week_number(d))
+    """Phase on a date. Honours a Maintain start date you chose in Settings."""
+    week = week_number(d)
+    if week < 1:
+        return PHASES[0]
+    if d >= maintain_start():
+        return PHASES[2]
+    return PHASES[0] if week <= 2 else PHASES[1]
+
+
+def phase_starts():
+    """[(name, first date)] for each phase, honouring the override."""
+    return [("Build", PLAN_START), ("Sharpen", week_dates(3)[0]), ("Maintain", maintain_start())]
 
 
 def plan_status(d):

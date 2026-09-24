@@ -61,10 +61,9 @@ def bodyweight_chart(table):
     ))
 
     # Mark where each phase starts so you can see the plan on the chart.
-    for phase in plan.PHASES:
-        start, _ = plan.week_dates(phase["first_week"])
+    for name, start in plan.phase_starts():
         fig.add_vline(x=start, line=dict(color=GRID, width=1))
-        fig.add_annotation(x=start, y=1, yref="paper", text=phase["name"],
+        fig.add_annotation(x=start, y=1, yref="paper", text=name,
                            showarrow=False, xanchor="left", yanchor="bottom",
                            font=dict(size=11, color=GREY))
 
@@ -95,6 +94,21 @@ def exercise_chart(top, exercise, metric="weight_kg"):
         ))
 
     return _tidy(fig, label)
+
+
+AQUA = "#1baf7a"
+
+
+def volume_chart(volume):
+    """Grouped bars: sets per week for Push, Pull and Legs."""
+    df = volume[(volume["Push"] + volume["Pull"] + volume["Legs"]) > 0]
+    labels = [f"Wk {w}" for w in df["Week"]]
+    fig = go.Figure()
+    for name, color in (("Push", BLUE), ("Pull", ORANGE), ("Legs", AQUA)):
+        fig.add_trace(go.Bar(x=labels, y=df[name], name=name, marker=dict(color=color),
+                             hovertemplate="%{y} sets<extra>" + name + "</extra>"))
+    fig.update_layout(barmode="group", bargap=0.25)
+    return _tidy(fig, "Sets per week")
 
 
 def weekly_change_chart(review):

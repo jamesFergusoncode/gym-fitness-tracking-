@@ -26,10 +26,18 @@ else:
     st.caption(f"{log_date:%A %d %b}: planned run is **{planned[0]}** ({planned[1]}).")
     default_index = plan.RUN_TYPES.index(planned[0])
 
+# The selectbox sits outside the form so the reps fields can react to it.
+run_type = st.selectbox("Type", plan.RUN_TYPES, index=default_index)
+planned_reps = plan.RUN_REPS[plan.phase_for_date(log_date)["name"]].get(run_type)
+
 with st.form("run_form"):
-    run_type = st.selectbox("Type", plan.RUN_TYPES, index=default_index)
     duration = st.number_input("Duration (minutes, including warm-up and cool-down)",
                                min_value=1, max_value=300, value=30, step=1)
+    reps_done = reps_planned = None
+    if planned_reps:
+        c1, c2 = st.columns(2)
+        reps_done = c1.number_input("Reps completed", min_value=0, max_value=30, value=planned_reps, step=1)
+        reps_planned = c2.number_input("Reps planned", min_value=1, max_value=30, value=planned_reps, step=1)
     feel = st.slider("How did it feel? (1 = terrible, 10 = amazing)", 1, 10, 7)
     notes = st.text_input("Notes (optional)", placeholder="e.g. did all 8 intervals, legs heavy")
     submitted = st.form_submit_button("Save run", type="primary")
@@ -37,7 +45,7 @@ with st.form("run_form"):
 if submitted:
     new_row = pd.DataFrame([{
         "date": log_date, "run_type": run_type, "duration_min": duration,
-        "feel": feel, "notes": notes,
+        "feel": feel, "reps_done": reps_done, "reps_planned": reps_planned, "notes": notes,
     }])
     storage.add_rows("runs", new_row)
     st.success(f"Saved {run_type} run, {duration} min, felt {feel}/10.")
@@ -47,7 +55,7 @@ if not runs.empty:
     st.subheader("Recent runs")
     show = runs.tail(10).iloc[::-1].rename(columns={
         "date": "Date", "run_type": "Type", "duration_min": "Minutes",
-        "feel": "Feel (1-10)", "notes": "Notes",
+        "feel": "Feel (1-10)", "reps_done": "Reps done", "reps_planned": "Reps planned", "notes": "Notes",
     })
     st.dataframe(show, hide_index=True, width="stretch")
 

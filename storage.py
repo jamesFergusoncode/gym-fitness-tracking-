@@ -19,13 +19,13 @@ DATA_DIR = Path(__file__).resolve().parent / "data"
 
 # name -> (file name, column names in order)
 FILES = {
-    "bodyweight": ("bodyweight.csv", ["date", "weight_kg", "notes"]),
+    "bodyweight": ("bodyweight.csv", ["date", "weight_kg", "sleep_h", "soreness", "notes"]),
     "gym": ("gym_sets.csv", ["date", "session", "exercise", "set_number", "weight_kg", "reps"]),
-    "runs": ("runs.csv", ["date", "run_type", "duration_min", "feel", "notes"]),
+    "runs": ("runs.csv", ["date", "run_type", "duration_min", "feel", "reps_done", "reps_planned", "notes"]),
 }
 
 # Columns that should always be numbers.
-NUMERIC_COLUMNS = ["weight_kg", "set_number", "reps", "duration_min", "feel"]
+NUMERIC_COLUMNS = ["weight_kg", "set_number", "reps", "duration_min", "feel", "sleep_h", "soreness", "reps_done", "reps_planned"]
 
 
 def file_path(name):
@@ -66,6 +66,9 @@ def save(name, df):
     _, columns = FILES[name]
     out = df.copy()
     out["date"] = pd.to_datetime(out["date"]).dt.strftime("%Y-%m-%d")
+    for col in columns:                      # older files may lack newer columns
+        if col not in out.columns:
+            out[col] = None
     out = out[columns].sort_values("date")
     DATA_DIR.mkdir(exist_ok=True)
     out.to_csv(file_path(name), index=False)

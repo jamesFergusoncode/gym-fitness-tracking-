@@ -21,13 +21,14 @@ Your browser opens at http://localhost:8501. Use the sidebar to move between pag
 | Page | What it does |
 |---|---|
 | **Dashboard** (`Dashboard.py`) | Phase and week you are in, today's gym session and run, bodyweight chart with 7-day average and the +0.25 kg/week target line, macros with the plan's +/- 200 kcal rule applied, this week's checklist, new bests in the last 7 days. |
-| **Log Gym Session** | Pick Push A / Push B / Pull A / Pull B / Legs A / Legs B and enter weight x reps per set. The table is pre-filled from your last time doing that session. |
-| **Log Bodyweight** | One weigh-in per morning. Saving the same date again replaces it. |
-| **Log Run** | Type (Sprints, Intervals, Shuttles, Easy), minutes and how it felt 1-10. Shows the planned run for the day. |
+| **Log Gym Session** | Pick a session (or Rest) and enter weight x reps per set. The table is pre-filled from last time, with a target for each exercise: hit the top of the rep range on every set and it tells you the next weight to try. |
+| **Log Bodyweight** | One weigh-in per morning, plus sleep hours and a soreness score. Saving the same date again replaces it. |
+| **Log Run** | Type, minutes, how it felt 1-10, and for hard runs the reps completed out of planned (the plan's "8 intervals" test). |
 | **Exercise Progress** | A chart per exercise of your top set over time, new bests marked with a star, all-time bests table, estimated 1RM. |
-| **Weekly Review** | One row per plan week: average weight, change vs previous week, target, gym sessions done, runs done, average run feel. |
+| **Weekly Review** | One row per plan week, adherence per phase, the "ready for Maintain?" check, sets per week by session type, and weekly weight change vs target. |
 | **Progress Photos** | One photo every two weeks (start, then every fortnight, then the finish), stored in `data/photos/` (not committed to git), with a then-and-now comparison. |
 | **Edit Data** | Fix or delete any row in the three CSV files, or download them. |
+| **Settings** | Set the date you actually move to Maintain if you stay in Sharpen longer, as the plan allows. Everything follows it. |
 
 ## Files
 

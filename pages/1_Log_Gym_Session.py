@@ -100,6 +100,17 @@ for exercise in plan.GYM_SESSIONS[session]:
             "Reps": int(match["reps"].iloc[0]) if not match.empty else float("nan"),
         })
 
+# Targets: what to aim for on each exercise, from the last time you did this session.
+if not last_time.empty:
+    with st.expander(f"Targets from your last {session} ({last_time['date'].iloc[0]:%d %b})", expanded=True):
+        for exercise in plan.GYM_SESSIONS[session]:
+            last_sets = last_time[last_time["exercise"] == exercise]
+            target = analysis.progression(exercise, last_sets)
+            if target is None:
+                continue
+            done = " · ".join(f"{w:.1f}x{int(r)}" for w, r in zip(last_sets["weight_kg"], last_sets["reps"]))
+            st.markdown(f"**{exercise}**: {done} → {target[1]}")
+
 if not already_saved.empty:
     st.info("This session is already saved for this date. Saving again will replace it.")
 elif not last_time.empty:

@@ -125,6 +125,94 @@ def recent_pbs(gym, today, days=7):
     return top[top["is_pb"] & (top["date"] >= since)].sort_values("date", ascending=False)
 
 
+def progression(exercise, last_sets):
+    """
+    What to aim for next time, from the last time you did this exercise.
+    last_sets: DataFrame rows (weight_kg, reps) from the previous session.
+    Returns (target weight, text) or None.
+    """
+    last_sets = last_sets[last_sets["reps"] > 0]
+    if last_sets.empty or exercise == "Bike":
+        return None
+    lo, hi = plan.rep_range(exercise)
+    inc = plan.increment(exercise)
+    kg = float(last_sets["weight_kg"].max())
+    top = last_sets[last_sets["weight_kg"] == kg]
+    if (top["reps"] >= hi).all():
+        if inc:
+            return kg + inc, f"Try {kg + inc:.1f} kg x {lo}-{hi}"
+        return kg, f"Add a rep: aim for {hi + 1}+"
+    if (top["reps"] < lo).any():
+        return kg, f"Stay at {kg:.1f} kg, get every set to {lo}+"
+    return kg, f"Stay at {kg:.1f} kg, push toward {hi} reps"
+
+
+def weekly_volume(gym):
+    """Sets per plan week, split by Push / Pull / Legs."""
+    rows = []
+    working = gym[gym["reps"] > 0] if not gym.empty else gym
+    for week in range(1, plan.TOTAL_WEEKS + 1):
+        start, end = plan.week_dates(week)
+        in_week = working[(working["date"] >= start) & (working["date"] <= end)] if not working.empty else working
+        groups = in_week["session"].str.split(" ").str[0].value_counts() if not in_week.empty else {}
+        rows.append({"Week": week, "Push": int(groups.get("Push", 0)), "Pull": int(groups.get("Pull", 0)), "Legs": int(groups.get("Legs", 0))})
+    return pd.DataFrame(rows)
+
+
+def adherence(gym, runs, today):
+    """Sessions and runs done against planned, per phase, counting only days up to today."""
+    starts = plan.phase_starts()
+    done = sessions_done(gym)
+    out = []
+    for i, (name, start) in enumerate(starts):
+        end = starts[i + 1][1] - timedelta(days=1) if i + 1 < len(starts) else plan.PLAN_END
+        if start > today:
+            out.append({"Phase": name, "Dates": f"{start:%d %b} - {end:%d %b}", "started": False})
+            continue
+        upto = min(today, end)
+        gym_planned = run_planned = 0
+        d = start
+        while d <= upto:
+            if plan.gym_for_date(d) != "Rest":
+                gym_planned += 1
+            if plan.run_for_date(d):
+                run_planned += 1
+            d += timedelta(days=1)
+        gym_done = int(((done["date"] >= start) & (done["date"] <= upto) & (done["session"] != "Rest")).sum())
+        run_done = int(((runs["date"] >= start) & (runs["date"] <= upto)).sum())
+        out.append({"Phase": name, "Dates": f"{start:%d %b} - {end:%d %b}", "started": True,
+                    "Gym": f"{gym_done} / {gym_planned}", "Gym %": round(100 * gym_done / gym_planned) if gym_planned else None,
+                    "Runs": f"{run_done} / {run_planned}", "Runs %": round(100 * run_done / run_planned) if run_planned else None})
+    return out
+
+
+def projection(bw, today):
+    """Where the 7-day average lands on 3 Jan if the last week's rate continues."""
+    table = bodyweight_table(bw)
+    if len(table) < 8:
+        return None
+    last = table.iloc[-1]
+    earlier = table[table["date"] <= last["date"] - timedelta(days=7)]
+    if earlier.empty:
+        return None
+    ago = earlier.iloc[-1]
+    weeks = (last["date"] - ago["date"]).days / 7
+    per_week = (last["avg_7d"] - ago["avg_7d"]) / weeks
+    final = last["avg_7d"] + per_week * (plan.PLAN_END - last["date"]).days / 7
+    return per_week, final
+
+
+def weigh_streak(bw, today):
+    """Consecutive days with a weigh-in, ending today or yesterday."""
+    dates = set(bw["date"])
+    d = today if today in dates else today - timedelta(days=1)
+    n = 0
+    while d in dates:
+        n += 1
+        d -= timedelta(days=1)
+    return n
+
+
 def sessions_done(gym):
     """One row per (date, session) that has at least one set logged."""
     if gym.empty:

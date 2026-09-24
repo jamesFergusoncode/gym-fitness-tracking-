@@ -58,6 +58,8 @@ else:
     col2.metric("Week", f"{week} / {plan.TOTAL_WEEKS}")
     col3.metric("Days to 3 Jan", f"{(plan.PLAN_END - today).days}")
 col4.metric("Runs this phase", f"{phase['runs_per_week']} per week")
+if plan.load_settings().get("maintain_start"):
+    st.caption(f"Maintain phase set to start {plan.maintain_start():%A %d %b} (change it on the Settings page).")
 
 # ---------------------------------------------------------------------------
 # Today's session
@@ -113,11 +115,15 @@ else:
     latest = table.iloc[-1]
     target_today = plan.target_weight(today)
 
-    m1, m2, m3, m4 = st.columns(4)
+    m1, m2, m3, m4, m5, m6 = st.columns(6)
     m1.metric("Latest", f"{latest['weight_kg']:.1f} kg", help=f"Logged {latest['date']:%d %b}")
     m2.metric("7-day average", f"{latest['avg_7d']:.2f} kg")
     m3.metric("Target today", f"{target_today:.2f} kg")
     m4.metric("Avg vs target", f"{latest['avg_7d'] - target_today:+.2f} kg")
+    proj = analysis.projection(bodyweight, today)
+    m5.metric("On pace for 3 Jan", f"{proj[1]:.1f} kg" if proj else "-",
+              help=f"{proj[0]:+.2f} kg/week lately. The plan says 89-90 kg." if proj else "Needs two weeks of data")
+    m6.metric("Weigh-in streak", f"{analysis.weigh_streak(bodyweight, today)} days")
 
     st.plotly_chart(charts.bodyweight_chart(table), width="stretch")
 
