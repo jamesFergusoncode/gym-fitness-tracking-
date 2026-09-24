@@ -535,7 +535,16 @@ function buildGymForm() {
   };
   $('gDate').addEventListener('change', onDate);
   $('gDate').addEventListener('input', onDate);
-  $('gSession').addEventListener('change', e => { gymForm.session = e.target.value; gymForm.dirty = false; fillGymRows(); });
+  // Picking a session moves the date to the day that session falls on in the same week.
+  $('gSession').addEventListener('change', e => {
+    gymForm.session = e.target.value; gymForm.dirty = false;
+    const idx = PLAN.gymSchedule.indexOf(gymForm.session);
+    if (idx >= 0) {
+      const day = addDays(gymForm.date, idx - weekday(gymForm.date));
+      if (day !== gymForm.date) { gymForm.date = day; $('gDate').value = day; toast(`${gymForm.session} is on ${fDay(day)}. Moved the date.`); }
+    }
+    fillGymRows();
+  });
   $('gSave').addEventListener('click', saveGym);
   fillGymRows();
 }

@@ -5,7 +5,7 @@ The table is pre-filled with what you lifted the last time you did the same
 session, so most days you only need to change a few numbers.
 """
 
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 import streamlit as st
@@ -32,6 +32,16 @@ def follow_date():
         st.session_state["session"] = planned_session
 
 
+def follow_session():
+    """When the session changes, move the date to that session's day in the same week."""
+    chosen = st.session_state["session"]
+    current = st.session_state["log_date"]
+    for weekday, name in plan.GYM_SCHEDULE.items():
+        if name == chosen:
+            st.session_state["log_date"] = current - timedelta(days=current.weekday()) + timedelta(days=weekday)
+            return
+
+
 # First visit: start from today and today's planned session.
 if "log_date" not in st.session_state:
     st.session_state["log_date"] = date.today()
@@ -41,7 +51,7 @@ if "session" not in st.session_state:
 
 col1, col2 = st.columns(2)
 log_date = col1.date_input("Date", key="log_date", on_change=follow_date)
-session = col2.selectbox("Session", session_names, key="session")
+session = col2.selectbox("Session", session_names, key="session", on_change=follow_session)
 planned = plan.gym_for_date(log_date)
 
 phase = plan.phase_for_date(log_date)
