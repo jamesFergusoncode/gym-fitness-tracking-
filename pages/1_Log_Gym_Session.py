@@ -22,13 +22,27 @@ gym = storage.load("gym")
 # ---------------------------------------------------------------------------
 # 1. Which day and which session?
 # ---------------------------------------------------------------------------
-col1, col2 = st.columns(2)
-log_date = col1.date_input("Date", value=date.today())
-
 session_names = list(plan.GYM_SESSIONS.keys())
+
+
+def follow_date():
+    """When the date changes, switch the session box to that day's planned session."""
+    planned_session = plan.gym_for_date(st.session_state["log_date"])
+    if planned_session in session_names:
+        st.session_state["session"] = planned_session
+
+
+# First visit: start from today and today's planned session.
+if "log_date" not in st.session_state:
+    st.session_state["log_date"] = date.today()
+    follow_date()
+if "session" not in st.session_state:
+    st.session_state["session"] = session_names[0]
+
+col1, col2 = st.columns(2)
+log_date = col1.date_input("Date", key="log_date", on_change=follow_date)
+session = col2.selectbox("Session", session_names, key="session")
 planned = plan.gym_for_date(log_date)
-default_index = session_names.index(planned) if planned in session_names else 0
-session = col2.selectbox("Session", session_names, index=default_index)
 
 phase = plan.phase_for_date(log_date)
 st.caption(f"{log_date:%A %d %b} · {phase['name']} phase · planned session: {planned}")
@@ -85,6 +99,9 @@ edited = st.data_editor(
 if st.button("Save session", type="primary"):
     filled = edited.dropna(subset=["Reps"])
     filled = filled[filled["Reps"] > 0]
+    # Keep the plan's exercise order, whatever order the table ended up in.
+    order = {name: i for i, name in enumerate(plan.ALL_EXERCISES)}
+    filled = filled.assign(_order=filled["Exercise"].map(order).fillna(999)).sort_values(["_order", "Set"])
 
     if filled.empty:
         st.warning("Nothing to save. Enter reps for at least one set.")

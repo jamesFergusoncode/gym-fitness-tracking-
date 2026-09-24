@@ -191,6 +191,8 @@ const gymFor = s => PLAN.gymSchedule[weekday(s)];
 const runFor = s => PLAN.runSchedule[phaseForDate(s).name][weekday(s)] || null;
 const defaultSets = (ex, phase) => ex === 'Barbell squats' ? (phase === 'Maintain' ? 4 : 3) : 3;
 const sessionId = (date, session) => `${date}_${session.replace(/\s+/g, '-')}`;
+// Position of an exercise in the plan, so lists always follow the plan's order.
+const planOrder = ex => { const i = PLAN.allExercises.indexOf(ex); return i < 0 ? 999 : i; };
 
 /* ===================== State and storage ===================== */
 // state.bw  : { "2026-09-28": {kg, notes} }
@@ -291,7 +293,7 @@ function topSets() {
 function allTimeBests(top) {
   const m = {};
   top.forEach(r => { if (!m[r.exercise] || r.score > m[r.exercise].score) m[r.exercise] = r; });
-  return Object.values(m).sort((a, b) => a.exercise.localeCompare(b.exercise));
+  return Object.values(m).sort((a, b) => planOrder(a.exercise) - planOrder(b.exercise));
 }
 const recentPbs = (top, today, days = 7) => top.filter(r => r.isPb && r.date >= addDays(today, -(days - 1))).sort((a, b) => b.date.localeCompare(a.date));
 function sessionsDone() {
@@ -418,7 +420,11 @@ function refresh(force) {
 }
 function renderTab(name) {
   if (name === 'dashboard') renderDashboard();
-  else if (name === 'gym') { if (!built.gym) { buildGymForm(); built.gym = true; } }
+  else if (name === 'gym') {
+    if (!built.gym) { buildGymForm(); built.gym = true; }
+    else if (gymForm.builtFor !== todayIso() && !gymForm.dirty) { buildGymForm(); }   // came back on a new day
+    else if (!gymForm.dirty) fillGymRows();                                            // data arrived after the form was built
+  }
   else if (name === 'weight') { if (!built.weight) { buildWeightForm(); built.weight = true; } renderWeightRecent(); }
   else if (name === 'run') { if (!built.run) { buildRunForm(); built.run = true; } renderRunRecent(); }
   else if (name === 'progress') renderProgress();
@@ -499,10 +505,12 @@ function renderDashboard() {
 }
 
 /* ---------- Log gym ---------- */
-const gymForm = { date: null, session: null, rows: [] };
+const gymForm = { date: null, session: null, rows: [], dirty: false, builtFor: null };
 function buildGymForm() {
   const today = todayIso();
-  gymForm.date = gymForm.date || today;
+  // A fresh visit (or a new day) starts from today's planned session.
+  if (!gymForm.date || (gymForm.builtFor && gymForm.builtFor !== today && !gymForm.dirty)) { gymForm.date = today; gymForm.session = null; }
+  gymForm.builtFor = today;
   const planned = gymFor(gymForm.date);
   gymForm.session = gymForm.session || (planned !== 'Rest' ? planned : 'Push A');
   $('view-gym').innerHTML = `
@@ -517,8 +525,17 @@ function buildGymForm() {
       <div class="actions"><button class="btn primary" id="gSave">Save session</button><span class="sub">Only sets with reps are saved. Pull-ups: weight 0. Bike: minutes in reps.</span></div>
       <div id="gResult" class="stack" style="margin-top:12px"></div>
     </div>`;
-  $('gDate').addEventListener('change', e => { gymForm.date = e.target.value || today; const p = gymFor(gymForm.date); if (p !== 'Rest') { gymForm.session = p; $('gSession').value = p; } fillGymRows(); });
-  $('gSession').addEventListener('change', e => { gymForm.session = e.target.value; fillGymRows(); });
+  // Changing the date switches to that day's planned session (a rest day keeps the current pick).
+  const onDate = e => {
+    const v = e.target.value; if (!v || v === gymForm.date) return;
+    gymForm.date = v; gymForm.dirty = false;
+    const p = gymFor(v);
+    if (p !== 'Rest') { gymForm.session = p; $('gSession').value = p; toast(`${fDay(v)} is ${p}. Switched the session.`); }
+    fillGymRows();
+  };
+  $('gDate').addEventListener('change', onDate);
+  $('gDate').addEventListener('input', onDate);
+  $('gSession').addEventListener('change', e => { gymForm.session = e.target.value; gymForm.dirty = false; fillGymRows(); });
   $('gSave').addEventListener('click', saveGym);
   fillGymRows();
 }
@@ -533,7 +550,7 @@ function fillGymRows() {
     else sourceLabel = `First time logging ${session}. Fill in what you lift.`;
   } else sourceLabel = `This session is already saved for ${fShort(date)}. Saving again replaces it.`;
   $('gInfo').textContent = `${fDay(date)} · ${phase.name} phase · planned session: ${gymFor(date)}. ${sourceLabel}`;
-  gymForm.rows = [];
+  gymForm.rows = []; gymForm.dirty = false;
   PLAN.sessions[session].forEach(ex => {
     const sets = (source && source.sets || []).filter(s => s.exercise === ex);
     const n = Math.max(defaultSets(ex, phase.name), sets.length);
@@ -551,7 +568,7 @@ function renderGymRows() {
       <td><input type="number" inputmode="numeric" step="1" min="0" data-i="${i}" data-k="reps" value="${r.reps === '' ? '' : r.reps}" placeholder="reps"></td></tr>`;
   });
   $('gTable').innerHTML = html + '</tbody></table>';
-  $('gTable').querySelectorAll('input').forEach(inp => inp.addEventListener('input', e => { gymForm.rows[+e.target.dataset.i][e.target.dataset.k] = e.target.value; }));
+  $('gTable').querySelectorAll('input').forEach(inp => inp.addEventListener('input', e => { gymForm.rows[+e.target.dataset.i][e.target.dataset.k] = e.target.value; gymForm.dirty = true; }));
   $('gTable').querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
     const ex = b.dataset.add, idx = gymForm.rows.map(r => r.exercise).lastIndexOf(ex);
     gymForm.rows.splice(idx + 1, 0, { exercise: ex, set: gymForm.rows[idx].set + 1, kg: gymForm.rows[idx].kg, reps: '' });

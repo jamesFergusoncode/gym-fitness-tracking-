@@ -110,7 +110,10 @@ def all_time_bests(gym):
     if top.empty:
         return top
     best = top.sort_values("score", ascending=False).groupby("exercise", as_index=False).first()
-    return best.sort_values("exercise")[["exercise", "date", "weight_kg", "reps", "est_1rm"]]
+    # Order by position in the plan, not alphabetically.
+    order = {name: i for i, name in enumerate(plan.ALL_EXERCISES)}
+    best = best.assign(_order=best["exercise"].map(order).fillna(999)).sort_values("_order")
+    return best[["exercise", "date", "weight_kg", "reps", "est_1rm"]]
 
 
 def recent_pbs(gym, today, days=7):
