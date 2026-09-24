@@ -92,6 +92,16 @@ details{margin-top:10px}
 summary{cursor:pointer;font-weight:500}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
 .toast.show{opacity:1}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.slot{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.slot.due{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.slot .ph{aspect-ratio:3/4;max-width:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:8px}
+.slot img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.slot .meta{padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.slot .meta b{font-weight:600}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;display:block}
+.compare .cap{font-size:13px;color:var(--muted);margin-top:6px}
 .feel{display:flex;align-items:center;gap:10px}
 .feel output{font-family:var(--display);font-size:26px;font-weight:700;min-width:32px;text-align:center}
 @media (prefers-reduced-motion: reduce){ .toast{transition:none} }
@@ -114,6 +124,7 @@ summary{cursor:pointer;font-weight:500}
     <button class="tab" role="tab" data-tab="run">Log run</button>
     <button class="tab" role="tab" data-tab="progress">Exercise progress</button>
     <button class="tab" role="tab" data-tab="weekly">Weekly review</button>
+    <button class="tab" role="tab" data-tab="photos">Photos</button>
     <button class="tab" role="tab" data-tab="data">Data</button>
   </nav>
 
@@ -123,6 +134,7 @@ summary{cursor:pointer;font-weight:500}
   <section class="view" id="view-run" hidden></section>
   <section class="view" id="view-progress" hidden></section>
   <section class="view" id="view-weekly" hidden></section>
+  <section class="view" id="view-photos" hidden></section>
   <section class="view" id="view-data" hidden></section>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -198,8 +210,9 @@ const planOrder = ex => { const i = PLAN.allExercises.indexOf(ex); return i < 0 
 // state.bw  : { "2026-09-28": {kg, notes} }
 // state.runs: [ {id, date, type, min, feel, notes} ]
 // state.gym : { "2026-09-28_Push-A": {date, session, sets:[{exercise, set, kg, reps}]} }
-const state = { bw: {}, runs: [], gym: {} };
-const store = { db: null, ready: false };
+// state.photos: { "2026-10-12": {assetId | dataUrl, taken, kg, notes} }  keyed by checkpoint date
+const state = { bw: {}, runs: [], gym: {}, photos: {} };
+const store = { db: null, assets: null, ready: false };
 const LS_KEY = 'road-to-new-year-v1';
 
 function setChip(on, text) {
@@ -228,12 +241,16 @@ async function initStore() {
   db.doc('log/bodyweight').onSnapshot(s => { state.bw = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
   db.doc('log/runs').onSnapshot(s => { state.runs = (s.exists && s.data().entries) || []; refresh(); }, onErr);
   db.collection('gym').onSnapshot(qs => { const g = {}; qs.docs.forEach(d => { g[d.id] = d.data(); }); state.gym = g; refresh(); }, onErr);
+  db.doc('log/photos').onSnapshot(s => { state.photos = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
+  try { store.assets = await window.claude.use('assets'); } catch (e) { store.assets = null; }
+  if (activeTab === 'photos') renderPhotos();
 }
 async function persist(kind, id) {
   if (!store.db) { saveLocal(); return; }
   try {
     if (kind === 'bw') await store.db.doc('log/bodyweight').set({ entries: state.bw });
     else if (kind === 'runs') await store.db.doc('log/runs').set({ entries: state.runs });
+    else if (kind === 'photos') await store.db.doc('log/photos').set({ entries: state.photos });
     else if (kind === 'gym') {
       const ref = store.db.collection('gym').doc(id);
       if (state.gym[id]) await ref.set(state.gym[id]); else await ref.delete();
@@ -396,7 +413,7 @@ function weeklyChart(id, review) {
 /* ===================== Views ===================== */
 const $ = id => document.getElementById(id);
 let activeTab = 'dashboard';
-const TABS = ['dashboard', 'gym', 'weight', 'run', 'progress', 'weekly', 'data'];
+const TABS = ['dashboard', 'gym', 'weight', 'run', 'progress', 'weekly', 'photos', 'data'];
 const built = { gym: false, weight: false, run: false };   // forms are built once, not on every data change
 const ui = { metric: 'kg' };
 
@@ -429,6 +446,7 @@ function renderTab(name) {
   else if (name === 'run') { if (!built.run) { buildRunForm(); built.run = true; } renderRunRecent(); }
   else if (name === 'progress') renderProgress();
   else if (name === 'weekly') renderWeekly();
+  else if (name === 'photos') renderPhotos();
   else if (name === 'data') renderData();
 }
 
@@ -497,6 +515,10 @@ function renderDashboard() {
     <h2>This week</h2>
     <p class="sub" style="margin:-6px 0 10px">Mon ${fShort(monday)} to Sun ${fShort(addDays(monday, 6))}. Starts fresh every Monday.</p>
     <div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Day</th><th>Gym</th><th>Done</th><th>Run</th><th>Done</th></tr></thead><tbody>${weekRows}</tbody></table></div>
+
+    ${(() => { const due = nextPhotoDue(today); if (!due) return ''; const n = diffDays(due, today);
+      return n <= 0 ? `<p class="note" style="margin-top:14px">📷 Progress photo due now (${checkpointLabel(due)}). <a href="#photos" onclick="showTab('photos', true); return false;">Take it on the Photos tab.</a></p>`
+        : (n <= 7 ? `<p class="sub" style="margin-top:14px">📷 Next progress photo: ${checkpointLabel(due)}, ${fDay(due)} (in ${n} days).</p>` : ''); })()}
 
     <h2>New bests in the last 7 days</h2>
     ${pbs.length ? `<div class="stack">${pbs.map(r => `<div class="pb"><span class="star">★</span><span><b>${esc(r.exercise)}</b> ${n1(r.kg)} kg × ${r.reps} on ${fDay(r.date)}</span></div>`).join('')}</div>`
@@ -738,6 +760,101 @@ function renderWeekly() {
     <h2>Weekly weight change vs target</h2>
     ${review.some(r => r.change != null) ? '<div class="card"><div class="chart sm"><canvas id="wkChart"></canvas></div></div>' : '<p class="note">This chart appears once you have weigh-ins in two different plan weeks.</p>'}`;
   if (review.some(r => r.change != null)) weeklyChart('wkChart', review);
+}
+
+/* ---------- Progress photos (every two weeks) ---------- */
+// Checkpoints: the start of week 1, then every two weeks, then the final day.
+const CHECKPOINTS = (() => { const c = []; for (let k = 0; k < 7; k++) c.push(addDays(PLAN.start, 14 * k)); c.push(PLAN.end); return c; })();
+const checkpointLabel = d => d === PLAN.end ? 'Finish' : (d === PLAN.start ? 'Start' : `Week ${weekNumber(d)}`);
+const nearestCheckpoint = d => CHECKPOINTS.reduce((best, c) => Math.abs(diffDays(c, d)) < Math.abs(diffDays(best, d)) ? c : best, CHECKPOINTS[0]);
+const photoSrc = ph => ph.assetId ? '/_blob/' + ph.assetId : (ph.dataUrl || '');
+function nextPhotoDue(today) {
+  const missing = CHECKPOINTS.filter(c => !state.photos[c]);
+  const due = missing.find(c => diffDays(c, today) >= -6) || null;   // a slot stays "open" for a week after its date
+  return due;
+}
+// Shrink a photo before storing it: long edge 1280px, JPEG. Keeps uploads small and fast.
+async function shrinkImage(file, maxEdge, quality) {
+  let bmp;
+  try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch (e) { bmp = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = URL.createObjectURL(file); }); }
+  const w = bmp.width, h = bmp.height, scale = Math.min(1, maxEdge / Math.max(w, h));
+  const canvas = document.createElement('canvas'); canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
+  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+function renderPhotos() {
+  const today = todayIso(), due = nextPhotoDue(today), canUpload = !!store.assets || !store.db;
+  const filled = CHECKPOINTS.filter(c => state.photos[c]);
+  const first = filled[0], last = filled[filled.length - 1];
+  const kgAt = d => { const near = Object.keys(state.bw).filter(x => Math.abs(diffDays(x, d)) <= 3).sort((a, b) => Math.abs(diffDays(a, d)) - Math.abs(diffDays(b, d)))[0]; return near ? +state.bw[near].kg : null; };
+  $('view-photos').innerHTML = `
+    <h2>Progress photos</h2>
+    <p class="sub" style="margin:-6px 0 12px">One photo every two weeks, same spot, same light, same pose. Bodyweight lies week to week; a fortnightly photo tells you whether the bulk is lean.</p>
+    ${due ? `<p class="note ${diffDays(due, today) <= 0 ? 'good' : ''}">📷 ${diffDays(due, today) <= 0 ? `Photo due now: <b>${checkpointLabel(due)}</b> (${fDay(due)})` : `Next photo: <b>${checkpointLabel(due)}</b> on ${fDay(due)}, in ${diffDays(due, today)} days`}</p>` : '<p class="note good">All checkpoints have a photo. Nice work.</p>'}
+    <div class="card" style="margin-top:12px">
+      ${canUpload ? `<div class="row">
+        <div class="field"><label for="pSlot">Checkpoint</label><select id="pSlot">${CHECKPOINTS.map(c => `<option value="${c}" ${c === (due || nearestCheckpoint(today)) ? 'selected' : ''}>${checkpointLabel(c)} · ${fShort(c)}${state.photos[c] ? ' (has photo)' : ''}</option>`).join('')}</select></div>
+        <div class="field"><label for="pDate">Taken on</label><input type="date" id="pDate" value="${today}"></div>
+        <div class="field grow"><label for="pFile">Photo</label><input type="file" id="pFile" accept="image/*"></div>
+      </div>
+      <div class="row" style="margin-top:10px"><div class="field grow"><label for="pNotes">Notes (optional)</label><input type="text" id="pNotes" placeholder="e.g. morning, fasted, front pose"></div></div>
+      <div class="actions"><button class="btn primary" id="pSave">Save photo</button><span class="sub" id="pStatus">${store.assets ? 'Stored with your account.' : (store.db ? '' : 'Stored in this browser only.')}</span></div>`
+      : '<p class="sub">Photos can be added from a view with edit access.</p>'}
+    </div>
+    ${first && last && first !== last ? `<h2>Then and now</h2><div class="compare">
+      <div><img src="${photoSrc(state.photos[first])}" alt="${checkpointLabel(first)}"><div class="cap"><b>${checkpointLabel(first)}</b> · ${fShort(state.photos[first].taken || first)}${state.photos[first].kg ? ` · ${n1(state.photos[first].kg)} kg` : ''}</div></div>
+      <div><img src="${photoSrc(state.photos[last])}" alt="${checkpointLabel(last)}"><div class="cap"><b>${checkpointLabel(last)}</b> · ${fShort(state.photos[last].taken || last)}${state.photos[last].kg ? ` · ${n1(state.photos[last].kg)} kg` : ''}</div></div>
+    </div>` : ''}
+    <h2>Checkpoints</h2>
+    <div class="photos">
+      ${CHECKPOINTS.map(c => { const ph = state.photos[c]; return `<div class="slot ${c === due ? 'due' : ''}">
+        ${ph ? `<img src="${photoSrc(ph)}" alt="${checkpointLabel(c)}" loading="lazy">` : `<div class="ph">${c === due && diffDays(c, today) <= 0 ? 'Due now' : (c > today ? `Due ${fShort(c)}` : 'Missed')}</div>`}
+        <div class="meta"><b>${checkpointLabel(c)}</b><span class="sub">${fShort(c)}${ph && ph.kg ? ` · ${n1(ph.kg)} kg` : ''}</span>${ph && ph.notes ? `<span class="sub">${esc(ph.notes)}</span>` : ''}${ph && canUpload ? `<span><button class="btn small danger" data-del-photo="${c}">Delete</button></span>` : ''}</div>
+      </div>`; }).join('')}
+    </div>`;
+  if (canUpload) $('pSave').addEventListener('click', savePhoto);
+  document.querySelectorAll('[data-del-photo]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => {
+    const c = b.dataset.delPhoto, ph = state.photos[c];
+    delete state.photos[c];
+    await persist('photos');
+    if (ph && ph.assetId && store.assets) { try { await store.assets.delete(ph.assetId); } catch (e) {} }
+    toast('Photo deleted.'); renderPhotos();
+  })));
+  // A photo card is a natural place to record the weight the day it was taken.
+  CHECKPOINTS.forEach(c => { const ph = state.photos[c]; if (ph && !ph.kg) { const k = kgAt(ph.taken || c); if (k) ph.kg = k; } });
+}
+async function savePhoto() {
+  const file = $('pFile').files[0], slot = $('pSlot').value, taken = $('pDate').value || todayIso();
+  if (!file) { toast('Choose a photo first.'); return; }
+  const btn = $('pSave'); btn.disabled = true; $('pStatus').textContent = 'Preparing photo…';
+  try {
+    const canvas = await shrinkImage(file, store.assets ? 1280 : 640, 0.85);
+    const near = Object.keys(state.bw).filter(x => Math.abs(diffDays(x, taken)) <= 3).sort((a, b) => Math.abs(diffDays(a, taken)) - Math.abs(diffDays(b, taken)))[0];
+    const entry = { taken, kg: near ? +state.bw[near].kg : null, notes: $('pNotes').value.trim() };
+    if (store.assets) {
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85));
+      $('pStatus').textContent = 'Uploading…';
+      const up = await store.assets.upload(blob, { type: 'image/jpeg' });
+      entry.assetId = up.id;
+    } else {
+      entry.dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    }
+    const old = state.photos[slot];
+    state.photos[slot] = entry;
+    await persist('photos');
+    if (old && old.assetId && store.assets && old.assetId !== entry.assetId) { try { await store.assets.delete(old.assetId); } catch (e) {} }
+    toast(`Photo saved for ${checkpointLabel(slot)}.`);
+    renderPhotos();
+  } catch (e) {
+    const code = e && e.code;
+    $('pStatus').textContent = '';
+    if (code === 'too_large') toast('That photo is too large even after shrinking. Try a smaller one.');
+    else if (code === 'quota_or_state') toast('Photo storage is full. Delete an old photo first.');
+    else if (code === 'unsupported_type') toast('That file type is not supported. Use a JPEG or PNG.');
+    else if (!code) toast('Could not read that image.');
+    btn.disabled = false;
+  }
 }
 
 /* ---------- Data (edit / delete) ---------- */

@@ -26,6 +26,7 @@ Your browser opens at http://localhost:8501. Use the sidebar to move between pag
 | **Log Run** | Type (Sprints, Intervals, Shuttles, Easy), minutes and how it felt 1-10. Shows the planned run for the day. |
 | **Exercise Progress** | A chart per exercise of your top set over time, new bests marked with a star, all-time bests table, estimated 1RM. |
 | **Weekly Review** | One row per plan week: average weight, change vs previous week, target, gym sessions done, runs done, average run feel. |
+| **Progress Photos** | One photo every two weeks (start, then every fortnight, then the finish), stored in `data/photos/` (not committed to git), with a then-and-now comparison. |
 | **Edit Data** | Fix or delete any row in the three CSV files, or download them. |
 
 ## Files
