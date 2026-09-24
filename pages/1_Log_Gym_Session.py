@@ -22,7 +22,7 @@ gym = storage.load("gym")
 # ---------------------------------------------------------------------------
 # 1. Which day and which session?
 # ---------------------------------------------------------------------------
-session_names = list(plan.GYM_SESSIONS.keys())
+session_names = list(plan.GYM_SESSIONS.keys()) + ["Rest"]
 
 
 def follow_date():
@@ -56,6 +56,25 @@ planned = plan.gym_for_date(log_date)
 
 phase = plan.phase_for_date(log_date)
 st.caption(f"{log_date:%A %d %b} · {phase['name']} phase · planned session: {planned}")
+
+# ---------------------------------------------------------------------------
+# Rest day: nothing to lift, but you can mark it done so the week shows complete.
+# ---------------------------------------------------------------------------
+if session == "Rest":
+    rest_saved = not gym[(gym["session"] == "Rest") & (gym["date"] == log_date)].empty
+    if rest_saved:
+        st.success("Rest day logged ✅")
+        if st.button("Undo rest day"):
+            storage.save("gym", gym[~((gym["session"] == "Rest") & (gym["date"] == log_date))])
+            st.rerun()
+    else:
+        st.info("No exercises today. Easy run on Sundays only.")
+        if st.button("Mark rest day done", type="primary"):
+            rest_row = pd.DataFrame([{"date": log_date, "session": "Rest", "exercise": "Rest day",
+                                      "set_number": 0, "weight_kg": 0.0, "reps": 0}])
+            storage.save("gym", pd.concat([gym, rest_row], ignore_index=True))
+            st.rerun()
+    st.stop()
 
 # ---------------------------------------------------------------------------
 # 2. Build the table to fill in

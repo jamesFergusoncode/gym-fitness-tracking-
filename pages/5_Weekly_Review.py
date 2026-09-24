@@ -35,7 +35,7 @@ if start_avg is not None and latest_avg is not None:
     c1.metric("Weight change since week 1", f"{latest_avg - start_avg:+.2f} kg")
 else:
     c1.metric("Weight change since week 1", "-")
-c2.metric("Gym sessions done", len(in_plan(done_sessions)))
+c2.metric("Gym sessions done", len(in_plan(done_sessions[done_sessions["session"] != "Rest"])))
 c3.metric("Runs done", len(in_plan(runs)))
 if current_week < 1:
     c4.metric("Current week", "Not started")

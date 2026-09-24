@@ -69,7 +69,12 @@ with gym_col:
     session = plan.gym_for_date(today)
     logged_today = not gym[(gym["date"] == today) & (gym["session"] == session)].empty
     if session == "Rest":
-        st.markdown("### 🛋️ Gym: Rest day")
+        st.markdown("### 🛋️ Gym: Rest day" + (" ✅ logged" if logged_today else ""))
+        if not logged_today and st.button("Mark rest day done"):
+            rest_row = pd.DataFrame([{"date": today, "session": "Rest", "exercise": "Rest day",
+                                      "set_number": 0, "weight_kg": 0.0, "reps": 0}])
+            storage.save("gym", pd.concat([gym, rest_row], ignore_index=True))
+            st.rerun()
     else:
         tick = " ✅ logged" if logged_today else ""
         st.markdown(f"### 🏋️ Gym: {session}{tick}")
@@ -135,6 +140,7 @@ st.caption("Easy carb wins: " + " · ".join(plan.EASY_CARB_WINS))
 # ---------------------------------------------------------------------------
 st.subheader("This week")
 monday = today - timedelta(days=today.weekday())
+st.caption(f"Mon {monday:%d %b} to Sun {monday + timedelta(days=6):%d %b}. Starts fresh every Monday.")
 done_sessions = analysis.sessions_done(gym)
 rows = []
 for offset in range(7):
@@ -146,7 +152,7 @@ for offset in range(7):
     rows.append({
         "Day": f"{plan.WEEKDAY_NAMES[offset]} {day:%d %b}" + ("  ← today" if day == today else ""),
         "Gym": gym_session,
-        "Gym done": "✅" if gym_done else ("—" if gym_session == "Rest" else ""),
+        "Gym done": "✅" if gym_done else "",
         "Run": "—" if run is None else f"{run[0]}: {run[1]}",
         "Run done": "✅" if run_done else ("—" if run is None else ""),
     })

@@ -149,7 +149,8 @@ def weekly_review(bw, gym, runs):
         if avg is not None:
             previous_avg = avg
 
-        gym_count = int(((done["date"] >= start) & (done["date"] <= end)).sum())
+        in_week = (done["date"] >= start) & (done["date"] <= end) & (done["session"] != "Rest")
+        gym_count = int(in_week.sum())
         run_mask = (runs["date"] >= start) & (runs["date"] <= end)
         run_count = int(run_mask.sum())
         feel = runs.loc[run_mask, "feel"].mean() if run_count else None

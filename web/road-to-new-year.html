@@ -298,7 +298,7 @@ function allTimeBests(top) {
 const recentPbs = (top, today, days = 7) => top.filter(r => r.isPb && r.date >= addDays(today, -(days - 1))).sort((a, b) => b.date.localeCompare(a.date));
 function sessionsDone() {
   const set = new Set();
-  Object.values(state.gym).forEach(s => { if ((s.sets || []).some(x => x.reps > 0)) set.add(s.date + '|' + s.session); });
+  Object.values(state.gym).forEach(s => { if (s.session === 'Rest' || (s.sets || []).some(x => x.reps > 0)) set.add(s.date + '|' + s.session); });
   return set;
 }
 function weeklyReview() {
@@ -308,7 +308,7 @@ function weeklyReview() {
     const avg = avgBetween(a, b);
     const change = avg != null && prev != null ? avg - prev : null;
     if (avg != null) prev = avg;
-    const gymN = [...done].filter(k => { const d = k.split('|')[0]; return d >= a && d <= b; }).length;
+    const gymN = [...done].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= b && sess !== 'Rest'; }).length;
     const runs = state.runs.filter(r => r.date >= a && r.date <= b);
     const feel = runs.length ? runs.reduce((s, r) => s + (+r.feel || 0), 0) / runs.length : null;
     rows.push({ w, a, b, phase: phase.name, avg, change, target: targetKg(addDays(a, 3)), gymN, runN: runs.length, runPlan: phase.runs, feel });
@@ -451,7 +451,7 @@ function renderDashboard() {
   const weekRows = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(monday, i), g = gymFor(d), r = runFor(d);
     const gd = done.has(d + '|' + g), rd = state.runs.some(x => x.date === d);
-    return `<tr class="${d === today ? 'today' : ''}"><td>${WD[i]} ${fShort(d)}${d === today ? ' <span class="pill accent">today</span>' : ''}</td><td>${g}</td><td>${gd ? '✅' : (g === 'Rest' ? '—' : '')}</td><td>${r ? `${r[0]}: ${r[1]}` : '—'}</td><td>${rd ? '✅' : (r ? '' : '—')}</td></tr>`;
+    return `<tr class="${d === today ? 'today' : ''}"><td>${WD[i]} ${fShort(d)}${d === today ? ' <span class="pill accent">today</span>' : ''}</td><td>${g}</td><td>${gd ? '✅' : ''}</td><td>${r ? `${r[0]}: ${r[1]}` : '—'}</td><td>${rd ? '✅' : (r ? '' : '—')}</td></tr>`;
   }).join('');
 
   $('view-dashboard').innerHTML = `
@@ -462,7 +462,7 @@ function renderDashboard() {
     <div class="grid2">
       <div class="card">
         <h3>Gym: ${session} ${gymDone ? '<span class="pill good">logged</span>' : ''}</h3>
-        ${session === 'Rest' ? '<p class="sub">Rest day. No lifting today.</p>' : `<ul class="plain">${PLAN.sessions[session].map(e => `<li>${e}${e === 'Barbell squats' ? ` <span class="sub">${defaultSets(e, phase.name)} × 5-8</span>` : ''}</li>`).join('')}</ul>
+        ${session === 'Rest' ? `<p class="sub">Rest day. No lifting today.</p>${gymDone ? '' : '<div class="actions"><button class="btn" onclick="markRest(todayIso())">Mark rest day done</button></div>'}` : `<ul class="plain">${PLAN.sessions[session].map(e => `<li>${e}${e === 'Barbell squats' ? ` <span class="sub">${defaultSets(e, phase.name)} × 5-8</span>` : ''}</li>`).join('')}</ul>
         <div class="actions"><button class="btn primary" onclick="showTab('gym', true)">Log this session</button></div>`}
       </div>
       <div class="card">
@@ -495,6 +495,7 @@ function renderDashboard() {
     <p class="sub">Easy carb wins: ${PLAN.carbWins.join(' · ')}</p>
 
     <h2>This week</h2>
+    <p class="sub" style="margin:-6px 0 10px">Mon ${fShort(monday)} to Sun ${fShort(addDays(monday, 6))}. Starts fresh every Monday.</p>
     <div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Day</th><th>Gym</th><th>Done</th><th>Run</th><th>Done</th></tr></thead><tbody>${weekRows}</tbody></table></div>
 
     <h2>New bests in the last 7 days</h2>
@@ -512,13 +513,13 @@ function buildGymForm() {
   if (!gymForm.date || (gymForm.builtFor && gymForm.builtFor !== today && !gymForm.dirty)) { gymForm.date = today; gymForm.session = null; }
   gymForm.builtFor = today;
   const planned = gymFor(gymForm.date);
-  gymForm.session = gymForm.session || (planned !== 'Rest' ? planned : 'Push A');
+  gymForm.session = gymForm.session || planned;
   $('view-gym').innerHTML = `
     <h2>Log gym session</h2>
     <div class="card">
       <div class="row">
         <div class="field"><label for="gDate">Date</label><input type="date" id="gDate" value="${gymForm.date}"></div>
-        <div class="field"><label for="gSession">Session</label><select id="gSession">${Object.keys(PLAN.sessions).map(s => `<option ${s === gymForm.session ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+        <div class="field"><label for="gSession">Session</label><select id="gSession">${[...Object.keys(PLAN.sessions), 'Rest'].map(s => `<option ${s === gymForm.session ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
       </div>
       <p class="sub" id="gInfo" style="margin:10px 0 0"></p>
       <div class="tblwrap" id="gTable" style="margin-top:12px"></div>
@@ -530,7 +531,7 @@ function buildGymForm() {
     const v = e.target.value; if (!v || v === gymForm.date) return;
     gymForm.date = v; gymForm.dirty = false;
     const p = gymFor(v);
-    if (p !== 'Rest') { gymForm.session = p; $('gSession').value = p; toast(`${fDay(v)} is ${p}. Switched the session.`); }
+    gymForm.session = p; $('gSession').value = p; toast(`${fDay(v)} is ${p === 'Rest' ? 'a rest day' : p}. Switched the session.`);
     fillGymRows();
   };
   $('gDate').addEventListener('change', onDate);
@@ -552,6 +553,14 @@ function fillGymRows() {
   const { date, session } = gymForm, phase = phaseForDate(date);
   const id = sessionId(date, session);
   const saved = state.gym[id];
+  if (session === 'Rest') {
+    $('gInfo').textContent = `${fDay(date)} · ${phase.name} phase · rest day. Nothing to lift; mark it done so the week shows complete.`;
+    $('gTable').innerHTML = saved ? '<p class="note good">Rest day logged ✅</p>' : '<p class="sub">No exercises today. Easy run on Sundays only.</p>';
+    $('gSave').textContent = saved ? 'Undo rest day' : 'Mark rest day done';
+    gymForm.rows = []; gymForm.dirty = false;
+    return;
+  }
+  $('gSave').textContent = 'Save session';
   let source = saved, sourceLabel = '';
   if (!source) {
     const prev = Object.values(state.gym).filter(s => s.session === session && s.date < date).sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -584,8 +593,16 @@ function renderGymRows() {
     renderGymRows();
   }));
 }
+async function markRest(date, undo) {
+  const id = sessionId(date, 'Rest');
+  if (undo) delete state.gym[id]; else state.gym[id] = { date, session: 'Rest', sets: [] };
+  try { await persist('gym', id); } catch (e) { return; }
+  toast(undo ? 'Rest day removed.' : `Rest day logged for ${fDay(date)}.`);
+  refresh();
+}
 async function saveGym() {
   const { date, session } = gymForm;
+  if (session === 'Rest') { await markRest(date, !!state.gym[sessionId(date, 'Rest')]); fillGymRows(); return; }
   const sets = gymForm.rows.filter(r => +r.reps > 0).map(r => ({ exercise: r.exercise, set: r.set, kg: +r.kg || 0, reps: Math.round(+r.reps) }));
   if (!sets.length) { toast('Nothing to save. Enter reps for at least one set.'); return; }
   const id = sessionId(date, session);
@@ -704,7 +721,7 @@ function renderWeekly() {
   const today = todayIso(), wk = weekNumber(today), review = weeklyReview(), done = sessionsDone();
   const inPlan = d => d >= PLAN.start && d <= PLAN.end;
   const startAvg = avgBetween(PLAN.start, weekDates(1)[1]), latestAvg = avgBetween(addDays(today, -6), today);
-  const gymTotal = [...done].filter(k => inPlan(k.split('|')[0])).length, runTotal = state.runs.filter(r => inPlan(r.date)).length;
+  const gymTotal = [...done].filter(k => inPlan(k.split('|')[0]) && k.split('|')[1] !== 'Rest').length, runTotal = state.runs.filter(r => inPlan(r.date)).length;
   const cell = v => v == null ? '<span class="sub">–</span>' : v;
   $('view-weekly').innerHTML = `
     <h2>Weekly review</h2>
@@ -733,7 +750,7 @@ function renderData() {
     <p class="sub">Everything you have logged. Delete a wrong entry here, then log it again. To change a gym session, open it and save again.</p>
     <h3 style="margin-top:18px">Gym sessions (${gym.length})</h3>
     ${gym.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th>Session</th><th>Sets</th><th></th></tr></thead><tbody>
-      ${gym.map(([id, s]) => `<tr><td>${fDay(s.date)}</td><td>${esc(s.session)}</td><td class="sub">${(s.sets || []).length} sets · ${[...new Set((s.sets || []).map(x => x.exercise))].length} exercises</td><td class="num"><button class="btn small" data-open="${esc(id)}">Open</button> <button class="btn small danger" data-del-gym="${esc(id)}">Delete</button></td></tr>`).join('')}
+      ${gym.map(([id, s]) => `<tr><td>${fDay(s.date)}</td><td>${esc(s.session)}</td><td class="sub">${s.session === 'Rest' ? 'rest day' : `${(s.sets || []).length} sets · ${[...new Set((s.sets || []).map(x => x.exercise))].length} exercises`}</td><td class="num"><button class="btn small" data-open="${esc(id)}">Open</button> <button class="btn small danger" data-del-gym="${esc(id)}">Delete</button></td></tr>`).join('')}
     </tbody></table></div>` : '<p class="empty">No gym sessions yet.</p>'}
     <h3 style="margin-top:18px">Weigh-ins (${bw.length})</h3>
     ${bw.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th class="num">kg</th><th>Notes</th><th></th></tr></thead><tbody>
