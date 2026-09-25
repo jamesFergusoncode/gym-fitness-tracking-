@@ -19,7 +19,7 @@ DATA_DIR = Path(__file__).resolve().parent / "data"
 
 # name -> (file name, column names in order)
 FILES = {
-    "bodyweight": ("bodyweight.csv", ["date", "weight_kg", "sleep_h", "soreness", "notes"]),
+    "bodyweight": ("bodyweight.csv", ["date", "weight_kg", "sleep_h", "soreness", "macros", "notes"]),
     "gym": ("gym_sets.csv", ["date", "session", "exercise", "set_number", "weight_kg", "reps"]),
     "runs": ("runs.csv", ["date", "run_type", "duration_min", "feel", "reps_done", "reps_planned", "notes"]),
 }
@@ -57,6 +57,8 @@ def load(name):
             df[col] = pd.to_numeric(df[col], errors="coerce")
     if "notes" in df.columns:
         df["notes"] = df["notes"].fillna("").astype(str)
+    if "macros" in df.columns:
+        df["macros"] = df["macros"].fillna("").astype(str)      # "hit", "mostly", "no" or empty
 
     return df.sort_values("date").reset_index(drop=True)
 

@@ -38,6 +38,17 @@ def average_between(bw, start, end):
     return float(values.mean()) if len(values) else None
 
 
+def macro_rate(bw, start, end):
+    """(days hit or mostly, days logged, rate) between two dates. Hit counts 1, mostly half."""
+    if "macros" not in bw.columns:
+        return 0, 0, None
+    rows = bw[(bw["date"] >= start) & (bw["date"] <= end) & (bw["macros"] != "")]
+    if rows.empty:
+        return 0, 0, None
+    score = (rows["macros"] == "hit").sum() + 0.5 * (rows["macros"] == "mostly").sum()
+    return int(((rows["macros"] == "hit") | (rows["macros"] == "mostly")).sum()), len(rows), score / len(rows)
+
+
 def calorie_suggestion(bw, today):
     """
     Apply the plan's rule of thumb:
@@ -61,6 +72,11 @@ def calorie_suggestion(bw, today):
                 f"Drop about {plan.CALORIE_ADJUSTMENT} kcal from carbs.")
 
     if two_weeks_ago is not None and abs(this_week - two_weeks_ago) < 0.1:
+        hit, logged, rate = macro_rate(bw, today - timedelta(days=13), today)
+        if logged >= 7 and rate < 0.7:
+            return (base, "🍽️",
+                    f"No real change over two weeks, but macros were only hit or nearly hit {hit} of the last {logged} days. "
+                    "Eat the plan as written before adding calories.")
         return (base + plan.CALORIE_ADJUSTMENT, "⬆️",
                 "No real change over the last two weeks. "
                 f"Add about {plan.CALORIE_ADJUSTMENT} kcal (easy carb wins below).")
@@ -252,6 +268,7 @@ def weekly_review(bw, gym, runs):
             "Target avg (kg)": round(plan.target_weight(start + timedelta(days=3)), 2),
             "Gym sessions": f"{gym_count} / 6",
             "Runs": f"{run_count} / {phase['runs_per_week']}",
+            "Macros": (lambda h, n, r: f"{h} / {n}" if n else None)(*macro_rate(bw, start, end)),
             "Avg run feel": np.nan if feel is None else round(float(feel), 1),
             "_start": start,
             "_end": end,

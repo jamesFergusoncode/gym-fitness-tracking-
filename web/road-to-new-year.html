@@ -152,6 +152,18 @@ input[type=range]{padding:0;border:0}
 .timer.running .clock{color:var(--accent)}
 .timer.done .clock{color:var(--good)}
 .timer select{width:auto}
+.tri{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.tri button{font:inherit;font-size:13px;font-weight:600;padding:8px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer;flex:1}
+.tri button+button{border-left:1px solid var(--border)}
+.tri button[aria-pressed="true"].hit{background:var(--good-soft);color:var(--good)}
+.tri button[aria-pressed="true"].mostly{background:var(--warn-soft);color:var(--warn)}
+.tri button[aria-pressed="true"].no{background:var(--bad-soft);color:var(--bad)}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days button{width:40px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:inherit;font-size:11px;color:var(--muted);padding:0}
+.days button i{display:block;width:12px;height:12px;border-radius:50%;background:var(--surface-3)}
+.days button.hit i{background:var(--good)} .days button.mostly i{background:var(--warn)} .days button.no i{background:var(--bad)}
+.days button.today{border-color:var(--accent)}
+.days button:disabled{opacity:.45;cursor:default}
 .feel{display:flex;align-items:center;gap:10px}
 .feel output{font-family:var(--display);font-size:26px;font-weight:700;min-width:32px;text-align:center}
 details{margin-top:12px;border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--surface)}
@@ -309,7 +321,8 @@ const planOrder = ex => { const i = PLAN.allExercises.indexOf(ex); return i < 0 
 // state.gym : { "2026-09-28_Push-A": {date, session, sets:[{exercise, set, kg, reps}]} }
 // state.photos: { "2026-10-12": {assetId | dataUrl, taken, kg, notes} }  keyed by checkpoint date
 // state.bw entries may also carry sleep (hours) and sore (1-5); runs may carry done/planned reps.
-const state = { bw: {}, runs: [], gym: {}, photos: {}, settings: { maintainStart: null } };
+// state.macros: { "2026-09-28": "hit" | "mostly" | "no" }  one tap per day
+const state = { bw: {}, runs: [], gym: {}, photos: {}, macros: {}, settings: { maintainStart: null } };
 const store = { db: null, assets: null, downloads: null, ready: false };
 const LS_KEY = 'road-to-new-year-v1';
 
@@ -341,6 +354,7 @@ async function initStore() {
   db.doc('log/runs').onSnapshot(s => { state.runs = (s.exists && s.data().entries) || []; refresh(); }, onErr);
   db.collection('gym').onSnapshot(qs => { const g = {}; qs.docs.forEach(d => { g[d.id] = d.data(); }); state.gym = g; refresh(); }, onErr);
   db.doc('log/photos').onSnapshot(s => { state.photos = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
+  db.doc('log/macros').onSnapshot(s => { state.macros = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
   db.doc('log/settings').onSnapshot(s => { state.settings = Object.assign({ maintainStart: null }, s.exists ? s.data() : {}); refresh(true); }, onErr);
   try { store.assets = await window.claude.use('assets'); } catch (e) { store.assets = null; }
   try { store.downloads = await window.claude.use('downloads'); } catch (e) { store.downloads = null; }
@@ -353,6 +367,7 @@ async function persist(kind, id) {
     else if (kind === 'runs') await store.db.doc('log/runs').set({ entries: state.runs });
     else if (kind === 'photos') await store.db.doc('log/photos').set({ entries: state.photos });
     else if (kind === 'settings') await store.db.doc('log/settings').set(state.settings);
+    else if (kind === 'macros') await store.db.doc('log/macros').set({ entries: state.macros });
     else if (kind === 'gym') {
       const ref = store.db.collection('gym').doc(id);
       if (state.gym[id]) await ref.set(state.gym[id]); else await ref.delete();
@@ -381,6 +396,13 @@ function avgBetween(a, b) {
   const v = Object.keys(state.bw).filter(d => d >= a && d <= b).map(d => +state.bw[d].kg);
   return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null;
 }
+// Macro hit rate over a date range: hit counts 1, mostly counts half.
+function macroRate(a, b) {
+  const days = Object.keys(state.macros).filter(d => d >= a && d <= b);
+  const score = days.reduce((s_, d) => s_ + (state.macros[d] === 'hit' ? 1 : state.macros[d] === 'mostly' ? 0.5 : 0), 0);
+  return { logged: days.length, hit: days.filter(d => state.macros[d] === 'hit').length, mostly: days.filter(d => state.macros[d] === 'mostly').length, missed: days.filter(d => state.macros[d] === 'no').length, score, rate: days.length ? score / days.length : null };
+}
+const MACRO_WORD = { hit: 'Hit', mostly: 'Mostly', no: 'Missed' };
 function calorieSuggestion(today) {
   const base = PLAN.macros[0][1];
   const thisWeek = avgBetween(addDays(today, -6), today);
@@ -389,7 +411,11 @@ function calorieSuggestion(today) {
   if (thisWeek == null || lastWeek == null) return { kcal: base, tone: '', icon: 'ℹ️', msg: 'Keep weighing in daily. Suggestions start once you have two weeks of data.' };
   const change = thisWeek - lastWeek;
   if (change > PLAN.gainPerWeek + 0.10) return { kcal: base - PLAN.adjust, tone: 'warn', icon: '⬇️', msg: `Gaining ${signed(change)} kg/week, faster than the 0.25 kg target. Drop about ${PLAN.adjust} kcal from carbs.` };
-  if (twoAgo != null && Math.abs(thisWeek - twoAgo) < 0.10) return { kcal: base + PLAN.adjust, tone: 'warn', icon: '⬆️', msg: `No real change over the last two weeks. Add about ${PLAN.adjust} kcal (easy carb wins below).` };
+  if (twoAgo != null && Math.abs(thisWeek - twoAgo) < 0.10) {
+    const m = macroRate(addDays(today, -13), today);
+    if (m.logged >= 7 && m.rate < 0.7) return { kcal: base, tone: 'warn', icon: '🍽️', msg: `No real change over two weeks, but macros were only hit ${m.hit} of the last ${m.logged} days (${m.mostly} mostly). Eat the plan as written before adding calories.` };
+    return { kcal: base + PLAN.adjust, tone: 'warn', icon: '⬆️', msg: `No real change over the last two weeks${m.logged >= 7 ? ' with macros mostly hit' : ''}. Add about ${PLAN.adjust} kcal (easy carb wins below).` };
+  }
   return { kcal: base, tone: 'good', icon: '✅', msg: `Gaining ${signed(change)} kg/week. On track, keep the macros as they are.` };
 }
 function topSets() {
@@ -444,7 +470,7 @@ function adherence(today) {
     for (let d = a; d <= upto; d = addDays(d, 1)) { if (gymFor(d) !== 'Rest') gymPlanned++; if (runFor(d)) runPlanned++; }
     const gymDone = [...done].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= upto && sess !== 'Rest'; }).length;
     const runDone = state.runs.filter(r => r.date >= a && r.date <= upto).length;
-    return { name: ph.name, a, b, started: true, gymPlanned, gymDone, runPlanned, runDone };
+    return { name: ph.name, a, b, started: true, gymPlanned, gymDone, runPlanned, runDone, macros: macroRate(a, upto), days: diffDays(upto, a) + 1 };
   });
 }
 // Latest hard-run result of a type, for the "ready for Maintain?" check.
@@ -478,7 +504,7 @@ function weeklyReview() {
     const gymN = [...done].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= b && sess !== 'Rest'; }).length;
     const runs = state.runs.filter(r => r.date >= a && r.date <= b);
     const feel = runs.length ? runs.reduce((s, r) => s + (+r.feel || 0), 0) / runs.length : null;
-    rows.push({ w, a, b, phase: phase.name, avg, change, target: targetKg(addDays(a, 3)), gymN, runN: runs.length, runPlan: phase.runs, feel });
+    rows.push({ w, a, b, phase: phase.name, avg, change, target: targetKg(addDays(a, 3)), gymN, runN: runs.length, runPlan: phase.runs, feel, macros: macroRate(a, b) });
   }
   return rows;
 }
@@ -687,6 +713,10 @@ function renderDashboard() {
         <div class="field"><label for="qSore">Soreness</label><select id="qSore">${['', 1, 2, 3, 4, 5].map(v => `<option value="${v}" ${String(todayBw.sore ?? '') === String(v) ? 'selected' : ''}>${v === '' ? '–' : v + (v === 1 ? ' fresh' : v === 5 ? ' wrecked' : '')}</option>`).join('')}</select></div>
         <div class="field"><button class="btn primary" id="qSave">${todayBw.kg ? 'Update' : 'Save'}</button></div>
       </div>
+      <div class="row" style="margin-top:12px;align-items:center">
+        <div class="field" style="flex:0 1 auto"><label>Macros today</label><span class="tri" id="qMacros">${['hit', 'mostly', 'no'].map(v => `<button class="${v}" data-m="${v}" aria-pressed="${state.macros[today] === v}">${MACRO_WORD[v]}</button>`).join('')}</span></div>
+        <span class="sub">One tap in the evening: 3,700 kcal, 195 g protein. Tap again to clear.</span>
+      </div>
     </div>
 
     ${sec('Today', fLong(today))}
@@ -736,6 +766,12 @@ function renderDashboard() {
       <div class="mlegend"><span style="--c:var(--accent)">Protein ${PLAN.macros[1][1]} g · ${P} kcal</span><span style="--c:var(--orange)">Fat ${PLAN.macros[2][1]} g · ${F} kcal</span><span style="--c:var(--aqua)">Carbs ${PLAN.macros[3][1]} g · ${C.toLocaleString('en-GB')} kcal</span></div>
       <div class="foot"><span class="sub">Easy carb wins: ${PLAN.carbWins.join(' · ')}</span><span class="sub">Gaining too fast: −200 kcal from carbs. No change in 2 weeks: +200 kcal.</span></div>
     </div>
+    ${(() => { const wkM = macroRate(monday, sunday), m28 = macroRate(addDays(today, -27), today);
+      return `<div class="card" style="margin-top:12px">
+      <div class="head"><h3>Macro hit rate</h3><span class="sub">${wkM.logged ? `this week ${wkM.hit + wkM.mostly} / 7` : 'this week: nothing logged yet'}${m28.logged ? ` · last 4 weeks ${Math.round(100 * m28.rate)}%` : ''}</span></div>
+      <div class="days" id="macroDays">${Array.from({ length: 7 }, (_, i) => { const d = addDays(monday, i), v = state.macros[d] || ''; return `<button class="${v} ${d === today ? 'today' : ''}" data-d="${d}" title="${fDay(d)}${v ? ': ' + MACRO_WORD[v] : ''}" ${d > today ? 'disabled' : ''}><i></i>${WD[i]}</button>`; }).join('')}</div>
+      <p class="sub" style="margin:10px 0 0">Tap a day to cycle hit → mostly → missed → clear. Green is on plan, amber is close, red is off. Hit counts 1 and mostly counts half toward the rate.</p>
+    </div>`; })()}
 
     ${sec('This week', `Mon ${fShort(monday)} – Sun ${fShort(sunday)}`)}
     <div class="pills" style="margin-bottom:10px"><span class="pill ${gymHit === gymPlanned && gymPlanned ? 'good' : ''}">Gym ${gymHit} / ${gymPlanned}</span><span class="pill ${runHit === runPlanned && runPlanned ? 'good' : ''}">Runs ${runHit} / ${runPlanned}</span><span class="pill">${phase.name}</span></div>
@@ -751,6 +787,13 @@ function renderDashboard() {
   `;
   bodyweightChart('bwChart', rows);
   spark('bwSpark', rows.slice(-14).map(r => r.kg));
+  const setMacro = async (d, v) => {
+    if (v) state.macros[d] = v; else delete state.macros[d];
+    try { await persist('macros'); } catch (e) { return; }
+    toast(v ? `${fDay(d)}: macros ${MACRO_WORD[v].toLowerCase()}.` : `${fDay(d)}: macros cleared.`); renderDashboard();
+  };
+  $('qMacros').querySelectorAll('button').forEach(b => b.addEventListener('click', () => setMacro(today, state.macros[today] === b.dataset.m ? null : b.dataset.m)));
+  $('macroDays').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const order = ['', 'hit', 'mostly', 'no'], cur = state.macros[b.dataset.d] || ''; setMacro(b.dataset.d, order[(order.indexOf(cur) + 1) % 4] || null); }));
   $('qSave').addEventListener('click', async () => {
     const kg = +$('qKg').value; if (!(kg > 0)) { toast('Enter a weight.'); return; }
     const entry = Object.assign({}, state.bw[today] || { notes: '' }, { kg: Math.round(kg * 10) / 10 });
@@ -1046,16 +1089,17 @@ function renderWeekly() {
       <div class="kpi"><div class="label">Runs done</div><div class="value">${runTotal}</div></div>
       <div class="kpi"><div class="label">Current week</div><div class="value">${wk < 1 ? 'Not started' : (wk > PLAN.weeks ? 'Finished' : `${wk} <small>/ 14</small>`)}</div></div>
     </div>
-    <div class="card table tblwrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Week</th><th>Dates</th><th>Phase</th><th class="num">Avg kg</th><th class="num">Change</th><th class="num">Target</th><th class="num">Gym</th><th class="num">Runs</th><th class="num">Run feel</th></tr></thead><tbody>
-      ${review.map(r => `<tr class="${r.w === wk ? 'current' : ''}"><td>${r.w}${r.w === wk ? ' ◀' : ''}</td><td>${fShort(r.a)} – ${fShort(r.b)}</td><td>${r.phase}</td><td class="num">${cell(r.avg == null ? null : n2(r.avg))}</td><td class="num">${cell(r.change == null ? null : signed(r.change))}</td><td class="num">${n2(r.target)}</td><td class="num">${r.gymN} / 6</td><td class="num">${r.runN} / ${r.runPlan}</td><td class="num">${cell(r.feel == null ? null : n1(r.feel))}</td></tr>`).join('')}
+    <div class="card table tblwrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Week</th><th>Dates</th><th>Phase</th><th class="num">Avg kg</th><th class="num">Change</th><th class="num">Target</th><th class="num">Gym</th><th class="num">Runs</th><th class="num">Macros</th><th class="num">Run feel</th></tr></thead><tbody>
+      ${review.map(r => `<tr class="${r.w === wk ? 'current' : ''}"><td>${r.w}${r.w === wk ? ' ◀' : ''}</td><td>${fShort(r.a)} – ${fShort(r.b)}</td><td>${r.phase}</td><td class="num">${cell(r.avg == null ? null : n2(r.avg))}</td><td class="num">${cell(r.change == null ? null : signed(r.change))}</td><td class="num">${n2(r.target)}</td><td class="num">${r.gymN} / 6</td><td class="num">${r.runN} / ${r.runPlan}</td><td class="num" title="${r.macros.hit} hit · ${r.macros.mostly} mostly · ${r.macros.missed} missed">${r.macros.logged ? `${r.macros.hit + r.macros.mostly} / 7` : cell(null)}</td><td class="num">${cell(r.feel == null ? null : n1(r.feel))}</td></tr>`).join('')}
     </tbody></table></div>
-    <p class="sub">Gym sessions count once per day per session. Runs count against the phase's plan: 5 a week in Build and Sharpen, 3 in Maintain.</p>
+    <p class="sub">Gym sessions count once per day per session. Runs count against the phase's plan: 5 a week in Build and Sharpen, 3 in Maintain. Macros counts days marked hit or mostly.</p>
 
     <h2>Adherence by phase</h2>
     <div class="adh">${adherence(today).map(a => a.started ? `<div class="card">
         <div class="exhead"><h3 style="margin:0">${a.name}</h3><span class="sub">${fShort(a.a)} – ${fShort(a.b)}</span></div>
         <div class="sub">Gym ${a.gymDone} / ${a.gymPlanned}${a.gymPlanned ? ` · ${Math.round(100 * a.gymDone / a.gymPlanned)}%` : ''}</div><div class="bar"><i style="width:${a.gymPlanned ? Math.min(100, 100 * a.gymDone / a.gymPlanned) : 0}%"></i></div>
         <div class="sub" style="margin-top:8px">Runs ${a.runDone} / ${a.runPlanned}${a.runPlanned ? ` · ${Math.round(100 * a.runDone / a.runPlanned)}%` : ''}</div><div class="bar"><i style="width:${a.runPlanned ? Math.min(100, 100 * a.runDone / a.runPlanned) : 0}%;background:var(--orange)"></i></div>
+        <div class="sub" style="margin-top:8px">Macros ${a.macros.hit + a.macros.mostly} / ${a.days} days${a.macros.logged ? ` · ${Math.round(100 * a.macros.score / a.days)}%` : ' · not logged'}</div><div class="bar"><i style="width:${Math.min(100, 100 * a.macros.score / a.days)}%;background:var(--aqua)"></i></div>
       </div>` : `<div class="card soft"><h3 style="margin:0">${a.name}</h3><div class="sub">Starts ${fShort(a.a)}</div></div>`).join('')}</div>
     <p class="sub">Planned counts only the days up to today, so a phase you're halfway through isn't marked down for the days still to come.</p>
 
@@ -1186,7 +1230,7 @@ function renderData() {
 
     ${sec('Export')}
     <div class="card">
-      <div class="actions" style="margin-top:0"><button class="btn" data-export="bodyweight">Weigh-ins CSV</button><button class="btn" data-export="gym">Gym sets CSV</button><button class="btn" data-export="runs">Runs CSV</button></div>
+      <div class="actions" style="margin-top:0"><button class="btn" data-export="bodyweight">Weigh-ins CSV</button><button class="btn" data-export="gym">Gym sets CSV</button><button class="btn" data-export="runs">Runs CSV</button><button class="btn" data-export="macros">Macros CSV</button></div>
       <p class="sub" style="margin:10px 0 0">Plain CSV files that open in Excel or Numbers, and load straight into the Python version of this dashboard. Tip: add this page to your phone's home screen from the browser's share menu and it works like an app.</p>
     </div>
 
@@ -1222,13 +1266,14 @@ function csvOf(kind) {
   const q = v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
   const line = arr => arr.map(q).join(',');
   if (kind === 'bodyweight') return [line(['date', 'weight_kg', 'sleep_h', 'soreness', 'notes'])].concat(Object.keys(state.bw).sort().map(d => line([d, state.bw[d].kg, state.bw[d].sleep ?? '', state.bw[d].sore ?? '', state.bw[d].notes]))).join('\n');
+  if (kind === 'macros') return [line(['date', 'macros'])].concat(Object.keys(state.macros).sort().map(d => line([d, state.macros[d]]))).join('\n');
   if (kind === 'runs') return [line(['date', 'run_type', 'duration_min', 'feel', 'reps_done', 'reps_planned', 'notes'])].concat([...state.runs].sort((a, b) => a.date.localeCompare(b.date)).map(r => line([r.date, r.type, r.min, r.feel, r.done ?? '', r.planned ?? '', r.notes]))).join('\n');
   const rows = [line(['date', 'session', 'exercise', 'set_number', 'weight_kg', 'reps'])];
   Object.values(state.gym).sort((a, b) => a.date.localeCompare(b.date)).forEach(sess => (sess.sets || []).forEach(x => rows.push(line([sess.date, sess.session, x.exercise, x.set, x.kg, x.reps]))));
   return rows.join('\n');
 }
 async function exportCsv(kind) {
-  const filename = { bodyweight: 'bodyweight.csv', gym: 'gym_sets.csv', runs: 'runs.csv' }[kind], data = csvOf(kind);
+  const filename = { bodyweight: 'bodyweight.csv', gym: 'gym_sets.csv', runs: 'runs.csv', macros: 'macros.csv' }[kind], data = csvOf(kind);
   if (store.downloads) {
     try { await store.downloads.save({ filename, data }); toast(`Saved ${filename}.`); }
     catch (e) { if (e && e.code === 'declined') return; toast(e && e.code === 'unavailable' ? 'Downloads are not available in this view.' : 'Could not save the file.'); }

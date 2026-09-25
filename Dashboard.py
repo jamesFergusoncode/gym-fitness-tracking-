@@ -139,6 +139,10 @@ c2.metric("Protein", f"{plan.MACROS['Protein']} g")
 c3.metric("Fat", f"{plan.MACROS['Fat']} g")
 c4.metric("Carbs", f"{plan.MACROS['Carbs']} g")
 st.markdown(f"{icon} {message}")
+hit, logged, rate = analysis.macro_rate(bodyweight, today - timedelta(days=27), today)
+if logged:
+    st.caption(f"Macro hit rate, last 4 weeks: {hit} of {logged} logged days on or near plan ({rate:.0%}). "
+               "Mark it each morning on the Log Bodyweight page.")
 st.caption("Easy carb wins: " + " · ".join(plan.EASY_CARB_WINS))
 
 # ---------------------------------------------------------------------------
