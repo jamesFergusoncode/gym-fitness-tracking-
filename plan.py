@@ -193,6 +193,36 @@ def increment(exercise):
     return 1.0 if exercise in ISOLATION else 2.5
 
 
+# What each run session actually is, in plain words.
+RUN_GUIDE = {
+    "Sprints": {
+        "what": "Short, all-out efforts on flat grass, a track or a quiet path.",
+        "how": "Build to full speed over the first few strides, hold it for 20 seconds, then walk back to the start "
+               "and take about 90 seconds before the next one. Every rep should feel as fast as the first; "
+               "if you slow down a lot, rest longer.",
+        "effort": "9-10 / 10, you could not say a word",
+    },
+    "Intervals": {
+        "what": "One minute hard, one minute easy, repeated.",
+        "how": "The hard minute is around 5 km race effort: breathing heavily, unable to chat. The easy minute is a "
+               "slow jog, not a stop. Aim to run the last hard minute at the same pace as the first. This is the "
+               "session the plan uses to judge when you are ready for Maintain.",
+        "effort": "8 / 10, a few words at most",
+    },
+    "Shuttles": {
+        "what": "Sprint 10 m out, turn, sprint back, turn, sprint 10 m out again. That is one round.",
+        "how": "Mark two lines 10 m apart. Stay low into each turn, plant the outside foot and drive out. Rest between "
+               "rounds standing or walking. About 30 m of sprinting and three turns per round.",
+        "effort": "9 / 10, sharp and fast, quality over quantity",
+    },
+    "Easy": {
+        "what": "A relaxed, conversational-pace run. Recovery and base, not a workout to push.",
+        "how": "If you cannot chat in full sentences, slow down. Keep it flat and steady. Sunday's easy run is a "
+               "little longer than Tuesday's.",
+        "effort": "3-4 / 10, could talk the whole way",
+    },
+}
+
 RUN_NOTES = [
     "Warm-up: 10 min easy jog + leg swings.",
     "Cool-down: 10 min easy jog.",

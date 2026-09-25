@@ -280,6 +280,29 @@ const PLAN = {
   runNotes: ['Warm-up: 10 min easy jog + leg swings.', 'Cool-down: 10 min easy jog.', 'Every session is 30+ minutes including warm-up and cool-down.', 'Shuttle round: sprint 10 m, turn, back, turn, 10 m.', 'Easy runs: if you can\'t chat, slow down.'],
 };
 PLAN.end = addDays(PLAN.start, PLAN.weeks * 7 - 1);
+// What each run session actually is, in plain words, for the day it comes up.
+PLAN.runGuide = {
+  Sprints: {
+    what: 'Short, all-out efforts on flat grass, a track or a quiet path.',
+    how: 'Build to full speed over the first few strides, hold it for 20 seconds, then walk back to the start and take about 90 seconds before the next one. Every rep should feel as fast as the first; if you slow down a lot, rest longer.',
+    effort: '9-10 / 10 · you could not say a word',
+  },
+  Intervals: {
+    what: 'One minute hard, one minute easy, repeated.',
+    how: 'The hard minute is around 5 km race effort: breathing heavily, unable to chat. The easy minute is a slow jog, not a stop. Aim to run the last hard minute at the same pace as the first. This is the session the plan uses to judge when you are ready for Maintain.',
+    effort: '8 / 10 · a few words at most',
+  },
+  Shuttles: {
+    what: 'Sprint 10 m out, turn, sprint back, turn, sprint 10 m out again. That is one round.',
+    how: 'Mark two lines 10 m apart. Stay low into each turn, plant the outside foot and drive out. Rest between rounds standing or walking. About 30 m of sprinting and three turns per round.',
+    effort: '9 / 10 · sharp and fast, quality over quantity',
+  },
+  Easy: {
+    what: 'A relaxed, conversational-pace run. Recovery and base, not a workout to push.',
+    how: 'If you cannot chat in full sentences, slow down. Keep it flat and steady. Sunday\'s easy run is a little longer than Tuesday\'s.',
+    effort: '3-4 / 10 · could talk the whole way',
+  },
+};
 // How many reps of each hard run the plan asks for, per phase.
 PLAN.runReps = {
   Build:    { Sprints: 8,  Intervals: 6, Shuttles: 6 },
@@ -731,7 +754,7 @@ function renderDashboard() {
         <div class="head"><h3>Run · ${run ? run[0] : 'none'}</h3>${runDone ? '<span class="pill good">logged</span>' : (run ? `<span class="pill">${phase.name} · 30+ min</span>` : '')}</div>
         ${run ? `<ol class="steps">
           <li><span>Warm-up · <b>10 min</b> easy jog + leg swings</span></li>
-          <li class="main"><span><b>${run[1]}</b>${run[0] === 'Shuttles' || run[1].includes('shuttle') ? '<br><span class="sub">Shuttle round: sprint 10 m, turn, back, turn, 10 m</span>' : ''}${run[0] === 'Easy' ? '<br><span class="sub">If you can\'t chat, slow down</span>' : ''}</span></li>
+          <li class="main"><span><b>${run[0]} · ${run[1]}</b><br><span class="sub">${PLAN.runGuide[run[0]].what} ${PLAN.runGuide[run[0]].how}${run[1].includes('shuttle') && run[0] !== 'Shuttles' ? ' Then the shuttles: ' + PLAN.runGuide.Shuttles.what + ' ' + PLAN.runGuide.Shuttles.how : ''}</span><br><span class="pill" style="margin-top:6px">Effort ${PLAN.runGuide[run[0]].effort}</span></span></li>
           <li><span>Cool-down · <b>10 min</b> easy jog</span></li>
         </ol>
         <div class="foot"><span class="sub">${lastHard ? `Last ${lastHard.type.toLowerCase()} ${fShort(lastHard.date)}: ${lastHard.done != null ? `${lastHard.done}/${lastHard.planned} done · ` : ''}felt ${lastHard.feel}/10` : 'Log reps done and how it felt.'}</span><button class="btn primary" onclick="showTab('run', true)">${runDone ? 'Log another' : 'Log this run'}</button></div>`
@@ -1012,6 +1035,7 @@ function buildRunForm() {
         <div class="field"><label for="rPlanned">Reps planned</label><input type="number" id="rPlanned" min="1" max="30" step="1" inputmode="numeric"></div>
       </div>
       <p class="sub" id="rInfo" style="margin:10px 0 0"></p>
+      <p class="note" id="rGuide" style="margin:10px 0 0"></p>
       <div class="row" style="margin-top:12px">
         <div class="field grow"><label for="rFeel">How did it feel? 1 = terrible, 10 = amazing</label><div class="feel"><input type="range" id="rFeel" min="1" max="10" value="7"><output id="rFeelOut">7</output></div></div>
         <div class="field grow"><label for="rNotes">Notes (optional)</label><input type="text" id="rNotes" placeholder="e.g. did all 8 intervals, legs heavy"></div>
@@ -1024,6 +1048,8 @@ function buildRunForm() {
     const d = $('rDate').value || todayIso(), type = $('rType').value, planned = PLAN.runReps[phaseForDate(d).name][type];
     $('rRepsRow').hidden = !planned;
     if (planned) { $('rPlanned').value = planned; $('rDone').value = planned; }
+    const g = PLAN.runGuide[type];
+    $('rGuide').innerHTML = `<b>${type}</b> · ${g.what} ${g.how}<br><span class="sub">Effort ${g.effort} · warm-up 10 min easy jog + leg swings · cool-down 10 min easy jog</span>`;
   };
   const setInfo = () => {
     const d = $('rDate').value || todayIso(), r = runFor(d);

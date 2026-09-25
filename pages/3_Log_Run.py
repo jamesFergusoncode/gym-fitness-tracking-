@@ -29,6 +29,9 @@ else:
 # The selectbox sits outside the form so the reps fields can react to it.
 run_type = st.selectbox("Type", plan.RUN_TYPES, index=default_index)
 planned_reps = plan.RUN_REPS[plan.phase_for_date(log_date)["name"]].get(run_type)
+guide = plan.RUN_GUIDE[run_type]
+st.info(f"**{run_type}** · {guide['what']} {guide['how']}\n\nEffort {guide['effort']}. "
+        "Warm-up 10 min easy jog + leg swings, cool-down 10 min easy jog.")
 
 with st.form("run_form"):
     duration = st.number_input("Duration (minutes, including warm-up and cool-down)",

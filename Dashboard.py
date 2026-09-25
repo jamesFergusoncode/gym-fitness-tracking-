@@ -95,7 +95,11 @@ with run_col:
         tick = " ✅ logged" if run_logged else ""
         st.markdown(f"### 🏃 Run: {run_type}{tick}")
         st.markdown(f"**{prescription}**")
-        st.caption("Warm-up 10 min easy jog + leg swings · cool-down 10 min easy jog")
+        guide = plan.RUN_GUIDE[run_type]
+        st.markdown(f"{guide['what']} {guide['how']}")
+        if "shuttle" in prescription and run_type != "Shuttles":
+            st.markdown(f"Then the shuttles: {plan.RUN_GUIDE['Shuttles']['what']} {plan.RUN_GUIDE['Shuttles']['how']}")
+        st.caption(f"Effort {guide['effort']} · warm-up 10 min easy jog + leg swings · cool-down 10 min easy jog")
 
 with st.expander(f"Tips for the {phase['name']} phase"):
     for tip in plan.PHASE_TIPS[phase["name"]]:
