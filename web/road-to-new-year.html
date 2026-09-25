@@ -32,27 +32,19 @@ h3{font-size:20px;font-weight:600;letter-spacing:.01em}
 .faint{color:var(--faint)}
 b{font-weight:600}
 
-/* Header + plan track */
 .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 16px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:3px 10px;background:var(--surface)}
 .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--grey)}
 .chip.on .dot{background:var(--good)}
 .trackwrap{margin:16px 0 4px}
-.track{position:relative;display:flex;gap:2px;height:12px;border-radius:6px;overflow:visible}
-.track .seg{flex:1;background:var(--surface-3);border-radius:2px}
-.track .seg.Build{background:color-mix(in srgb,var(--accent) 45%,var(--surface-3))}
-.track .seg.Sharpen{background:color-mix(in srgb,var(--orange) 45%,var(--surface-3))}
-.track .seg.Maintain{background:color-mix(in srgb,var(--aqua) 45%,var(--surface-3))}
-.track .seg.past{opacity:.55}
+.track{position:relative;display:flex;gap:2px;height:12px}
+.track .seg{flex:1;background:color-mix(in srgb,var(--accent) 40%,var(--surface-3));border-radius:2px}
+.track .seg.past{background:var(--accent)}
+.track .seg.future{background:var(--surface-3)}
 .track .now{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--text);border-radius:2px;transform:translateX(-50%)}
-.tlegend{display:none;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
-.tlegend span::before{content:'';display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
-.tlabels{display:flex;margin-top:6px;font-size:12px;color:var(--muted)}
-.tlabels span{display:flex;flex-direction:column;gap:0}
-.tlabels b{color:var(--text);font-weight:600}
-.tlabels .B{flex:2}.tlabels .S{flex:2}.tlabels .M{flex:10}
+.tlabels{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)}
+.tlabels b{color:var(--text)}
 
-/* Tabs */
 nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:10px 0 8px;margin-top:14px}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs .rail{display:flex;gap:2px;background:var(--surface-2);padding:4px;border-radius:10px}
@@ -61,14 +53,12 @@ nav.tabs .rail{display:flex;gap:2px;background:var(--surface-2);padding:4px;bord
 .tab:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .view[hidden]{display:none}
 
-/* Sections */
 .sec{display:flex;align-items:baseline;gap:12px;margin:34px 0 12px}
 .sec::after{content:'';flex:1;height:1px;background:var(--border);align-self:center}
 .sec h2{margin:0}
 .sec .sub{white-space:nowrap}
 .view > h2{margin:34px 0 12px}
 
-/* Tiles */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);min-width:0}
 .kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
@@ -77,14 +67,13 @@ nav.tabs .rail{display:flex;gap:2px;background:var(--surface-2);padding:4px;bord
 .kpi .delta{font-size:12px;color:var(--muted);margin-top:3px}
 .kpi .delta.up{color:var(--good)} .kpi .delta.down{color:var(--bad)}
 .kpi canvas.spark{display:block;width:100%;height:26px;margin-top:6px}
-.kpi.tone-Build{border-top:3px solid var(--accent)} .kpi.tone-Sharpen{border-top:3px solid var(--orange)} .kpi.tone-Maintain{border-top:3px solid var(--aqua)}
 
-/* Cards, notes, pills */
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
 .card.soft{background:var(--surface-2);border-color:transparent;box-shadow:none}
 .card .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .card .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.card.table{padding:0;overflow:hidden}
 .note{border-radius:10px;padding:10px 14px;font-size:14px;background:var(--accent-soft)}
 .note.good{background:var(--good-soft)} .note.warn{background:var(--warn-soft)} .note.bad{background:var(--bad-soft)}
 ul.plain{margin:6px 0 0;padding-left:18px}
@@ -93,32 +82,35 @@ ul.ex{list-style:none;margin:0;padding:0}
 ul.ex li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
 ul.ex li:last-child{border-bottom:0}
 ul.ex li .sub{white-space:nowrap;font-variant-numeric:tabular-nums}
-ol.steps{list-style:none;margin:0;padding:0;counter-reset:step}
-ol.steps li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:6px 0;font-size:14px;counter-increment:step}
-ol.steps li::before{content:counter(step);width:22px;height:22px;border-radius:50%;background:var(--surface-2);color:var(--muted);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
-ol.steps li.main::before{background:var(--accent);color:var(--accent-ink)}
 .pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);vertical-align:middle}
 .pill.good{background:var(--good-soft);color:var(--good)}
 .pill.accent{background:var(--accent-soft);color:var(--accent)}
-.pill.orange{background:var(--orange-soft);color:var(--orange)}
-.pill.aqua{background:var(--aqua-soft);color:var(--aqua)}
 .pills{display:flex;gap:6px;flex-wrap:wrap}
-
-/* Macro split bar */
 .mbar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin-top:14px}
 .mbar i{display:block;height:100%}
 .mlegend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--muted)}
 .mlegend span::before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+.tri{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.tri button{font:inherit;font-size:13px;font-weight:600;padding:8px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer;flex:1}
+.tri button+button{border-left:1px solid var(--border)}
+.tri button[aria-pressed="true"].hit{background:var(--good-soft);color:var(--good)}
+.tri button[aria-pressed="true"].mostly{background:var(--warn-soft);color:var(--warn)}
+.tri button[aria-pressed="true"].no{background:var(--bad-soft);color:var(--bad)}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days button{width:40px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:inherit;font-size:11px;color:var(--muted);padding:0}
+.days button i{display:block;width:12px;height:12px;border-radius:50%;background:var(--surface-3)}
+.days button.hit i{background:var(--good)} .days button.mostly i{background:var(--warn)} .days button.no i{background:var(--bad)}
+.days button.today{border-color:var(--accent)}
+.days button:disabled{opacity:.45;cursor:default}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:0}
+.dl dt{color:var(--muted)} .dl dd{margin:0;font-variant-numeric:tabular-nums}
 
-/* Charts */
 .chart{position:relative;height:320px;max-width:100%}
 .chart.sm{height:220px}
 
-/* Tables */
 .tblwrap{overflow-x:auto}
 table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface-2)}
-.tbl th:first-child{border-radius:8px 0 0 0}.tbl th:last-child{border-radius:0 8px 0 0}
 .tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
 .tbl tbody tr:last-child td{border-bottom:0}
 .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
@@ -129,15 +121,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl tr.hint td{padding:4px 10px 10px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted)}
 .tbl tr.hint td b{color:var(--text)}
 .tbl tr.hint .apply{margin-left:6px;padding:1px 8px;font-size:12px}
-.card.table{padding:0;overflow:hidden}
 
-/* Forms */
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:5px;flex:1 1 160px}
 .field.grow{flex:2 1 240px}
 label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
 input,select{font:inherit;font-size:15px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);width:100%;font-variant-numeric:tabular-nums}
-input[type=range]{padding:0;border:0}
 .btn{font:inherit;font-weight:600;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.small{padding:4px 10px;font-size:13px}
@@ -152,25 +141,10 @@ input[type=range]{padding:0;border:0}
 .timer.running .clock{color:var(--accent)}
 .timer.done .clock{color:var(--good)}
 .timer select{width:auto}
-.tri{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.tri button{font:inherit;font-size:13px;font-weight:600;padding:8px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer;flex:1}
-.tri button+button{border-left:1px solid var(--border)}
-.tri button[aria-pressed="true"].hit{background:var(--good-soft);color:var(--good)}
-.tri button[aria-pressed="true"].mostly{background:var(--warn-soft);color:var(--warn)}
-.tri button[aria-pressed="true"].no{background:var(--bad-soft);color:var(--bad)}
-.days{display:flex;gap:6px;flex-wrap:wrap}
-.days button{width:40px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:inherit;font-size:11px;color:var(--muted);padding:0}
-.days button i{display:block;width:12px;height:12px;border-radius:50%;background:var(--surface-3)}
-.days button.hit i{background:var(--good)} .days button.mostly i{background:var(--warn)} .days button.no i{background:var(--bad)}
-.days button.today{border-color:var(--accent)}
-.days button:disabled{opacity:.45;cursor:default}
-.feel{display:flex;align-items:center;gap:10px}
-.feel output{font-family:var(--display);font-size:26px;font-weight:700;min-width:32px;text-align:center}
 details{margin-top:12px;border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--surface)}
 summary{cursor:pointer;font-weight:500;font-size:14px}
 .empty{color:var(--muted);font-size:14px;padding:20px 0}
 
-/* Bests, progress, adherence, photos */
 .pb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--good-soft)}
 .star{color:var(--good);font-size:18px;line-height:1}
 .exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
@@ -178,7 +152,6 @@ summary{cursor:pointer;font-weight:500;font-size:14px}
 .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .seg button{font:inherit;font-size:13px;padding:6px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.adh{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .adh .bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:6px}
 .adh .bar i{display:block;height:100%;background:var(--accent)}
 .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
@@ -194,7 +167,7 @@ summary{cursor:pointer;font-weight:500;font-size:14px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){ .toast{transition:none} }
-@media (max-width:560px){ h1{font-size:34px} h2{font-size:21px} .kpi .value{font-size:27px} .chart{height:260px} .card{padding:14px} .tlabels{display:none} .tlegend{display:flex} .top{align-items:flex-start} }
+@media (max-width:560px){ h1{font-size:34px} h2{font-size:21px} .kpi .value{font-size:27px} .chart{height:260px} .card{padding:14px} .top{align-items:flex-start} }
 </style>
 
 <div class="wrap">
@@ -211,7 +184,6 @@ summary{cursor:pointer;font-weight:500;font-size:14px}
     <button class="tab" role="tab" data-tab="dashboard">Dashboard</button>
     <button class="tab" role="tab" data-tab="gym">Log gym</button>
     <button class="tab" role="tab" data-tab="weight">Log weight</button>
-    <button class="tab" role="tab" data-tab="run">Log run</button>
     <button class="tab" role="tab" data-tab="progress">Exercise progress</button>
     <button class="tab" role="tab" data-tab="weekly">Weekly review</button>
     <button class="tab" role="tab" data-tab="photos">Photos</button>
@@ -221,7 +193,6 @@ summary{cursor:pointer;font-weight:500;font-size:14px}
   <section class="view" id="view-dashboard"></section>
   <section class="view" id="view-gym" hidden></section>
   <section class="view" id="view-weight" hidden></section>
-  <section class="view" id="view-run" hidden></section>
   <section class="view" id="view-progress" hidden></section>
   <section class="view" id="view-weekly" hidden></section>
   <section class="view" id="view-photos" hidden></section>
@@ -231,7 +202,7 @@ summary{cursor:pointer;font-weight:500;font-size:14px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-/* ===================== The plan (from the PDF) ===================== */
+/* ===================== The plan ===================== */
 const DAY = 86400000;
 const P = s => new Date(s + 'T00:00:00Z');
 const toIso = d => d.toISOString().slice(0, 10);
@@ -253,16 +224,14 @@ const PLAN = {
   start: '2026-09-28', weeks: 14, startKg: 86, gainPerWeek: 0.25, adjust: 200,
   macros: [['Calories', 3700, 'kcal'], ['Protein', 195, 'g'], ['Fat', 90, 'g'], ['Carbs', 530, 'g']],
   carbWins: ['Oats', 'Bagels', 'Bananas', 'Juice', 'Milk'],
-  phases: [
-    { name: 'Build', first: 1, last: 2, runs: 5 },
-    { name: 'Sharpen', first: 3, last: 4, runs: 5 },
-    { name: 'Maintain', first: 5, last: 14, runs: 3 },
+  rules: [
+    'Weigh every morning and judge by the weekly average, not the daily number.',
+    'Target +0.25 kg a week: about 89-90 kg by New Year.',
+    'Gaining faster than that? Take about 200 kcal off, from carbs.',
+    'No change after two weeks? Add about 200 kcal. Easy carb wins: oats, bagels, bananas, juice, milk.',
+    'Barbell squats 4 × 5-8. Everything else 3 sets of 8-12. Add weight once you own the top of the range on every set.',
+    'Six sessions a week, Sunday off.',
   ],
-  tips: {
-    Build: ['Wed: intervals before legs, or split them by a few hours.', 'Legs A: squats down to 3 sets, skip the bike.', 'Legs B: stop 1-2 reps short of failure.'],
-    Sharpen: ['Wed: intervals before legs, or split them by a few hours.', 'Legs A: squats down to 3 sets, skip the bike.', 'Legs B: stop 1-2 reps short of failure.', 'Move to Maintain when you can finish 8 intervals without dying and recover quickly between sprints. Not there by week 5? Stay in Sharpen a bit longer.'],
-    Maintain: ['Back to full leg volume: 4 sets of squats, bike included.', 'Push your lifts harder now that running is lighter.', 'Running less now, so if weight climbs faster than 0.25 kg/week, drop about 200 kcal from carbs.'],
-  },
   sessions: {
     'Push A': ['Bench press', 'Incline bench', 'Chest fly', 'Shoulder press', 'Cable lateral raise', 'Tricep pushdown', 'Tricep overhead'],
     'Push B': ['Incline bench', 'Chest fly', 'Shoulder press', 'Lateral raise', 'Face pulls', 'Tricep overhead', 'Tricep pushdown'],
@@ -271,114 +240,45 @@ const PLAN = {
     'Legs A': LEGS, 'Legs B': LEGS,
   },
   gymSchedule: ['Push A', 'Pull A', 'Legs A', 'Push B', 'Pull B', 'Legs B', 'Rest'],
-  runTypes: ['Sprints', 'Intervals', 'Shuttles', 'Easy'],
-  runSchedule: {
-    Build:    { 0: ['Sprints', '8 x 20s'], 1: ['Easy', '30 min'], 2: ['Intervals', '6 x 1 min on / 1 min off'], 4: ['Shuttles', '6 rounds, 60s rest'], 6: ['Easy', '35 min'] },
-    Sharpen:  { 0: ['Sprints', '10 x 20s'], 1: ['Easy', '30 min'], 2: ['Intervals', '8 x 1 min on / 1 min off'], 4: ['Shuttles', '8 rounds, 45s rest'], 6: ['Easy', '40 min'] },
-    Maintain: { 0: ['Sprints', '8 x 20s + 6 shuttle rounds'], 2: ['Intervals', '8 x 1 min on / 1 min off'], 6: ['Easy', '40 min'] },
-  },
-  runNotes: ['Warm-up: 10 min easy jog + leg swings.', 'Cool-down: 10 min easy jog.', 'Every session is 30+ minutes including warm-up and cool-down.', 'Shuttle round: sprint 10 m, turn, back, turn, 10 m.', 'Easy runs: if you can\'t chat, slow down.'],
 };
 PLAN.end = addDays(PLAN.start, PLAN.weeks * 7 - 1);
-// What each run session actually is, in plain words, for the day it comes up.
-PLAN.runGuide = {
-  Sprints: {
-    what: 'Short, all-out efforts on flat grass, a track or a quiet path.',
-    how: 'Build to full speed over the first few strides, hold it for 20 seconds, then walk back to the start and take about 90 seconds before the next one. Every rep should feel as fast as the first; if you slow down a lot, rest longer.',
-    effort: '9-10 / 10 · you could not say a word',
-  },
-  Intervals: {
-    what: 'One minute hard, one minute easy, repeated.',
-    how: 'The hard minute is around 5 km race effort: breathing heavily, unable to chat. The easy minute is a slow jog, not a stop. Aim to run the last hard minute at the same pace as the first. This is the session the plan uses to judge when you are ready for Maintain.',
-    effort: '8 / 10 · a few words at most',
-  },
-  Shuttles: {
-    what: 'Sprint 10 m out, turn, sprint back, turn, sprint 10 m out again. That is one round.',
-    how: 'Mark two lines 10 m apart. Stay low into each turn, plant the outside foot and drive out. Rest between rounds standing or walking. About 30 m of sprinting and three turns per round.',
-    effort: '9 / 10 · sharp and fast, quality over quantity',
-  },
-  Easy: {
-    what: 'A relaxed, conversational-pace run. Recovery and base, not a workout to push.',
-    how: 'If you cannot chat in full sentences, slow down. Keep it flat and steady. Sunday\'s easy run is a little longer than Tuesday\'s.',
-    effort: '3-4 / 10 · could talk the whole way',
-  },
-};
-// How many reps of each hard run the plan asks for, per phase.
-PLAN.runReps = {
-  Build:    { Sprints: 8,  Intervals: 6, Shuttles: 6 },
-  Sharpen:  { Sprints: 10, Intervals: 8, Shuttles: 8 },
-  Maintain: { Sprints: 8,  Intervals: 8, Shuttles: 6 },
-};
-// Progression rules: rep range to work in and the jump to make once you own the top of it.
+PLAN.allExercises = [...new Set(Object.values(PLAN.sessions).flat())];
+const WD = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const ISOLATION = ['Chest fly', 'Cable lateral raise', 'Lateral raise', 'Face pulls', 'Tricep pushdown', 'Tricep overhead', 'Bicep curl', 'Hammer curl', 'Cable curl', 'Cable pullovers', 'Leg extension', 'Hamstring curl'];
 const repRange = ex => ex === 'Barbell squats' ? [5, 8] : [8, 12];
 const increment = ex => ex === 'Pull-ups' ? 0 : (ISOLATION.includes(ex) ? 1 : 2.5);
-PLAN.allExercises = [...new Set(Object.values(PLAN.sessions).flat())];
-const WD = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const defaultSets = ex => ex === 'Barbell squats' ? 4 : 3;
+const planOrder = ex => { const i = PLAN.allExercises.indexOf(ex); return i < 0 ? 999 : i; };
 
 const weekNumber = s => s < PLAN.start ? 0 : Math.min(Math.floor(diffDays(s, PLAN.start) / 7) + 1, PLAN.weeks + 1);
 const weekDates = w => { const a = addDays(PLAN.start, (w - 1) * 7); return [a, addDays(a, 6)]; };
-const phaseForWeek = w => w < 1 ? PLAN.phases[0] : (PLAN.phases.find(p => w >= p.first && w <= p.last) || PLAN.phases[PLAN.phases.length - 1]);
-function phaseForDate(s) {
-  const ms = state.settings.maintainStart, w = weekNumber(s);
-  if (ms && w >= 1) { if (s >= ms) return PLAN.phases[2]; return w <= 2 ? PLAN.phases[0] : PLAN.phases[1]; }
-  return phaseForWeek(w);
-}
-// Where each phase starts on the calendar, honouring the override.
-function phaseStarts() {
-  const ms = state.settings.maintainStart;
-  return [{ name: 'Build', date: PLAN.start }, { name: 'Sharpen', date: weekDates(3)[0] }, { name: 'Maintain', date: ms || weekDates(5)[0] }];
-}
 const planStatus = s => s < PLAN.start ? 'before' : (s > PLAN.end ? 'after' : 'during');
 const targetKg = s => PLAN.startKg + PLAN.gainPerWeek * Math.max(0, diffDays(s, PLAN.start)) / 7;
 const gymFor = s => PLAN.gymSchedule[weekday(s)];
-const runFor = s => PLAN.runSchedule[phaseForDate(s).name][weekday(s)] || null;
-const defaultSets = (ex, phase) => ex === 'Barbell squats' ? (phase === 'Maintain' ? 4 : 3) : 3;
 const sessionId = (date, session) => `${date}_${session.replace(/\s+/g, '-')}`;
-// Position of an exercise in the plan, so lists always follow the plan's order.
-const planOrder = ex => { const i = PLAN.allExercises.indexOf(ex); return i < 0 ? 999 : i; };
 
 /* ===================== State and storage ===================== */
-// state.bw  : { "2026-09-28": {kg, notes} }
-// state.runs: [ {id, date, type, min, feel, notes} ]
-// state.gym : { "2026-09-28_Push-A": {date, session, sets:[{exercise, set, kg, reps}]} }
-// state.photos: { "2026-10-12": {assetId | dataUrl, taken, kg, notes} }  keyed by checkpoint date
-// state.bw entries may also carry sleep (hours) and sore (1-5); runs may carry done/planned reps.
-// state.macros: { "2026-09-28": "hit" | "mostly" | "no" }  one tap per day
-const state = { bw: {}, runs: [], gym: {}, photos: {}, macros: {}, settings: { maintainStart: null } };
-const store = { db: null, assets: null, downloads: null, ready: false };
+// state.bw     : { "2026-09-28": {kg, sleep?, notes} }
+// state.gym    : { "2026-09-28_Push-A": {date, session, sets:[{exercise, set, kg, reps}]} }
+// state.macros : { "2026-09-28": "hit" | "mostly" | "no" }
+// state.photos : { "<checkpoint date>": {assetId | dataUrl, taken, kg, notes} }
+const state = { bw: {}, gym: {}, macros: {}, photos: {} };
+const store = { db: null, assets: null, downloads: null };
 const LS_KEY = 'road-to-new-year-v1';
 
-function setChip(on, text) {
-  const c = document.getElementById('storeChip');
-  c.classList.toggle('on', on);
-  document.getElementById('storeText').textContent = text;
-}
-function loadLocal() {
-  try { const raw = localStorage.getItem(LS_KEY); if (raw) Object.assign(state, JSON.parse(raw)); } catch (e) {}
-  state.settings = Object.assign({ maintainStart: null }, state.settings || {});
-}
-function saveLocal() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
-}
+function setChip(on, text) { $('storeChip').classList.toggle('on', on); $('storeText').textContent = text; }
+function loadLocal() { try { const raw = localStorage.getItem(LS_KEY); if (raw) { const o = JSON.parse(raw); ['bw', 'gym', 'macros', 'photos'].forEach(k => { if (o[k]) state[k] = o[k]; }); } } catch (e) {} }
+function saveLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
 async function initStore() {
   let db = null;
   try { if (window.claude && window.claude.use) db = await window.claude.use('db'); } catch (e) { db = null; }
-  if (!db) {
-    loadLocal(); store.ready = true;
-    setChip(false, 'Saved in this browser only');
-    refresh(true);
-    return;
-  }
-  store.db = db; store.ready = true;
-  setChip(true, 'Saved to your account');
+  if (!db) { loadLocal(); setChip(false, 'Saved in this browser only'); refresh(true); return; }
+  store.db = db; setChip(true, 'Saved to your account');
   const onErr = e => { if (e && e.code !== 'unavailable') toast('Live updates stopped. Reload the page to reconnect.'); };
   db.doc('log/bodyweight').onSnapshot(s => { state.bw = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
-  db.doc('log/runs').onSnapshot(s => { state.runs = (s.exists && s.data().entries) || []; refresh(); }, onErr);
   db.collection('gym').onSnapshot(qs => { const g = {}; qs.docs.forEach(d => { g[d.id] = d.data(); }); state.gym = g; refresh(); }, onErr);
-  db.doc('log/photos').onSnapshot(s => { state.photos = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
   db.doc('log/macros').onSnapshot(s => { state.macros = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
-  db.doc('log/settings').onSnapshot(s => { state.settings = Object.assign({ maintainStart: null }, s.exists ? s.data() : {}); refresh(true); }, onErr);
+  db.doc('log/photos').onSnapshot(s => { state.photos = (s.exists && s.data().entries) || {}; refresh(); }, onErr);
   try { store.assets = await window.claude.use('assets'); } catch (e) { store.assets = null; }
   try { store.downloads = await window.claude.use('downloads'); } catch (e) { store.downloads = null; }
   if (activeTab === 'photos') renderPhotos();
@@ -387,14 +287,9 @@ async function persist(kind, id) {
   if (!store.db) { saveLocal(); return; }
   try {
     if (kind === 'bw') await store.db.doc('log/bodyweight').set({ entries: state.bw });
-    else if (kind === 'runs') await store.db.doc('log/runs').set({ entries: state.runs });
-    else if (kind === 'photos') await store.db.doc('log/photos').set({ entries: state.photos });
-    else if (kind === 'settings') await store.db.doc('log/settings').set(state.settings);
     else if (kind === 'macros') await store.db.doc('log/macros').set({ entries: state.macros });
-    else if (kind === 'gym') {
-      const ref = store.db.collection('gym').doc(id);
-      if (state.gym[id]) await ref.set(state.gym[id]); else await ref.delete();
-    }
+    else if (kind === 'photos') await store.db.doc('log/photos').set({ entries: state.photos });
+    else if (kind === 'gym') { const ref = store.db.collection('gym').doc(id); if (state.gym[id]) await ref.set(state.gym[id]); else await ref.delete(); }
   } catch (e) {
     const code = e && e.code;
     if (code === 'invalid_argument') toast('You can view this page but not save to it.');
@@ -406,20 +301,12 @@ async function persist(kind, id) {
 
 /* ===================== Analysis ===================== */
 function bwSeries() {
-  const rows = Object.keys(state.bw).sort().map(d => ({ date: d, kg: +state.bw[d].kg, notes: state.bw[d].notes || '' }));
-  rows.forEach((r, i) => {
-    const from = addDays(r.date, -6);
-    const win = rows.slice(0, i + 1).filter(x => x.date >= from);
-    r.avg7 = win.reduce((s, x) => s + x.kg, 0) / win.length;
-    r.target = targetKg(r.date);
-  });
+  const rows = Object.keys(state.bw).sort().map(d => ({ date: d, kg: +state.bw[d].kg, sleep: state.bw[d].sleep, notes: state.bw[d].notes || '' }));
+  rows.forEach((r, i) => { const from = addDays(r.date, -6); const win = rows.slice(0, i + 1).filter(x => x.date >= from); r.avg7 = win.reduce((s, x) => s + x.kg, 0) / win.length; r.target = targetKg(r.date); });
   return rows;
 }
-function avgBetween(a, b) {
-  const v = Object.keys(state.bw).filter(d => d >= a && d <= b).map(d => +state.bw[d].kg);
-  return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null;
-}
-// Macro hit rate over a date range: hit counts 1, mostly counts half.
+function avgBetween(a, b) { const v = Object.keys(state.bw).filter(d => d >= a && d <= b).map(d => +state.bw[d].kg); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; }
+function sleepBetween(a, b) { const v = Object.keys(state.bw).filter(d => d >= a && d <= b && state.bw[d].sleep != null).map(d => +state.bw[d].sleep); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; }
 function macroRate(a, b) {
   const days = Object.keys(state.macros).filter(d => d >= a && d <= b);
   const score = days.reduce((s_, d) => s_ + (state.macros[d] === 'hit' ? 1 : state.macros[d] === 'mostly' ? 0.5 : 0), 0);
@@ -428,9 +315,7 @@ function macroRate(a, b) {
 const MACRO_WORD = { hit: 'Hit', mostly: 'Mostly', no: 'Missed' };
 function calorieSuggestion(today) {
   const base = PLAN.macros[0][1];
-  const thisWeek = avgBetween(addDays(today, -6), today);
-  const lastWeek = avgBetween(addDays(today, -13), addDays(today, -7));
-  const twoAgo = avgBetween(addDays(today, -20), addDays(today, -14));
+  const thisWeek = avgBetween(addDays(today, -6), today), lastWeek = avgBetween(addDays(today, -13), addDays(today, -7)), twoAgo = avgBetween(addDays(today, -20), addDays(today, -14));
   if (thisWeek == null || lastWeek == null) return { kcal: base, tone: '', icon: 'ℹ️', msg: 'Keep weighing in daily. Suggestions start once you have two weeks of data.' };
   const change = thisWeek - lastWeek;
   if (change > PLAN.gainPerWeek + 0.10) return { kcal: base - PLAN.adjust, tone: 'warn', icon: '⬇️', msg: `Gaining ${signed(change)} kg/week, faster than the 0.25 kg target. Drop about ${PLAN.adjust} kcal from carbs.` };
@@ -445,36 +330,25 @@ function topSets() {
   const best = {};
   Object.values(state.gym).forEach(sess => (sess.sets || []).forEach(s => {
     if (!(s.reps > 0)) return;
-    const kg = +s.kg || 0, reps = +s.reps, score = kg * 1000 + reps;
-    const key = s.exercise + '|' + sess.date;
+    const kg = +s.kg || 0, reps = +s.reps, score = kg * 1000 + reps, key = s.exercise + '|' + sess.date;
     if (!best[key] || score > best[key].score) best[key] = { date: sess.date, exercise: s.exercise, session: sess.session, kg, reps, score, e1rm: kg * (1 + reps / 30) };
   }));
   const rows = Object.values(best).sort((a, b) => a.exercise.localeCompare(b.exercise) || a.date.localeCompare(b.date));
   const running = {};
-  rows.forEach(r => {
-    const prev = running[r.exercise];
-    r.isPb = prev != null && r.score > prev;
-    running[r.exercise] = Math.max(prev ?? -1, r.score);
-  });
+  rows.forEach(r => { const prev = running[r.exercise]; r.isPb = prev != null && r.score > prev; running[r.exercise] = Math.max(prev ?? -1, r.score); });
   return rows;
 }
-function allTimeBests(top) {
-  const m = {};
-  top.forEach(r => { if (!m[r.exercise] || r.score > m[r.exercise].score) m[r.exercise] = r; });
-  return Object.values(m).sort((a, b) => planOrder(a.exercise) - planOrder(b.exercise));
-}
+function allTimeBests(top) { const m = {}; top.forEach(r => { if (!m[r.exercise] || r.score > m[r.exercise].score) m[r.exercise] = r; }); return Object.values(m).sort((a, b) => planOrder(a.exercise) - planOrder(b.exercise)); }
 const recentPbs = (top, today, days = 7) => top.filter(r => r.isPb && r.date >= addDays(today, -(days - 1))).sort((a, b) => b.date.localeCompare(a.date));
-// What to aim for next time, from the last time you did this exercise.
 function progression(exercise, lastSets) {
   if (!lastSets || !lastSets.length || exercise === 'Bike') return null;
   const [lo, hi] = repRange(exercise), inc = increment(exercise);
-  const kg = Math.max(...lastSets.map(x => +x.kg || 0));
-  const top = lastSets.filter(x => (+x.kg || 0) === kg);
+  const kg = Math.max(...lastSets.map(x => +x.kg || 0)), top = lastSets.filter(x => (+x.kg || 0) === kg);
   if (top.every(x => x.reps >= hi)) return inc ? { kg: kg + inc, text: `Try ${n1(kg + inc)} kg × ${lo}-${hi}` } : { kg, text: `Add a rep: aim for ${hi + 1}+` };
   if (top.some(x => x.reps < lo)) return { kg, text: `Stay at ${n1(kg)} kg, get every set to ${lo}+` };
   return { kg, text: `Stay at ${n1(kg)} kg, push toward ${hi} reps` };
 }
-// Weekly sets by session type (push / pull / legs).
+function sessionsDone() { const set = new Set(); Object.values(state.gym).forEach(s => { if (s.session === 'Rest' || (s.sets || []).some(x => x.reps > 0)) set.add(s.date + '|' + s.session); }); return set; }
 function weeklyVolume() {
   return Array.from({ length: PLAN.weeks }, (_, i) => {
     const [a, b] = weekDates(i + 1), v = { week: i + 1, Push: 0, Pull: 0, Legs: 0 };
@@ -482,107 +356,52 @@ function weeklyVolume() {
     return v;
   });
 }
-// Sessions and runs done against planned, per phase, counting only days up to today.
-function adherence(today) {
-  const starts = phaseStarts(), done = sessionsDone();
-  return starts.map((ph, i) => {
-    const a = ph.date, b = i + 1 < starts.length ? addDays(starts[i + 1].date, -1) : PLAN.end;
-    const upto = today < b ? today : b;
-    if (a > today) return { name: ph.name, a, b, started: false };
-    let gymPlanned = 0, runPlanned = 0;
-    for (let d = a; d <= upto; d = addDays(d, 1)) { if (gymFor(d) !== 'Rest') gymPlanned++; if (runFor(d)) runPlanned++; }
-    const gymDone = [...done].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= upto && sess !== 'Rest'; }).length;
-    const runDone = state.runs.filter(r => r.date >= a && r.date <= upto).length;
-    return { name: ph.name, a, b, started: true, gymPlanned, gymDone, runPlanned, runDone, macros: macroRate(a, upto), days: diffDays(upto, a) + 1 };
-  });
-}
-// Latest hard-run result of a type, for the "ready for Maintain?" check.
-function lastRun(type) { return [...state.runs].filter(r => r.type === type).sort((a, b) => b.date.localeCompare(a.date))[0] || null; }
-function weighStreak(today) {
-  let n = 0; for (let d = today; state.bw[d]; d = addDays(d, -1)) n++;
-  if (!n && state.bw[addDays(today, -1)]) { for (let d = addDays(today, -1); state.bw[d]; d = addDays(d, -1)) n++; }
-  return n;
-}
-// Where the 7-day average lands on 3 Jan if the last two weeks' rate continues.
-function projection(rows, today) {
-  if (rows.length < 8) return null;
-  const last = rows[rows.length - 1];
-  const ago = rows.filter(r => r.date <= addDays(last.date, -7)).pop();
-  if (!ago) return null;
-  const perWeek = (last.avg7 - ago.avg7) / (diffDays(last.date, ago.date) / 7);
-  return { perWeek, final: last.avg7 + perWeek * diffDays(PLAN.end, last.date) / 7 };
-}
-function sessionsDone() {
-  const set = new Set();
-  Object.values(state.gym).forEach(s => { if (s.session === 'Rest' || (s.sets || []).some(x => x.reps > 0)) set.add(s.date + '|' + s.session); });
-  return set;
-}
 function weeklyReview() {
   const done = sessionsDone(); let prev = null; const rows = [];
   for (let w = 1; w <= PLAN.weeks; w++) {
-    const [a, b] = weekDates(w), phase = phaseForDate(a);
-    const avg = avgBetween(a, b);
-    const change = avg != null && prev != null ? avg - prev : null;
+    const [a, b] = weekDates(w), avg = avgBetween(a, b), change = avg != null && prev != null ? avg - prev : null;
     if (avg != null) prev = avg;
     const gymN = [...done].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= b && sess !== 'Rest'; }).length;
-    const runs = state.runs.filter(r => r.date >= a && r.date <= b);
-    const feel = runs.length ? runs.reduce((s, r) => s + (+r.feel || 0), 0) / runs.length : null;
-    rows.push({ w, a, b, phase: phase.name, avg, change, target: targetKg(addDays(a, 3)), gymN, runN: runs.length, runPlan: phase.runs, feel, macros: macroRate(a, b) });
+    rows.push({ w, a, b, avg, change, target: targetKg(addDays(a, 3)), gymN, macros: macroRate(a, b), sleep: sleepBetween(a, b) });
   }
   return rows;
+}
+function adherence(today) {
+  const a = PLAN.start, upto = today < PLAN.end ? today : PLAN.end;
+  if (a > today) return null;
+  let gymPlanned = 0; for (let d = a; d <= upto; d = addDays(d, 1)) if (gymFor(d) !== 'Rest') gymPlanned++;
+  const gymDone = [...sessionsDone()].filter(k => { const [d, sess] = k.split('|'); return d >= a && d <= upto && sess !== 'Rest'; }).length;
+  return { gymPlanned, gymDone, macros: macroRate(a, upto), days: diffDays(upto, a) + 1 };
+}
+function weighStreak(today) { let n = 0; for (let d = today; state.bw[d]; d = addDays(d, -1)) n++; if (!n && state.bw[addDays(today, -1)]) { for (let d = addDays(today, -1); state.bw[d]; d = addDays(d, -1)) n++; } return n; }
+function projection(rows) {
+  if (rows.length < 8) return null;
+  const last = rows[rows.length - 1], ago = rows.filter(r => r.date <= addDays(last.date, -7)).pop();
+  if (!ago) return null;
+  const perWeek = (last.avg7 - ago.avg7) / (diffDays(last.date, ago.date) / 7);
+  return { perWeek, final: last.avg7 + perWeek * diffDays(PLAN.end, last.date) / 7 };
 }
 
 /* ===================== Charts ===================== */
 const charts = {};
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-const X0 = '2026-08-01';                 // x axis = days since this date
+const X0 = '2026-08-01';
 const xOf = s => diffDays(s, X0);
 const dateOfX = x => addDays(X0, Math.round(x));
 function baseOptions(yTitle) {
   const text = css('--muted'), grid = css('--grid');
-  return {
-    responsive: true, maintainAspectRatio: false, animation: false,
-    interaction: { mode: 'nearest', intersect: false },
-    plugins: {
-      legend: { position: 'top', align: 'start', labels: { color: text, boxWidth: 10, boxHeight: 10, usePointStyle: true, font: { family: css('--body'), size: 12 } } },
-      tooltip: { titleFont: { family: css('--body') }, bodyFont: { family: css('--body') } },
-    },
-    scales: {
-      x: { type: 'linear', grid: { display: false }, border: { color: grid }, ticks: { color: text, maxRotation: 0, autoSkip: true, callback: v => fShort(dateOfX(v)), font: { family: css('--body'), size: 11 } } },
-      y: { grid: { color: grid }, border: { display: false }, ticks: { color: text, font: { family: css('--body'), size: 11 } }, title: { display: !!yTitle, text: yTitle, color: text, font: { family: css('--body'), size: 11 } } },
-    },
-  };
+  return { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'nearest', intersect: false },
+    plugins: { legend: { position: 'top', align: 'start', labels: { color: text, boxWidth: 10, boxHeight: 10, usePointStyle: true, font: { family: css('--body'), size: 12 } } }, tooltip: { titleFont: { family: css('--body') }, bodyFont: { family: css('--body') } } },
+    scales: { x: { type: 'linear', grid: { display: false }, border: { color: grid }, ticks: { color: text, maxRotation: 0, autoSkip: true, callback: v => fShort(dateOfX(v)), font: { family: css('--body'), size: 11 } } },
+              y: { grid: { color: grid }, border: { display: false }, ticks: { color: text, font: { family: css('--body'), size: 11 } }, title: { display: !!yTitle, text: yTitle, color: text, font: { family: css('--body'), size: 11 } } } } };
 }
-function mount(id, config) {
-  const el = document.getElementById(id);
-  if (!el || typeof Chart === 'undefined') return;
-  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
-  charts[id] = new Chart(el, config);
-}
-// Draws a thin vertical line and a label where each phase starts.
-const phasePlugin = {
-  id: 'phases',
-  afterDraw(chart) {
-    const { ctx, chartArea: area, scales: { x } } = chart;
-    ctx.save(); ctx.font = `11px ${css('--body')}`; ctx.fillStyle = css('--muted'); ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
-    let lastLabelEnd = -Infinity;
-    phaseStarts().forEach(p => {
-      const px = x.getPixelForValue(xOf(p.date));
-      if (px < area.left || px > area.right) return;
-      ctx.beginPath(); ctx.moveTo(px, area.top); ctx.lineTo(px, area.bottom); ctx.stroke();
-      const w = ctx.measureText(p.name).width;
-      if (px + 4 > lastLabelEnd && px + 4 + w < area.right) { ctx.fillText(p.name, px + 4, area.top + 11); lastLabelEnd = px + 4 + w + 8; }
-    });
-    ctx.restore();
-  },
-};
+function mount(id, config) { const el = $(id); if (!el || typeof Chart === 'undefined') return; if (charts[id]) { charts[id].destroy(); delete charts[id]; } charts[id] = new Chart(el, config); }
 function bodyweightChart(id, rows) {
   const first = rows.length ? (rows[0].date < PLAN.start ? rows[0].date : addDays(PLAN.start, -7)) : addDays(PLAN.start, -7);
   const targetPts = []; for (let d = first; d <= PLAN.end; d = addDays(d, 1)) targetPts.push({ x: xOf(d), y: targetKg(d) });
-  const o = baseOptions('Bodyweight (kg)');
-  o.scales.x.min = xOf(first); o.scales.x.max = xOf(PLAN.end);
+  const o = baseOptions('Bodyweight (kg)'); o.scales.x.min = xOf(first); o.scales.x.max = xOf(PLAN.end);
   o.plugins.tooltip.callbacks = { title: items => fDay(dateOfX(items[0].parsed.x)), label: c => `${c.dataset.label}: ${n2(c.parsed.y)} kg` };
-  mount(id, { type: 'line', plugins: [phasePlugin], data: { datasets: [
+  mount(id, { type: 'line', data: { datasets: [
     { label: 'Daily weigh-in', data: rows.map(r => ({ x: xOf(r.date), y: r.kg })), showLine: false, pointRadius: 4, pointHoverRadius: 6, backgroundColor: css('--accent'), borderColor: css('--accent') },
     { label: '7-day average', data: rows.map(r => ({ x: xOf(r.date), y: r.avg7 })), borderColor: css('--orange'), backgroundColor: css('--orange'), borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: .2 },
     { label: 'Target (+0.25 kg/week)', data: targetPts, borderColor: css('--grey'), backgroundColor: css('--grey'), borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 0 },
@@ -591,85 +410,27 @@ function bodyweightChart(id, rows) {
 function exerciseChart(id, rows, metric) {
   const o = baseOptions(metric === 'kg' ? 'Top set (kg)' : 'Estimated 1RM (kg)');
   o.plugins.tooltip.callbacks = { title: items => fDay(dateOfX(items[0].parsed.x)), label: c => c.dataset.label === 'New best' ? 'New best' : `${n1(c.raw.kg)} kg × ${c.raw.reps} reps` };
-  const pts = rows.map(r => ({ x: xOf(r.date), y: metric === 'kg' ? r.kg : r.e1rm, kg: r.kg, reps: r.reps }));
-  const pbs = rows.filter(r => r.isPb).map(r => ({ x: xOf(r.date), y: metric === 'kg' ? r.kg : r.e1rm, kg: r.kg, reps: r.reps }));
+  const pt = r => ({ x: xOf(r.date), y: metric === 'kg' ? r.kg : r.e1rm, kg: r.kg, reps: r.reps });
   mount(id, { type: 'line', data: { datasets: [
-    { label: metric === 'kg' ? 'Top set' : 'Est. 1RM', data: pts, borderColor: css('--accent'), backgroundColor: css('--accent'), borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, tension: .15 },
-    { label: 'New best', data: pbs, showLine: false, pointStyle: 'star', pointRadius: 9, pointHoverRadius: 11, borderWidth: 2, borderColor: css('--good'), backgroundColor: css('--good') },
+    { label: metric === 'kg' ? 'Top set' : 'Est. 1RM', data: rows.map(pt), borderColor: css('--accent'), backgroundColor: css('--accent'), borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, tension: .15 },
+    { label: 'New best', data: rows.filter(r => r.isPb).map(pt), showLine: false, pointStyle: 'star', pointRadius: 9, pointHoverRadius: 11, borderWidth: 2, borderColor: css('--good'), backgroundColor: css('--good') },
   ] }, options: o });
 }
+function categoryOptions(yTitle) { const o = baseOptions(yTitle); o.scales.x = { type: 'category', grid: { display: false }, border: { color: css('--grid') }, ticks: { color: css('--muted'), font: { family: css('--body'), size: 11 } } }; return o; }
 function volumeChart(id, vol) {
-  const rows = vol.filter(v => v.Push + v.Pull + v.Legs > 0);
-  const o = baseOptions('Sets per week');
-  o.scales.x = { type: 'category', grid: { display: false }, border: { color: css('--grid') }, ticks: { color: css('--muted'), font: { family: css('--body'), size: 11 } } };
+  const rows = vol.filter(v => v.Push + v.Pull + v.Legs > 0), o = categoryOptions('Sets per week');
   o.plugins.tooltip.callbacks = { label: c => `${c.dataset.label}: ${c.parsed.y} sets` };
   const ds = (label, color) => ({ label, data: rows.map(r => r[label]), backgroundColor: css(color), borderRadius: 3, maxBarThickness: 22 });
   mount(id, { type: 'bar', data: { labels: rows.map(r => 'Wk ' + r.week), datasets: [ds('Push', '--accent'), ds('Pull', '--orange'), ds('Legs', '--aqua')] }, options: o });
 }
 function weeklyChart(id, review) {
-  const rows = review.filter(r => r.change != null);
-  const o = baseOptions('Change vs previous week (kg)');
-  o.scales.x = { type: 'category', grid: { display: false }, border: { color: css('--grid') }, ticks: { color: css('--muted'), font: { family: css('--body'), size: 11 } } };
+  const rows = review.filter(r => r.change != null), o = categoryOptions('Change vs previous week (kg)');
   o.plugins.tooltip.callbacks = { label: c => `${c.dataset.label}: ${signed(c.parsed.y)} kg` };
   mount(id, { type: 'bar', data: { labels: rows.map(r => 'Wk ' + r.w), datasets: [
     { label: 'Weekly change', data: rows.map(r => r.change), backgroundColor: css('--accent'), borderRadius: 4, maxBarThickness: 28 },
     { type: 'line', label: 'Target +0.25 kg', data: rows.map(() => PLAN.gainPerWeek), borderColor: css('--grey'), borderDash: [6, 4], borderWidth: 2, pointRadius: 0 },
   ] }, options: o });
 }
-
-/* ===================== Views ===================== */
-const $ = id => document.getElementById(id);
-let activeTab = 'dashboard';
-const TABS = ['dashboard', 'gym', 'weight', 'run', 'progress', 'weekly', 'photos', 'data'];
-const built = { gym: false, weight: false, run: false };   // forms are built once, not on every data change
-const ui = { metric: 'kg' };
-
-function toast(msg) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200);
-}
-function showTab(name, push) {
-  if (!TABS.includes(name)) name = 'dashboard';
-  activeTab = name;
-  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
-  TABS.forEach(t => { $('view-' + t).hidden = t !== name; });
-  if (push && location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
-  try { localStorage.setItem(LS_KEY + '-tab', name); } catch (e) {}
-  renderTab(name);
-  window.scrollTo({ top: 0 });
-}
-function refresh(force) {
-  if (force) { built.gym = built.weight = built.run = false; }
-  renderTab(activeTab);
-}
-function renderTab(name) {
-  if (name === 'dashboard') renderDashboard();
-  else if (name === 'gym') {
-    if (!built.gym) { buildGymForm(); built.gym = true; }
-    else if (gymForm.builtFor !== todayIso() && !gymForm.dirty) { buildGymForm(); }   // came back on a new day
-    else if (!gymForm.dirty) fillGymRows();                                            // data arrived after the form was built
-  }
-  else if (name === 'weight') { if (!built.weight) { buildWeightForm(); built.weight = true; } renderWeightRecent(); }
-  else if (name === 'run') { if (!built.run) { buildRunForm(); built.run = true; } renderRunRecent(); }
-  else if (name === 'progress') renderProgress();
-  else if (name === 'weekly') renderWeekly();
-  else if (name === 'photos') renderPhotos();
-  else if (name === 'data') renderData();
-}
-
-/* ---------- Dashboard ---------- */
-// The 14-week track under the title: one segment per week, coloured by phase, with a marker for today.
-function renderTrack(today) {
-  const status = planStatus(today), wk = weekNumber(today);
-  const segs = Array.from({ length: PLAN.weeks }, (_, i) => { const [a, b] = weekDates(i + 1); return `<div class="seg ${phaseForDate(a).name} ${b < today ? 'past' : ''}" title="Week ${i + 1}: ${fShort(a)} – ${fShort(b)}"></div>`; }).join('');
-  const pct = Math.min(100, Math.max(0, 100 * (diffDays(today, PLAN.start) + 0.5) / (PLAN.weeks * 7)));
-  const label = status === 'before' ? `Starts in ${diffDays(PLAN.start, today)} days` : status === 'after' ? 'Done' : `Today · week ${wk}`;
-  const starts = phaseStarts();
-  $('track').innerHTML = `<div class="track">${segs}<div class="now" style="left:${pct}%" title="${label}"></div></div>
-    <div class="tlegend"><span style="--c:color-mix(in srgb,var(--accent) 45%,var(--surface-3))">Build ${fShort(starts[0].date)}</span><span style="--c:color-mix(in srgb,var(--orange) 45%,var(--surface-3))">Sharpen ${fShort(starts[1].date)}</span><span style="--c:color-mix(in srgb,var(--aqua) 45%,var(--surface-3))">Maintain ${fShort(starts[2].date)}</span><span style="--c:var(--text)">${label}</span></div>
-    <div class="tlabels"><span class="B"><b>Build</b>${fShort(starts[0].date)} · 5 runs/wk</span><span class="S"><b>Sharpen</b>${fShort(starts[1].date)} · 5 runs/wk</span><span class="M"><b>Maintain</b>${fShort(starts[2].date)} · 3 runs/wk · to ${fShort(PLAN.end)}</span></div>`;
-}
-// A tiny line for the last two weeks of weigh-ins inside the Latest tile.
 function spark(id, values) {
   const c = $(id); if (!c || values.length < 2) return;
   const w = c.clientWidth || 140, h = 26; c.width = w * 2; c.height = h * 2; const ctx = c.getContext('2d'); ctx.scale(2, 2);
@@ -678,67 +439,88 @@ function spark(id, values) {
   ctx.strokeStyle = css('--accent'); ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
   const last = pts[pts.length - 1]; ctx.fillStyle = css('--accent'); ctx.beginPath(); ctx.arc(last[0], last[1], 2.5, 0, Math.PI * 2); ctx.fill();
 }
+
+/* ===================== Views ===================== */
+const $ = id => document.getElementById(id);
+let activeTab = 'dashboard';
+const TABS = ['dashboard', 'gym', 'weight', 'progress', 'weekly', 'photos', 'data'];
+const built = { gym: false, weight: false };
+const ui = { metric: 'kg' };
 const sec = (title, sub) => `<div class="sec"><h2>${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ''}</div>`;
 
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200); }
+function showTab(name, push) {
+  if (!TABS.includes(name)) name = 'dashboard';
+  activeTab = name;
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
+  TABS.forEach(t => { $('view-' + t).hidden = t !== name; });
+  if (push && location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+  try { localStorage.setItem(LS_KEY + '-tab', name); } catch (e) {}
+  renderTab(name); window.scrollTo({ top: 0 });
+}
+function refresh(force) { if (force) { built.gym = built.weight = false; } renderTab(activeTab); }
+function renderTab(name) {
+  if (name === 'dashboard') renderDashboard();
+  else if (name === 'gym') { if (!built.gym) { buildGymForm(); built.gym = true; } else if (gymForm.builtFor !== todayIso() && !gymForm.dirty) buildGymForm(); else if (!gymForm.dirty) fillGymRows(); }
+  else if (name === 'weight') { if (!built.weight) { buildWeightForm(); built.weight = true; } renderWeightRecent(); }
+  else if (name === 'progress') renderProgress();
+  else if (name === 'weekly') renderWeekly();
+  else if (name === 'photos') renderPhotos();
+  else if (name === 'data') renderData();
+}
+
+/* ---------- Header track ---------- */
+function renderTrack(today) {
+  const status = planStatus(today), wk = weekNumber(today);
+  const segs = Array.from({ length: PLAN.weeks }, (_, i) => { const [a, b] = weekDates(i + 1); return `<div class="seg ${b < today ? 'past' : (a > today ? 'future' : '')}" title="Week ${i + 1}: ${fShort(a)} – ${fShort(b)}"></div>`; }).join('');
+  const pct = Math.min(100, Math.max(0, 100 * (diffDays(today, PLAN.start) + 0.5) / (PLAN.weeks * 7)));
+  const label = status === 'before' ? `Starts in ${diffDays(PLAN.start, today)} days` : status === 'after' ? 'Plan complete' : `Week ${wk} of ${PLAN.weeks} · ${diffDays(PLAN.end, today)} days to go`;
+  $('track').innerHTML = `<div class="track">${segs}<div class="now" style="left:${pct}%" title="${label}"></div></div>
+    <div class="tlabels"><span><b>${fShort(PLAN.start)}</b> · ${n1(PLAN.startKg)} kg</span><span><b>${label}</b></span><span><b>${fShort(PLAN.end)}</b> · 89-90 kg</span></div>`;
+}
+
+/* ---------- Dashboard ---------- */
 function renderDashboard() {
-  const today = todayIso(), wk = weekNumber(today), phase = phaseForDate(today), status = planStatus(today);
+  const today = todayIso(), wk = weekNumber(today), status = planStatus(today);
   const done = sessionsDone(), top = topSets(), pbs = recentPbs(top, today), bests = allTimeBests(top);
-  const session = gymFor(today), run = runFor(today);
-  const gymDone = done.has(today + '|' + session), runDone = state.runs.some(r => r.date === today);
+  const session = gymFor(today), gymDone = done.has(today + '|' + session);
   const rows = bwSeries(), latest = rows[rows.length - 1];
-  const sug = calorieSuggestion(today), proj = projection(rows, today), streak = weighStreak(today);
+  const sug = calorieSuggestion(today), proj = projection(rows), streak = weighStreak(today);
   const todayBw = state.bw[today] || {};
-  const lastHard = run && run[0] !== 'Easy' ? lastRun(run[0]) : null;
   $('subline').textContent = `28 Sep 2026 to 3 Jan 2027 · 14 weeks · ${fLong(today)}`;
   renderTrack(today);
 
-  // Top row: where you are in the plan.
-  const kpis = status === 'before'
-    ? [['Phase', 'Not started', `first up: ${PLAN.phases[0].name}`], ['Starts in', `${diffDays(PLAN.start, today)} <small>days</small>`, `Mon ${fShort(PLAN.start)}`], ['Runs per week', `${phase.runs}`, 'in Build'], ['Target by 3 Jan', '89-90 <small>kg</small>', `from ${n1(PLAN.startKg)} kg`]]
-    : status === 'after'
-    ? [['Phase', 'Finished', 'plan complete'], ['Week', `14 <small>/ 14</small>`, ''], ['Days to 3 Jan', '0', ''], ['Target by 3 Jan', '89-90 <small>kg</small>', `from ${n1(PLAN.startKg)} kg`]]
-    : [['Phase', phase.name, `${phase.first === phase.last ? 'week ' + phase.first : 'weeks ' + phase.first + '-' + phase.last}`], ['Week', `${wk} <small>/ 14</small>`, `${fShort(weekDates(wk)[0])} – ${fShort(weekDates(wk)[1])}`], ['Days to 3 Jan', `${diffDays(PLAN.end, today)}`, `${Math.ceil(diffDays(PLAN.end, today) / 7)} weeks left`], ['Runs per week', `${phase.runs}`, phase.name === 'Maintain' ? 'Mon · Wed · Sun' : 'Mon · Tue · Wed · Fri · Sun']];
-
-  // This week's table plus the counts for its header.
   const monday = addDays(today, -weekday(today)), sunday = addDays(monday, 6);
-  let gymPlanned = 0, gymHit = 0, runPlanned = 0, runHit = 0;
+  let gymPlanned = 0, gymHit = 0;
   const weekRows = Array.from({ length: 7 }, (_, i) => {
-    const d = addDays(monday, i), g = gymFor(d), r = runFor(d);
-    const gd = done.has(d + '|' + g), rd = state.runs.some(x => x.date === d);
-    if (g !== 'Rest') { gymPlanned++; if (gd) gymHit++; } if (r) { runPlanned++; if (rd) runHit++; }
-    const state_ = d < today ? (gd || g === 'Rest' ? '' : '<span class="faint">missed</span>') : '';
-    return `<tr class="${d === today ? 'today' : ''}"><td><b>${WD[i]}</b> <span class="sub">${fShort(d)}</span>${d === today ? ' <span class="pill accent">today</span>' : ''}</td><td>${g}</td><td>${gd ? '✅' : state_}</td><td>${r ? `<b>${r[0]}</b> <span class="sub">${r[1]}</span>` : '<span class="faint">—</span>'}</td><td>${rd ? '✅' : (r ? (d < today ? '<span class="faint">missed</span>' : '') : '<span class="faint">—</span>')}</td></tr>`;
+    const d = addDays(monday, i), g = gymFor(d), gd = done.has(d + '|' + g), m = state.macros[d];
+    if (g !== 'Rest') { gymPlanned++; if (gd) gymHit++; }
+    const missed = d < today && !gd && g !== 'Rest' ? '<span class="faint">missed</span>' : '';
+    return `<tr class="${d === today ? 'today' : ''}"><td><b>${WD[i]}</b> <span class="sub">${fShort(d)}</span>${d === today ? ' <span class="pill accent">today</span>' : ''}</td><td>${g}</td><td>${gd ? '✅' : missed}</td><td>${m ? MACRO_WORD[m] : (d < today ? '<span class="faint">—</span>' : '')}</td><td class="num">${state.bw[d] ? n1(state.bw[d].kg) : '<span class="faint">—</span>'}</td></tr>`;
   }).join('');
+  const kpis = status === 'before'
+    ? [['Starts in', `${diffDays(PLAN.start, today)} <small>days</small>`, `Mon ${fShort(PLAN.start)}`], ['Weeks', '14', `to ${fShort(PLAN.end)}`], ['Target by 3 Jan', '89-90 <small>kg</small>', `from ${n1(PLAN.startKg)} kg`], ['Gym this week', `${gymHit} <small>/ ${gymPlanned}</small>`, 'Sunday off']]
+    : status === 'after'
+    ? [['Plan', 'Finished', 'well done'], ['Weeks', '14 <small>/ 14</small>', ''], ['Target by 3 Jan', '89-90 <small>kg</small>', `from ${n1(PLAN.startKg)} kg`], ['Gym this week', `${gymHit} <small>/ ${gymPlanned}</small>`, '']]
+    : [['Week', `${wk} <small>/ 14</small>`, `${fShort(weekDates(wk)[0])} – ${fShort(weekDates(wk)[1])}`], ['Days to 3 Jan', `${diffDays(PLAN.end, today)}`, `${Math.ceil(diffDays(PLAN.end, today) / 7)} weeks left`], ['Target by 3 Jan', '89-90 <small>kg</small>', `today's line: ${n2(targetKg(today))} kg`], ['Gym this week', `${gymHit} <small>/ ${gymPlanned}</small>`, 'Sunday off']];
 
-  // Exercise list with the sets × reps to work in and your last top set.
-  const bestOf = ex => bests.find(b => b.exercise === ex);
   const lastTop = ex => top.filter(r => r.exercise === ex).sort((a, b) => b.date.localeCompare(a.date))[0];
-  const exList = session === 'Rest' ? '' : PLAN.sessions[session].map(e => {
-    const [lo, hi] = repRange(e), n = defaultSets(e, phase.name), lt = lastTop(e);
-    return `<li><span>${e}</span><span class="sub">${e === 'Bike' ? (phase.name === 'Maintain' ? '10 min' : 'skip') : `${n} × ${lo}-${hi}`}${lt ? ` · last ${n1(lt.kg)} × ${lt.reps}` : ''}</span></li>`;
-  }).join('');
-  const setCount = session === 'Rest' ? 0 : PLAN.sessions[session].reduce((s_, e) => s_ + (e === 'Bike' ? 0 : defaultSets(e, phase.name)), 0);
-
-  // Macro split by calories.
-  const P = PLAN.macros[1][1] * 4, F = PLAN.macros[2][1] * 9, C = PLAN.macros[3][1] * 4, T = P + F + C;
+  const exList = session === 'Rest' ? '' : PLAN.sessions[session].map(e => { const [lo, hi] = repRange(e), lt = lastTop(e); return `<li><span>${e}</span><span class="sub">${e === 'Bike' ? '10 min' : `${defaultSets(e)} × ${lo}-${hi}`}${lt ? ` · last ${n1(lt.kg)} × ${lt.reps}` : ''}</span></li>`; }).join('');
+  const setCount = session === 'Rest' ? 0 : PLAN.sessions[session].reduce((s_, e) => s_ + (e === 'Bike' ? 0 : defaultSets(e)), 0);
+  const Pk = PLAN.macros[1][1] * 4, Fk = PLAN.macros[2][1] * 9, Ck = PLAN.macros[3][1] * 4, Tk = Pk + Fk + Ck;
   const weekAvg = avgBetween(addDays(today, -6), today), lastWeekAvg = avgBetween(addDays(today, -13), addDays(today, -7));
+  const wkM = macroRate(monday, sunday), m28 = macroRate(addDays(today, -27), today);
 
   $('view-dashboard').innerHTML = `
-    <div class="kpis">${kpis.map(([l, v, d]) => `<div class="kpi ${l === 'Phase' && status === 'during' ? 'tone-' + phase.name : ''}"><div class="label">${l}</div><div class="value">${v}</div>${d ? `<div class="delta">${d}</div>` : ''}</div>`).join('')}</div>
+    <div class="kpis">${kpis.map(([l, v, d]) => `<div class="kpi"><div class="label">${l}</div><div class="value">${v}</div>${d ? `<div class="delta">${d}</div>` : ''}</div>`).join('')}</div>
     ${status === 'before' ? `<p class="note" style="margin-top:12px">The plan starts on Monday ${fShort(PLAN.start)}. Log weigh-ins now so the chart has a baseline.</p>` : ''}
-    ${state.settings.maintainStart ? `<p class="sub" style="margin-top:8px">Maintain phase set to start ${fDay(state.settings.maintainStart)} (change on the Data tab).</p>` : ''}
 
     <div class="card" style="margin-top:14px">
       <div class="head"><h3>Quick log</h3><span class="sub">${fDay(today)}${todayBw.kg ? ' · <span class="pill good">weighed in</span>' : ''}</span></div>
       <div class="quick">
         <div class="field"><label for="qKg">Weight (kg)</label><input type="number" id="qKg" step="0.1" min="40" max="200" inputmode="decimal" value="${todayBw.kg ? n1(todayBw.kg) : (latest ? n1(latest.kg) : n1(PLAN.startKg))}"></div>
         <div class="field"><label for="qSleep">Sleep (h)</label><input type="number" id="qSleep" step="0.5" min="0" max="14" inputmode="decimal" value="${todayBw.sleep ?? ''}" placeholder="7.5"></div>
-        <div class="field"><label for="qSore">Soreness</label><select id="qSore">${['', 1, 2, 3, 4, 5].map(v => `<option value="${v}" ${String(todayBw.sore ?? '') === String(v) ? 'selected' : ''}>${v === '' ? '–' : v + (v === 1 ? ' fresh' : v === 5 ? ' wrecked' : '')}</option>`).join('')}</select></div>
         <div class="field"><button class="btn primary" id="qSave">${todayBw.kg ? 'Update' : 'Save'}</button></div>
-      </div>
-      <div class="row" style="margin-top:12px;align-items:center">
-        <div class="field" style="flex:0 1 auto"><label>Macros today</label><span class="tri" id="qMacros">${['hit', 'mostly', 'no'].map(v => `<button class="${v}" data-m="${v}" aria-pressed="${state.macros[today] === v}">${MACRO_WORD[v]}</button>`).join('')}</span></div>
-        <span class="sub">One tap in the evening: 3,700 kcal, 195 g protein. Tap again to clear.</span>
       </div>
     </div>
 
@@ -746,26 +528,17 @@ function renderDashboard() {
     <div class="grid2">
       <div class="card">
         <div class="head"><h3>Gym · ${session}</h3>${gymDone ? '<span class="pill good">logged</span>' : (session === 'Rest' ? '<span class="pill">rest</span>' : `<span class="pill">${PLAN.sessions[session].length} exercises · ${setCount} sets</span>`)}</div>
-        ${session === 'Rest' ? `<p class="sub" style="margin:0">Rest day. No lifting. ${runFor(today) ? 'Easy run only.' : ''}</p>${gymDone ? '' : '<div class="actions"><button class="btn" onclick="markRest(todayIso())">Mark rest day done</button></div>'}`
+        ${session === 'Rest' ? `<p class="sub" style="margin:0">Rest day. Eat well, sleep, and come back Monday for Push A.</p>${gymDone ? '' : '<div class="actions"><button class="btn" onclick="markRest(todayIso())">Mark rest day done</button></div>'}`
         : `<ul class="ex">${exList}</ul>
-        <div class="foot"><span class="sub">${phase.name === 'Maintain' ? 'Full leg volume, push the lifts.' : 'Sets × reps to work in. Targets appear in the log.'}</span><button class="btn primary" onclick="showTab('gym', true)">${gymDone ? 'Open session' : 'Log this session'}</button></div>`}
+        <div class="foot"><span class="sub">Sets × reps to work in. Targets appear in the log.</span><button class="btn primary" onclick="showTab('gym', true)">${gymDone ? 'Open session' : 'Log this session'}</button></div>`}
       </div>
       <div class="card">
-        <div class="head"><h3>Run · ${run ? run[0] : 'none'}</h3>${runDone ? '<span class="pill good">logged</span>' : (run ? `<span class="pill">${phase.name} · 30+ min</span>` : '')}</div>
-        ${run ? `<ol class="steps">
-          <li><span>Warm-up · <b>10 min</b> easy jog + leg swings</span></li>
-          <li class="main"><span><b>${run[0]} · ${run[1]}</b><br><span class="sub">${PLAN.runGuide[run[0]].what} ${PLAN.runGuide[run[0]].how}${run[1].includes('shuttle') && run[0] !== 'Shuttles' ? ' Then the shuttles: ' + PLAN.runGuide.Shuttles.what + ' ' + PLAN.runGuide.Shuttles.how : ''}</span><br><span class="pill" style="margin-top:6px">Effort ${PLAN.runGuide[run[0]].effort}</span></span></li>
-          <li><span>Cool-down · <b>10 min</b> easy jog</span></li>
-        </ol>
-        <div class="foot"><span class="sub">${lastHard ? `Last ${lastHard.type.toLowerCase()} ${fShort(lastHard.date)}: ${lastHard.done != null ? `${lastHard.done}/${lastHard.planned} done · ` : ''}felt ${lastHard.feel}/10` : 'Log reps done and how it felt.'}</span><button class="btn primary" onclick="showTab('run', true)">${runDone ? 'Log another' : 'Log this run'}</button></div>`
-        : '<p class="sub" style="margin:0">No run planned today. Legs get a break.</p>'}
+        <div class="head"><h3>Diet · today</h3><span class="pill ${state.macros[today] ? (state.macros[today] === 'hit' ? 'good' : '') : ''}">${state.macros[today] ? MACRO_WORD[state.macros[today]] : 'not marked yet'}</span></div>
+        <dl class="dl"><dt>Calories</dt><dd><b>${sug.kcal.toLocaleString('en-GB')} kcal</b>${sug.kcal !== PLAN.macros[0][1] ? ` <span class="sub">(${sug.kcal > PLAN.macros[0][1] ? '+' : ''}${sug.kcal - PLAN.macros[0][1]} vs plan)</span>` : ''}</dd><dt>Protein</dt><dd>${PLAN.macros[1][1]} g</dd><dt>Fat</dt><dd>${PLAN.macros[2][1]} g</dd><dt>Carbs</dt><dd>${PLAN.macros[3][1]} g${sug.kcal < PLAN.macros[0][1] ? ' <span class="sub">(take the 200 kcal from here, about 50 g)</span>' : ''}</dd></dl>
+        <div class="foot"><span class="sub">Did you hit it? Tap once in the evening.</span><span class="tri" id="qMacros">${['hit', 'mostly', 'no'].map(v => `<button class="${v}" data-m="${v}" aria-pressed="${state.macros[today] === v}">${MACRO_WORD[v]}</button>`).join('')}</span></div>
       </div>
     </div>
-    <details><summary>Tips for the ${phase.name} phase</summary>
-      <ul class="plain">${PLAN.tips[phase.name].map(t => `<li>${t}</li>`).join('')}</ul>
-      <p class="sub" style="margin:10px 0 2px"><b>Running reminders</b></p>
-      <ul class="plain">${PLAN.runNotes.map(t => `<li>${t}</li>`).join('')}</ul>
-    </details>
+    <details><summary>Plan rules</summary><ul class="plain">${PLAN.rules.map(t => `<li>${t}</li>`).join('')}</ul></details>
 
     ${sec('Bodyweight', latest ? `${rows.length} weigh-ins · target +0.25 kg/week` : '')}
     ${!latest ? '<p class="note">No weigh-ins yet. Use the quick log above after your first morning weigh-in.</p>' : `
@@ -781,63 +554,53 @@ function renderDashboard() {
 
     ${sec('Macros', 'lean bulk targets')}
     <div class="kpis" style="margin-top:0">
-      ${PLAN.macros.map(([l, v, u], i) => `<div class="kpi"><div class="label">${l}</div><div class="value">${(i === 0 ? sug.kcal : v).toLocaleString('en-GB')} <small>${u}</small></div><div class="delta">${i === 0 ? (sug.kcal !== v ? `${sug.kcal > v ? '+' : ''}${sug.kcal - v} kcal vs plan` : 'as planned') : i === 1 ? `${(P / T * 100).toFixed(0)}% of calories` : i === 2 ? `${(F / T * 100).toFixed(0)}% of calories` : `${(C / T * 100).toFixed(0)}% of calories`}</div></div>`).join('')}
+      ${PLAN.macros.map(([l, v, u], i) => `<div class="kpi"><div class="label">${l}</div><div class="value">${(i === 0 ? sug.kcal : v).toLocaleString('en-GB')} <small>${u}</small></div><div class="delta">${i === 0 ? (sug.kcal !== v ? `${sug.kcal > v ? '+' : ''}${sug.kcal - v} kcal vs plan` : 'as planned') : `${Math.round(100 * [0, Pk, Fk, Ck][i] / Tk)}% of calories`}</div></div>`).join('')}
     </div>
     <div class="card" style="margin-top:12px">
       <p class="note ${sug.tone}" style="margin:0">${sug.icon} ${sug.msg}</p>
-      <div class="mbar"><i style="flex:${P};background:var(--accent)"></i><i style="flex:${F};background:var(--orange)"></i><i style="flex:${C};background:var(--aqua)"></i></div>
-      <div class="mlegend"><span style="--c:var(--accent)">Protein ${PLAN.macros[1][1]} g · ${P} kcal</span><span style="--c:var(--orange)">Fat ${PLAN.macros[2][1]} g · ${F} kcal</span><span style="--c:var(--aqua)">Carbs ${PLAN.macros[3][1]} g · ${C.toLocaleString('en-GB')} kcal</span></div>
+      <div class="mbar"><i style="flex:${Pk};background:var(--accent)"></i><i style="flex:${Fk};background:var(--orange)"></i><i style="flex:${Ck};background:var(--aqua)"></i></div>
+      <div class="mlegend"><span style="--c:var(--accent)">Protein ${PLAN.macros[1][1]} g · ${Pk} kcal</span><span style="--c:var(--orange)">Fat ${PLAN.macros[2][1]} g · ${Fk} kcal</span><span style="--c:var(--aqua)">Carbs ${PLAN.macros[3][1]} g · ${Ck.toLocaleString('en-GB')} kcal</span></div>
       <div class="foot"><span class="sub">Easy carb wins: ${PLAN.carbWins.join(' · ')}</span><span class="sub">Gaining too fast: −200 kcal from carbs. No change in 2 weeks: +200 kcal.</span></div>
     </div>
-    ${(() => { const wkM = macroRate(monday, sunday), m28 = macroRate(addDays(today, -27), today);
-      return `<div class="card" style="margin-top:12px">
-      <div class="head"><h3>Macro hit rate</h3><span class="sub">${wkM.logged ? `this week ${wkM.hit + wkM.mostly} / 7` : 'this week: nothing logged yet'}${m28.logged ? ` · last 4 weeks ${Math.round(100 * m28.rate)}%` : ''}</span></div>
+    <div class="card" style="margin-top:12px">
+      <div class="head"><h3>Macro hit rate</h3><span class="sub">${wkM.logged ? `this week ${wkM.hit + wkM.mostly} / 7` : 'this week: nothing marked yet'}${m28.logged ? ` · last 4 weeks ${Math.round(100 * m28.rate)}%` : ''}</span></div>
       <div class="days" id="macroDays">${Array.from({ length: 7 }, (_, i) => { const d = addDays(monday, i), v = state.macros[d] || ''; return `<button class="${v} ${d === today ? 'today' : ''}" data-d="${d}" title="${fDay(d)}${v ? ': ' + MACRO_WORD[v] : ''}" ${d > today ? 'disabled' : ''}><i></i>${WD[i]}</button>`; }).join('')}</div>
-      <p class="sub" style="margin:10px 0 0">Tap a day to cycle hit → mostly → missed → clear. Green is on plan, amber is close, red is off. Hit counts 1 and mostly counts half toward the rate.</p>
-    </div>`; })()}
+      <p class="sub" style="margin:10px 0 0">Tap a day to cycle hit → mostly → missed → clear. Hit counts 1 and mostly counts half toward the rate.</p>
+    </div>
 
     ${sec('This week', `Mon ${fShort(monday)} – Sun ${fShort(sunday)}`)}
-    <div class="pills" style="margin-bottom:10px"><span class="pill ${gymHit === gymPlanned && gymPlanned ? 'good' : ''}">Gym ${gymHit} / ${gymPlanned}</span><span class="pill ${runHit === runPlanned && runPlanned ? 'good' : ''}">Runs ${runHit} / ${runPlanned}</span><span class="pill">${phase.name}</span></div>
-    <div class="card table tblwrap"><table class="tbl"><thead><tr><th>Day</th><th>Gym</th><th>Done</th><th>Run</th><th>Done</th></tr></thead><tbody>${weekRows}</tbody></table></div>
+    <div class="pills" style="margin-bottom:10px"><span class="pill ${gymHit === gymPlanned && gymPlanned ? 'good' : ''}">Gym ${gymHit} / ${gymPlanned}</span><span class="pill ${wkM.logged && wkM.hit + wkM.mostly === wkM.logged ? 'good' : ''}">Macros ${wkM.hit + wkM.mostly} / ${wkM.logged}</span></div>
+    <div class="card table tblwrap"><table class="tbl"><thead><tr><th>Day</th><th>Gym</th><th>Done</th><th>Macros</th><th class="num">Weight</th></tr></thead><tbody>${weekRows}</tbody></table></div>
 
     ${(() => { const due = nextPhotoDue(today); if (!due) return ''; const n = diffDays(due, today);
       return n <= 0 ? `<p class="note" style="margin-top:14px">📷 Progress photo due now (${checkpointLabel(due)}). <a href="#photos" onclick="showTab('photos', true); return false;">Take it on the Photos tab.</a></p>`
         : (n <= 7 ? `<p class="sub" style="margin-top:14px">📷 Next progress photo: ${checkpointLabel(due)}, ${fDay(due)} (in ${n} days).</p>` : ''); })()}
 
     ${sec('New bests', 'last 7 days')}
-    ${pbs.length ? `<div class="stack">${pbs.map(r => `<div class="pb"><span class="star">★</span><span><b>${esc(r.exercise)}</b> ${n1(r.kg)} kg × ${r.reps} on ${fDay(r.date)}</span></div>`).join('')}</div>`
-      : '<p class="sub">None yet. New bests appear here automatically when a top set beats your previous best.</p>'}
+    ${pbs.length ? `<div class="stack">${pbs.map(r => `<div class="pb"><span class="star">★</span><span><b>${esc(r.exercise)}</b> ${n1(r.kg)} kg × ${r.reps} on ${fDay(r.date)}</span></div>`).join('')}</div>` : '<p class="sub">None yet. New bests appear here automatically when a top set beats your previous best.</p>'}
   `;
   bodyweightChart('bwChart', rows);
   spark('bwSpark', rows.slice(-14).map(r => r.kg));
-  const setMacro = async (d, v) => {
-    if (v) state.macros[d] = v; else delete state.macros[d];
-    try { await persist('macros'); } catch (e) { return; }
-    toast(v ? `${fDay(d)}: macros ${MACRO_WORD[v].toLowerCase()}.` : `${fDay(d)}: macros cleared.`); renderDashboard();
-  };
-  $('qMacros').querySelectorAll('button').forEach(b => b.addEventListener('click', () => setMacro(today, state.macros[today] === b.dataset.m ? null : b.dataset.m)));
-  $('macroDays').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const order = ['', 'hit', 'mostly', 'no'], cur = state.macros[b.dataset.d] || ''; setMacro(b.dataset.d, order[(order.indexOf(cur) + 1) % 4] || null); }));
   $('qSave').addEventListener('click', async () => {
     const kg = +$('qKg').value; if (!(kg > 0)) { toast('Enter a weight.'); return; }
     const entry = Object.assign({}, state.bw[today] || { notes: '' }, { kg: Math.round(kg * 10) / 10 });
-    const sleep = $('qSleep').value, sore = $('qSore').value;
-    if (sleep !== '') entry.sleep = +sleep; else delete entry.sleep;
-    if (sore !== '') entry.sore = +sore; else delete entry.sore;
+    const sleep = $('qSleep').value; if (sleep !== '') entry.sleep = +sleep; else delete entry.sleep; delete entry.sore;
     state.bw[today] = entry;
     try { await persist('bw'); } catch (e) { return; }
     toast(`Saved ${n1(kg)} kg for today.`); renderDashboard();
   });
+  const setMacro = async (d, v) => { if (v) state.macros[d] = v; else delete state.macros[d]; try { await persist('macros'); } catch (e) { return; } toast(v ? `${fDay(d)}: macros ${MACRO_WORD[v].toLowerCase()}.` : `${fDay(d)}: macros cleared.`); renderDashboard(); };
+  $('qMacros').querySelectorAll('button').forEach(b => b.addEventListener('click', () => setMacro(today, state.macros[today] === b.dataset.m ? null : b.dataset.m)));
+  $('macroDays').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const order = ['', 'hit', 'mostly', 'no'], cur = state.macros[b.dataset.d] || ''; setMacro(b.dataset.d, order[(order.indexOf(cur) + 1) % 4] || null); }));
 }
 
 /* ---------- Log gym ---------- */
-const gymForm = { date: null, session: null, rows: [], dirty: false, builtFor: null };
+const gymForm = { date: null, session: null, rows: [], dirty: false, builtFor: null, last: null };
 function buildGymForm() {
   const today = todayIso();
-  // A fresh visit (or a new day) starts from today's planned session.
   if (!gymForm.date || (gymForm.builtFor && gymForm.builtFor !== today && !gymForm.dirty)) { gymForm.date = today; gymForm.session = null; }
   gymForm.builtFor = today;
-  const planned = gymFor(gymForm.date);
-  gymForm.session = gymForm.session || planned;
+  gymForm.session = gymForm.session || gymFor(gymForm.date);
   $('view-gym').innerHTML = `
     ${sec('Log gym session')}
     <div class="card">
@@ -851,42 +614,25 @@ function buildGymForm() {
       <div class="actions"><button class="btn primary" id="gSave">Save session</button><span class="sub">Only sets with reps are saved. Pull-ups: weight 0. Bike: minutes in reps.</span></div>
       <div id="gResult" class="stack" style="margin-top:12px"></div>
     </div>`;
-  // Changing the date switches to that day's planned session (a rest day keeps the current pick).
-  const onDate = e => {
-    const v = e.target.value; if (!v || v === gymForm.date) return;
-    gymForm.date = v; gymForm.dirty = false;
-    const p = gymFor(v);
-    gymForm.session = p; $('gSession').value = p; toast(`${fDay(v)} is ${p === 'Rest' ? 'a rest day' : p}. Switched the session.`);
-    fillGymRows();
-  };
-  $('gDate').addEventListener('change', onDate);
-  $('gDate').addEventListener('input', onDate);
-  // Picking a session moves the date to the day that session falls on in the same week.
+  const onDate = e => { const v = e.target.value; if (!v || v === gymForm.date) return; gymForm.date = v; gymForm.dirty = false; const p = gymFor(v); gymForm.session = p; $('gSession').value = p; toast(`${fDay(v)} is ${p === 'Rest' ? 'a rest day' : p}. Switched the session.`); fillGymRows(); };
+  $('gDate').addEventListener('change', onDate); $('gDate').addEventListener('input', onDate);
   $('gSession').addEventListener('change', e => {
     gymForm.session = e.target.value; gymForm.dirty = false;
     const idx = PLAN.gymSchedule.indexOf(gymForm.session);
-    if (idx >= 0) {
-      const day = addDays(gymForm.date, idx - weekday(gymForm.date));
-      if (day !== gymForm.date) { gymForm.date = day; $('gDate').value = day; toast(`${gymForm.session} is on ${fDay(day)}. Moved the date.`); }
-    }
+    if (idx >= 0) { const day = addDays(gymForm.date, idx - weekday(gymForm.date)); if (day !== gymForm.date) { gymForm.date = day; $('gDate').value = day; toast(`${gymForm.session} is on ${fDay(day)}. Moved the date.`); } }
     fillGymRows();
   });
   $('gSave').addEventListener('click', saveGym);
   $('tStart').addEventListener('click', () => timer.running ? stopTimer() : startTimer());
   fillGymRows();
 }
-// ---- Rest timer ----
 const timer = { running: false, left: 0, handle: null };
-function fmtClock(sec) { return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
+const fmtClock = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 function startTimer() {
   const el = $('timer'); if (!el) return;
   clearInterval(timer.handle); timer.left = +$('tLen').value; timer.running = true;
   el.classList.add('running'); el.classList.remove('done'); $('tStart').textContent = 'Stop'; $('tClock').textContent = fmtClock(timer.left);
-  timer.handle = setInterval(() => {
-    timer.left--; const c = $('tClock'); if (!c) { clearInterval(timer.handle); timer.running = false; return; }
-    c.textContent = fmtClock(Math.max(0, timer.left));
-    if (timer.left <= 0) { stopTimer(true); }
-  }, 1000);
+  timer.handle = setInterval(() => { timer.left--; const c = $('tClock'); if (!c) { clearInterval(timer.handle); timer.running = false; return; } c.textContent = fmtClock(Math.max(0, timer.left)); if (timer.left <= 0) stopTimer(true); }, 1000);
 }
 function stopTimer(finished) {
   clearInterval(timer.handle); timer.running = false;
@@ -896,29 +642,23 @@ function stopTimer(finished) {
   else $('tClock').textContent = fmtClock(+$('tLen').value);
 }
 function fillGymRows() {
-  const { date, session } = gymForm, phase = phaseForDate(date);
-  const id = sessionId(date, session);
-  const saved = state.gym[id];
+  const { date, session } = gymForm, id = sessionId(date, session), saved = state.gym[id];
   if (session === 'Rest') {
-    $('gInfo').textContent = `${fDay(date)} · ${phase.name} phase · rest day. Nothing to lift; mark it done so the week shows complete.`;
-    $('gTable').innerHTML = saved ? '<p class="note good">Rest day logged ✅</p>' : '<p class="sub">No exercises today. Easy run on Sundays only.</p>';
+    $('gInfo').textContent = `${fDay(date)} · rest day. Nothing to lift; mark it done so the week shows complete.`;
+    $('gTable').innerHTML = saved ? '<p class="note good">Rest day logged ✅</p>' : '<p class="sub">No exercises today.</p>';
     $('gSave').textContent = saved ? 'Undo rest day' : 'Mark rest day done';
-    gymForm.rows = []; gymForm.dirty = false;
-    return;
+    gymForm.rows = []; gymForm.dirty = false; return;
   }
   $('gSave').textContent = 'Save session';
-  let source = saved, sourceLabel = '';
   const prev = Object.values(state.gym).filter(s => s.session === session && s.date < date).sort((a, b) => b.date.localeCompare(a.date))[0];
   gymForm.last = prev || null;
-  if (!source) {
-    if (prev) { source = prev; sourceLabel = `Pre-filled from your last ${session} on ${fShort(prev.date)}. Targets below each exercise.`; }
-    else sourceLabel = `First time logging ${session}. Fill in what you lift.`;
-  } else sourceLabel = `This session is already saved for ${fShort(date)}. Saving again replaces it.`;
-  $('gInfo').textContent = `${fDay(date)} · ${phase.name} phase · planned session: ${gymFor(date)}. ${sourceLabel}`;
+  let source = saved, label;
+  if (!source) { if (prev) { source = prev; label = `Pre-filled from your last ${session} on ${fShort(prev.date)}. Targets below each exercise.`; } else label = `First time logging ${session}. Fill in what you lift.`; }
+  else label = `This session is already saved for ${fShort(date)}. Saving again replaces it.`;
+  $('gInfo').textContent = `${fDay(date)} · planned session: ${gymFor(date)}. ${label}`;
   gymForm.rows = []; gymForm.dirty = false;
   PLAN.sessions[session].forEach(ex => {
-    const sets = (source && source.sets || []).filter(s => s.exercise === ex);
-    const n = Math.max(defaultSets(ex, phase.name), sets.length);
+    const sets = (source && source.sets || []).filter(s => s.exercise === ex), n = Math.max(defaultSets(ex), sets.length);
     for (let i = 1; i <= n; i++) { const m = sets.find(s => +s.set === i); gymForm.rows.push({ exercise: ex, set: i, kg: m ? m.kg : '', reps: m ? m.reps : '' }); }
   });
   renderGymRows();
@@ -926,12 +666,9 @@ function fillGymRows() {
 function renderGymRows() {
   let html = '<table class="tbl"><thead><tr><th>Exercise</th><th>Set</th><th>Weight (kg)</th><th>Reps</th></tr></thead><tbody>';
   gymForm.rows.forEach((r, i) => {
-    const firstOfEx = i === 0 || gymForm.rows[i - 1].exercise !== r.exercise;
-    const lastOfEx = i === gymForm.rows.length - 1 || gymForm.rows[i + 1].exercise !== r.exercise;
+    const firstOfEx = i === 0 || gymForm.rows[i - 1].exercise !== r.exercise, lastOfEx = i === gymForm.rows.length - 1 || gymForm.rows[i + 1].exercise !== r.exercise;
     if (firstOfEx && gymForm.last) {
-      // "Last time" and the target for this exercise, from the most recent time you did this session.
-      const lastSets = (gymForm.last.sets || []).filter(x => x.exercise === r.exercise && x.reps > 0);
-      const target = progression(r.exercise, lastSets);
+      const lastSets = (gymForm.last.sets || []).filter(x => x.exercise === r.exercise && x.reps > 0), target = progression(r.exercise, lastSets);
       if (lastSets.length) html += `<tr class="hint"><td colspan="4">Last (${fShort(gymForm.last.date)}): ${lastSets.map(x => `${n1(x.kg)}×${x.reps}`).join(' · ')}${target ? ` &nbsp;→&nbsp; <b>${target.text}</b>${target.kg > Math.max(...lastSets.map(x => +x.kg || 0)) ? `<button class="btn small apply" data-apply="${esc(r.exercise)}" data-kg="${target.kg}">Use ${n1(target.kg)}</button>` : ''}` : ''}</td></tr>`;
     }
     html += `<tr><td class="exname">${firstOfEx ? esc(r.exercise) : ''}</td><td class="num">${r.set}${lastOfEx ? ` <button class="btn small" data-add="${esc(r.exercise)}" title="Add a set">+</button>` : ''}</td>
@@ -941,37 +678,24 @@ function renderGymRows() {
   $('gTable').innerHTML = html + '</tbody></table>';
   $('gTable').querySelectorAll('input').forEach(inp => {
     inp.addEventListener('input', e => { gymForm.rows[+e.target.dataset.i][e.target.dataset.k] = e.target.value; gymForm.dirty = true; });
-    // Entering reps means the set is done: start the rest clock.
     inp.addEventListener('change', e => { if (e.target.dataset.k === 'reps' && +e.target.value > 0) startTimer(); });
-    // Enter jumps to the next box, like a spreadsheet.
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); const all = [...$('gTable').querySelectorAll('input')], j = all.indexOf(e.target); if (j >= 0 && j + 1 < all.length) all[j + 1].focus(); } });
   });
-  $('gTable').querySelectorAll('[data-apply]').forEach(b => b.addEventListener('click', () => {
-    const ex = b.dataset.apply, kg = +b.dataset.kg;
-    gymForm.rows.forEach(r => { if (r.exercise === ex) r.kg = kg; }); gymForm.dirty = true;
-    $('gTable').querySelectorAll(`input[data-k="kg"]`).forEach(inp => { if (gymForm.rows[+inp.dataset.i].exercise === ex) inp.value = kg; });
-    toast(`${ex}: set to ${n1(kg)} kg.`);
-  }));
-  $('gTable').querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
-    const ex = b.dataset.add, idx = gymForm.rows.map(r => r.exercise).lastIndexOf(ex);
-    gymForm.rows.splice(idx + 1, 0, { exercise: ex, set: gymForm.rows[idx].set + 1, kg: gymForm.rows[idx].kg, reps: '' });
-    renderGymRows();
-  }));
+  $('gTable').querySelectorAll('[data-apply]').forEach(b => b.addEventListener('click', () => { const ex = b.dataset.apply, kg = +b.dataset.kg; gymForm.rows.forEach(r => { if (r.exercise === ex) r.kg = kg; }); gymForm.dirty = true; $('gTable').querySelectorAll('input[data-k="kg"]').forEach(inp => { if (gymForm.rows[+inp.dataset.i].exercise === ex) inp.value = kg; }); toast(`${ex}: set to ${n1(kg)} kg.`); }));
+  $('gTable').querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => { const ex = b.dataset.add, idx = gymForm.rows.map(r => r.exercise).lastIndexOf(ex); gymForm.rows.splice(idx + 1, 0, { exercise: ex, set: gymForm.rows[idx].set + 1, kg: gymForm.rows[idx].kg, reps: '' }); renderGymRows(); }));
 }
 async function markRest(date, undo) {
   const id = sessionId(date, 'Rest');
   if (undo) delete state.gym[id]; else state.gym[id] = { date, session: 'Rest', sets: [] };
   try { await persist('gym', id); } catch (e) { return; }
-  toast(undo ? 'Rest day removed.' : `Rest day logged for ${fDay(date)}.`);
-  refresh();
+  toast(undo ? 'Rest day removed.' : `Rest day logged for ${fDay(date)}.`); refresh();
 }
 async function saveGym() {
   const { date, session } = gymForm;
   if (session === 'Rest') { await markRest(date, !!state.gym[sessionId(date, 'Rest')]); fillGymRows(); return; }
   const sets = gymForm.rows.filter(r => +r.reps > 0).map(r => ({ exercise: r.exercise, set: r.set, kg: +r.kg || 0, reps: Math.round(+r.reps) }));
   if (!sets.length) { toast('Nothing to save. Enter reps for at least one set.'); return; }
-  const id = sessionId(date, session);
-  const before = allTimeBests(topSets()).reduce((m, r) => (m[r.exercise] = r.score, m), {});
+  const id = sessionId(date, session), before = allTimeBests(topSets()).reduce((m, r) => (m[r.exercise] = r.score, m), {});
   state.gym[id] = { date, session, sets };
   $('gSave').disabled = true;
   try { await persist('gym', id); } catch (e) { $('gSave').disabled = false; return; }
@@ -993,7 +717,6 @@ function buildWeightForm() {
         <div class="field"><label for="wDate">Date</label><input type="date" id="wDate" value="${todayIso()}"></div>
         <div class="field"><label for="wKg">Weight (kg)</label><input type="number" id="wKg" step="0.1" min="40" max="200" inputmode="decimal" value="${n1(last)}"></div>
         <div class="field"><label for="wSleep">Sleep (h)</label><input type="number" id="wSleep" step="0.5" min="0" max="14" inputmode="decimal" placeholder="7.5"></div>
-        <div class="field"><label for="wSore">Soreness 1-5</label><select id="wSore"><option value="">–</option><option value="1">1 fresh</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 wrecked</option></select></div>
         <div class="field grow"><label for="wNotes">Notes (optional)</label><input type="text" id="wNotes" placeholder="e.g. after a big dinner"></div>
       </div>
       <div class="actions"><button class="btn primary" id="wSave">Save weigh-in</button></div>
@@ -1005,84 +728,21 @@ function buildWeightForm() {
     if (!date || !(kg > 0)) { toast('Enter a date and a weight.'); return; }
     const entry = { kg: Math.round(kg * 10) / 10, notes: $('wNotes').value.trim() };
     if ($('wSleep').value !== '') entry.sleep = +$('wSleep').value;
-    if ($('wSore').value !== '') entry.sore = +$('wSore').value;
     state.bw[date] = entry;
     try { await persist('bw'); } catch (e) { return; }
-    toast(`Saved ${n1(kg)} kg for ${fDay(date)}.`);
-    $('wNotes').value = '';
-    renderWeightRecent();
+    toast(`Saved ${n1(kg)} kg for ${fDay(date)}.`); $('wNotes').value = ''; renderWeightRecent();
   });
 }
 function renderWeightRecent() {
   const rows = bwSeries().slice(-7).reverse();
-  $('wRecent').innerHTML = rows.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">Sleep</th><th class="num">Sore</th><th>Notes</th></tr></thead><tbody>
-    ${rows.map(r => { const e = state.bw[r.date] || {}; return `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="num">${n2(r.avg7)}</td><td class="num">${n2(r.target)}</td><td class="num">${e.sleep != null ? e.sleep + ' h' : ''}</td><td class="num">${e.sore != null ? e.sore : ''}</td><td class="sub">${esc(r.notes)}</td></tr>`; }).join('')}</tbody></table></div>`
-    : '<p class="empty">No weigh-ins yet.</p>';
-}
-
-/* ---------- Log run ---------- */
-function buildRunForm() {
-  $('view-run').innerHTML = `
-    ${sec('Log run')}
-    <div class="card">
-      <div class="row">
-        <div class="field"><label for="rDate">Date</label><input type="date" id="rDate" value="${todayIso()}"></div>
-        <div class="field"><label for="rType">Type</label><select id="rType">${PLAN.runTypes.map(t => `<option>${t}</option>`).join('')}</select></div>
-        <div class="field"><label for="rMin">Minutes (incl. warm-up + cool-down)</label><input type="number" id="rMin" min="1" max="300" step="1" inputmode="numeric" value="30"></div>
-      </div>
-      <div class="row" id="rRepsRow" style="margin-top:10px">
-        <div class="field"><label for="rDone">Reps completed</label><input type="number" id="rDone" min="0" max="30" step="1" inputmode="numeric"></div>
-        <div class="field"><label for="rPlanned">Reps planned</label><input type="number" id="rPlanned" min="1" max="30" step="1" inputmode="numeric"></div>
-      </div>
-      <p class="sub" id="rInfo" style="margin:10px 0 0"></p>
-      <p class="note" id="rGuide" style="margin:10px 0 0"></p>
-      <div class="row" style="margin-top:12px">
-        <div class="field grow"><label for="rFeel">How did it feel? 1 = terrible, 10 = amazing</label><div class="feel"><input type="range" id="rFeel" min="1" max="10" value="7"><output id="rFeelOut">7</output></div></div>
-        <div class="field grow"><label for="rNotes">Notes (optional)</label><input type="text" id="rNotes" placeholder="e.g. did all 8 intervals, legs heavy"></div>
-      </div>
-      <div class="actions"><button class="btn primary" id="rSave">Save run</button></div>
-    </div>
-    <h2>Recent runs</h2>
-    <div id="rRecent"></div>`;
-  const setReps = () => {
-    const d = $('rDate').value || todayIso(), type = $('rType').value, planned = PLAN.runReps[phaseForDate(d).name][type];
-    $('rRepsRow').hidden = !planned;
-    if (planned) { $('rPlanned').value = planned; $('rDone').value = planned; }
-    const g = PLAN.runGuide[type];
-    $('rGuide').innerHTML = `<b>${type}</b> · ${g.what} ${g.how}<br><span class="sub">Effort ${g.effort} · warm-up 10 min easy jog + leg swings · cool-down 10 min easy jog</span>`;
-  };
-  const setInfo = () => {
-    const d = $('rDate').value || todayIso(), r = runFor(d);
-    $('rInfo').textContent = r ? `${fDay(d)}: planned run is ${r[0]} (${r[1]}).` : `${fDay(d)}: no run planned. Log one anyway if you went out.`;
-    if (r) $('rType').value = r[0];
-    setReps();
-  };
-  $('rDate').addEventListener('change', setInfo); $('rType').addEventListener('change', setReps); setInfo();
-  $('rFeel').addEventListener('input', e => { $('rFeelOut').value = e.target.value; });
-  $('rSave').addEventListener('click', async () => {
-    const date = $('rDate').value; if (!date) { toast('Pick a date.'); return; }
-    const entry = { id: Date.now().toString(36), date, type: $('rType').value, min: Math.round(+$('rMin').value) || 0, feel: +$('rFeel').value, notes: $('rNotes').value.trim() };
-    if (!$('rRepsRow').hidden && $('rPlanned').value) { entry.planned = +$('rPlanned').value; entry.done = +$('rDone').value || 0; }
-    state.runs.push(entry);
-    try { await persist('runs'); } catch (e) { state.runs.pop(); return; }
-    toast(`Saved ${entry.type} run, ${entry.min} min, felt ${entry.feel}/10.`);
-    $('rNotes').value = '';
-    renderRunRecent();
-  });
-}
-function renderRunRecent() {
-  const today = todayIso(), monday = addDays(today, -weekday(today)), phase = phaseForDate(today);
-  const thisWeek = state.runs.filter(r => r.date >= monday && r.date <= addDays(monday, 6)).length;
-  const rows = [...state.runs].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
-  $('rRecent').innerHTML = `<div class="kpis" style="margin:0 0 12px"><div class="kpi"><div class="label">Runs this week</div><div class="value">${thisWeek} <small>/ ${phase.runs}</small></div></div></div>` +
-    (rows.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Reps</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th></tr></thead><tbody>
-    ${rows.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.planned ? `${r.done}/${r.planned}` : '—'}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">No runs logged yet.</p>');
+  $('wRecent').innerHTML = rows.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">Sleep</th><th>Macros</th><th>Notes</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="num">${n2(r.avg7)}</td><td class="num">${n2(r.target)}</td><td class="num">${r.sleep != null ? r.sleep + ' h' : ''}</td><td>${state.macros[r.date] ? MACRO_WORD[state.macros[r.date]] : ''}</td><td class="sub">${esc(r.notes)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">No weigh-ins yet.</p>';
 }
 
 /* ---------- Exercise progress ---------- */
 function renderProgress() {
   const top = topSets(), today = todayIso();
-  if (!top.length) { $('view-progress').innerHTML = '<h2>Exercise progress</h2><p class="note">No gym sessions logged yet. Log one from <b>Log gym</b> and the charts appear here.</p>'; return; }
+  if (!top.length) { $('view-progress').innerHTML = `${sec('Exercise progress')}<p class="note">No gym sessions logged yet. Log one from <b>Log gym</b> and the charts appear here.</p>`; return; }
   const bests = allTimeBests(top), recent = new Set(recentPbs(top, today).map(r => r.exercise));
   const exercises = PLAN.allExercises.filter(e => top.some(r => r.exercise === e));
   $('view-progress').innerHTML = `
@@ -1091,8 +751,7 @@ function renderProgress() {
       ${bests.map(r => `<tr><td class="exname">${recent.has(r.exercise) ? '<span class="star">★</span> ' : ''}${esc(r.exercise)}</td><td>${fShort(r.date)}</td><td class="num">${n1(r.kg)} kg</td><td class="num">${r.reps}</td><td class="num">${n1(r.e1rm)} kg</td></tr>`).join('')}
     </tbody></table></div>
     <p class="sub">★ = new best in the last 7 days. Est. 1RM uses the Epley formula: weight × (1 + reps ÷ 30).</p>
-    <div class="exhead" style="margin-top:30px"><h2>Top set over time</h2>
-      <span class="seg"><button aria-pressed="${ui.metric === 'kg'}" data-m="kg">Top set weight</button><button aria-pressed="${ui.metric === 'e1rm'}" data-m="e1rm">Estimated 1RM</button></span></div>
+    <div class="exhead" style="margin-top:30px"><h2>Top set over time</h2><span class="seg"><button aria-pressed="${ui.metric === 'kg'}" data-m="kg">Top set weight</button><button aria-pressed="${ui.metric === 'e1rm'}" data-m="e1rm">Estimated 1RM</button></span></div>
     <div class="exgrid" style="margin-top:12px">
       ${exercises.map((e, i) => { const b = bests.find(x => x.exercise === e); return `<div class="card"><div class="exhead"><h3 style="margin:0">${esc(e)}</h3><span class="sub">best ${n1(b.kg)} kg × ${b.reps}${recent.has(e) ? ' · <span class="pill good">new best this week</span>' : ''}</span></div><div class="chart sm"><canvas id="ex${i}"></canvas></div></div>`; }).join('')}
     </div>`;
@@ -1102,76 +761,59 @@ function renderProgress() {
 
 /* ---------- Weekly review ---------- */
 function renderWeekly() {
-  const today = todayIso(), wk = weekNumber(today), review = weeklyReview(), done = sessionsDone();
-  const inPlan = d => d >= PLAN.start && d <= PLAN.end;
-  const startAvg = avgBetween(PLAN.start, weekDates(1)[1]), latestAvg = avgBetween(addDays(today, -6), today);
-  const gymTotal = [...done].filter(k => inPlan(k.split('|')[0]) && k.split('|')[1] !== 'Rest').length, runTotal = state.runs.filter(r => inPlan(r.date)).length;
+  const today = todayIso(), wk = weekNumber(today), review = weeklyReview(), adh = adherence(today);
+  const startAvg = avgBetween(PLAN.start, weekDates(1)[1]), latestAvg = avgBetween(addDays(today, -6), today), m28 = macroRate(addDays(today, -27), today);
   const cell = v => v == null ? '<span class="sub">–</span>' : v;
   $('view-weekly').innerHTML = `
     ${sec('Weekly review', 'all 14 weeks')}
     <div class="kpis" style="margin-top:0">
       <div class="kpi"><div class="label">Change since week 1</div><div class="value">${startAvg != null && latestAvg != null ? signed(latestAvg - startAvg) + ' <small>kg</small>' : '–'}</div></div>
-      <div class="kpi"><div class="label">Gym sessions done</div><div class="value">${gymTotal}</div></div>
-      <div class="kpi"><div class="label">Runs done</div><div class="value">${runTotal}</div></div>
+      <div class="kpi"><div class="label">Gym sessions</div><div class="value">${adh ? `${adh.gymDone} <small>/ ${adh.gymPlanned}</small>` : '–'}</div><div class="delta">${adh && adh.gymPlanned ? `${Math.round(100 * adh.gymDone / adh.gymPlanned)}% of planned so far` : 'from 28 Sep'}</div></div>
+      <div class="kpi"><div class="label">Macros, last 4 weeks</div><div class="value">${m28.logged ? Math.round(100 * m28.rate) + '<small>%</small>' : '–'}</div><div class="delta">${m28.logged ? `${m28.hit} hit · ${m28.mostly} mostly · ${m28.missed} missed` : 'not marked yet'}</div></div>
       <div class="kpi"><div class="label">Current week</div><div class="value">${wk < 1 ? 'Not started' : (wk > PLAN.weeks ? 'Finished' : `${wk} <small>/ 14</small>`)}</div></div>
     </div>
-    <div class="card table tblwrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Week</th><th>Dates</th><th>Phase</th><th class="num">Avg kg</th><th class="num">Change</th><th class="num">Target</th><th class="num">Gym</th><th class="num">Runs</th><th class="num">Macros</th><th class="num">Run feel</th></tr></thead><tbody>
-      ${review.map(r => `<tr class="${r.w === wk ? 'current' : ''}"><td>${r.w}${r.w === wk ? ' ◀' : ''}</td><td>${fShort(r.a)} – ${fShort(r.b)}</td><td>${r.phase}</td><td class="num">${cell(r.avg == null ? null : n2(r.avg))}</td><td class="num">${cell(r.change == null ? null : signed(r.change))}</td><td class="num">${n2(r.target)}</td><td class="num">${r.gymN} / 6</td><td class="num">${r.runN} / ${r.runPlan}</td><td class="num" title="${r.macros.hit} hit · ${r.macros.mostly} mostly · ${r.macros.missed} missed">${r.macros.logged ? `${r.macros.hit + r.macros.mostly} / 7` : cell(null)}</td><td class="num">${cell(r.feel == null ? null : n1(r.feel))}</td></tr>`).join('')}
+    <div class="card table tblwrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Week</th><th>Dates</th><th class="num">Avg kg</th><th class="num">Change</th><th class="num">Target</th><th class="num">Gym</th><th class="num">Macros</th><th class="num">Sleep</th></tr></thead><tbody>
+      ${review.map(r => `<tr class="${r.w === wk ? 'current' : ''}"><td>${r.w}${r.w === wk ? ' ◀' : ''}</td><td>${fShort(r.a)} – ${fShort(r.b)}</td><td class="num">${cell(r.avg == null ? null : n2(r.avg))}</td><td class="num">${cell(r.change == null ? null : signed(r.change))}</td><td class="num">${n2(r.target)}</td><td class="num">${r.gymN} / 6</td><td class="num" title="${r.macros.hit} hit · ${r.macros.mostly} mostly · ${r.macros.missed} missed">${r.macros.logged ? `${r.macros.hit + r.macros.mostly} / 7` : cell(null)}</td><td class="num">${cell(r.sleep == null ? null : n1(r.sleep) + ' h')}</td></tr>`).join('')}
     </tbody></table></div>
-    <p class="sub">Gym sessions count once per day per session. Runs count against the phase's plan: 5 a week in Build and Sharpen, 3 in Maintain. Macros counts days marked hit or mostly.</p>
+    <p class="sub">Gym counts one session per day. Macros counts days marked hit or mostly. Sleep is the week's average.</p>
 
-    <h2>Adherence by phase</h2>
-    <div class="adh">${adherence(today).map(a => a.started ? `<div class="card">
-        <div class="exhead"><h3 style="margin:0">${a.name}</h3><span class="sub">${fShort(a.a)} – ${fShort(a.b)}</span></div>
-        <div class="sub">Gym ${a.gymDone} / ${a.gymPlanned}${a.gymPlanned ? ` · ${Math.round(100 * a.gymDone / a.gymPlanned)}%` : ''}</div><div class="bar"><i style="width:${a.gymPlanned ? Math.min(100, 100 * a.gymDone / a.gymPlanned) : 0}%"></i></div>
-        <div class="sub" style="margin-top:8px">Runs ${a.runDone} / ${a.runPlanned}${a.runPlanned ? ` · ${Math.round(100 * a.runDone / a.runPlanned)}%` : ''}</div><div class="bar"><i style="width:${a.runPlanned ? Math.min(100, 100 * a.runDone / a.runPlanned) : 0}%;background:var(--orange)"></i></div>
-        <div class="sub" style="margin-top:8px">Macros ${a.macros.hit + a.macros.mostly} / ${a.days} days${a.macros.logged ? ` · ${Math.round(100 * a.macros.score / a.days)}%` : ' · not logged'}</div><div class="bar"><i style="width:${Math.min(100, 100 * a.macros.score / a.days)}%;background:var(--aqua)"></i></div>
-      </div>` : `<div class="card soft"><h3 style="margin:0">${a.name}</h3><div class="sub">Starts ${fShort(a.a)}</div></div>`).join('')}</div>
-    <p class="sub">Planned counts only the days up to today, so a phase you're halfway through isn't marked down for the days still to come.</p>
-
-    ${(() => { const iv = lastRun('Intervals'), sp = lastRun('Sprints'); if (!iv && !sp) return '';
-      const ready = iv && iv.planned && iv.done >= 8 && iv.feel >= 6;
-      return `<h2>Ready for Maintain?</h2><p class="note ${ready ? 'good' : ''}">${ready ? '✅ Last intervals: all 8 done and it felt OK. The plan says you can move to Maintain.' : 'The plan\'s test: finish 8 intervals without dying and recover quickly between sprints.'}
-      ${iv ? `<br>Last intervals (${fShort(iv.date)}): ${iv.planned ? `${iv.done}/${iv.planned} done, ` : ''}felt ${iv.feel}/10.` : ''}${sp ? `<br>Last sprints (${fShort(sp.date)}): ${sp.planned ? `${sp.done}/${sp.planned} done, ` : ''}felt ${sp.feel}/10.` : ''}
-      ${state.settings.maintainStart ? `<br>Maintain set to start ${fDay(state.settings.maintainStart)}.` : '<br>When you\'re ready, set the Maintain start date on the Data tab.'}</p>`; })()}
+    ${adh ? `${sec('Adherence', `${fShort(PLAN.start)} to ${fShort(today < PLAN.end ? today : PLAN.end)}`)}
+    <div class="grid2 adh">
+      <div class="card"><div class="sub">Gym sessions ${adh.gymDone} / ${adh.gymPlanned}${adh.gymPlanned ? ` · ${Math.round(100 * adh.gymDone / adh.gymPlanned)}%` : ''}</div><div class="bar"><i style="width:${adh.gymPlanned ? Math.min(100, 100 * adh.gymDone / adh.gymPlanned) : 0}%"></i></div></div>
+      <div class="card"><div class="sub">Macros ${adh.macros.hit + adh.macros.mostly} / ${adh.days} days${adh.macros.logged ? ` · ${Math.round(100 * adh.macros.score / adh.days)}%` : ' · not marked'}</div><div class="bar"><i style="width:${Math.min(100, 100 * adh.macros.score / adh.days)}%;background:var(--aqua)"></i></div></div>
+    </div>
+    <p class="sub">Counts only the days up to today.</p>` : ''}
 
     <h2>Sets per week by session</h2>
-    ${weeklyVolume().some(v => v.Push + v.Pull + v.Legs) ? '<div class="card"><div class="chart sm"><canvas id="volChart"></canvas></div></div><p class="sub">Legs should dip in Build and Sharpen (3 sets of squats, no bike) and come back in Maintain.</p>' : '<p class="note">Appears once you have logged gym sessions.</p>'}
+    ${weeklyVolume().some(v => v.Push + v.Pull + v.Legs) ? '<div class="card"><div class="chart sm"><canvas id="volChart"></canvas></div></div><p class="sub">Push, pull and legs should stay roughly level week to week. A dip means missed sessions.</p>' : '<p class="note">Appears once you have logged gym sessions.</p>'}
     <h2>Weekly weight change vs target</h2>
     ${review.some(r => r.change != null) ? '<div class="card"><div class="chart sm"><canvas id="wkChart"></canvas></div></div>' : '<p class="note">This chart appears once you have weigh-ins in two different plan weeks.</p>'}`;
   if (review.some(r => r.change != null)) weeklyChart('wkChart', review);
   if (weeklyVolume().some(v => v.Push + v.Pull + v.Legs)) volumeChart('volChart', weeklyVolume());
 }
 
-/* ---------- Progress photos (every two weeks) ---------- */
-// Checkpoints: the start of week 1, then every two weeks, then the final day.
+/* ---------- Progress photos ---------- */
 const CHECKPOINTS = (() => { const c = []; for (let k = 0; k < 7; k++) c.push(addDays(PLAN.start, 14 * k)); c.push(PLAN.end); return c; })();
 const checkpointLabel = d => d === PLAN.end ? 'Finish' : (d === PLAN.start ? 'Start' : `Week ${weekNumber(d)}`);
 const nearestCheckpoint = d => CHECKPOINTS.reduce((best, c) => Math.abs(diffDays(c, d)) < Math.abs(diffDays(best, d)) ? c : best, CHECKPOINTS[0]);
 const photoSrc = ph => ph.assetId ? '/_blob/' + ph.assetId : (ph.dataUrl || '');
-function nextPhotoDue(today) {
-  const missing = CHECKPOINTS.filter(c => !state.photos[c]);
-  const due = missing.find(c => diffDays(c, today) >= -6) || null;   // a slot stays "open" for a week after its date
-  return due;
-}
-// Shrink a photo before storing it: long edge 1280px, JPEG. Keeps uploads small and fast.
-async function shrinkImage(file, maxEdge, quality) {
+function nextPhotoDue(today) { return CHECKPOINTS.filter(c => !state.photos[c]).find(c => diffDays(c, today) >= -6) || null; }
+async function shrinkImage(file, maxEdge) {
   let bmp;
   try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
   catch (e) { bmp = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = URL.createObjectURL(file); }); }
   const w = bmp.width, h = bmp.height, scale = Math.min(1, maxEdge / Math.max(w, h));
   const canvas = document.createElement('canvas'); canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
-  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  return canvas;
+  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height); return canvas;
 }
+function kgNear(d) { const near = Object.keys(state.bw).filter(x => Math.abs(diffDays(x, d)) <= 3).sort((a, b) => Math.abs(diffDays(a, d)) - Math.abs(diffDays(b, d)))[0]; return near ? +state.bw[near].kg : null; }
 function renderPhotos() {
   const today = todayIso(), due = nextPhotoDue(today), canUpload = !!store.assets || !store.db;
-  const filled = CHECKPOINTS.filter(c => state.photos[c]);
-  const first = filled[0], last = filled[filled.length - 1];
-  const kgAt = d => { const near = Object.keys(state.bw).filter(x => Math.abs(diffDays(x, d)) <= 3).sort((a, b) => Math.abs(diffDays(a, d)) - Math.abs(diffDays(b, d)))[0]; return near ? +state.bw[near].kg : null; };
+  const filled = CHECKPOINTS.filter(c => state.photos[c]), first = filled[0], last = filled[filled.length - 1];
+  CHECKPOINTS.forEach(c => { const ph = state.photos[c]; if (ph && !ph.kg) { const k = kgNear(ph.taken || c); if (k) ph.kg = k; } });
   $('view-photos').innerHTML = `
     ${sec('Progress photos', 'every two weeks')}
-    <p class="sub" style="margin:-6px 0 12px">One photo every two weeks, same spot, same light, same pose. Bodyweight lies week to week; a fortnightly photo tells you whether the bulk is lean.</p>
+    <p class="sub" style="margin:-6px 0 12px">Same spot, same light, same pose. Bodyweight lies week to week; a fortnightly photo tells you whether the bulk is lean.</p>
     ${due ? `<p class="note ${diffDays(due, today) <= 0 ? 'good' : ''}">📷 ${diffDays(due, today) <= 0 ? `Photo due now: <b>${checkpointLabel(due)}</b> (${fDay(due)})` : `Next photo: <b>${checkpointLabel(due)}</b> on ${fDay(due)}, in ${diffDays(due, today)} days`}</p>` : '<p class="note good">All checkpoints have a photo. Nice work.</p>'}
     <div class="card" style="margin-top:12px">
       ${canUpload ? `<div class="row">
@@ -1180,8 +822,7 @@ function renderPhotos() {
         <div class="field grow"><label for="pFile">Photo</label><input type="file" id="pFile" accept="image/*"></div>
       </div>
       <div class="row" style="margin-top:10px"><div class="field grow"><label for="pNotes">Notes (optional)</label><input type="text" id="pNotes" placeholder="e.g. morning, fasted, front pose"></div></div>
-      <div class="actions"><button class="btn primary" id="pSave">Save photo</button><span class="sub" id="pStatus">${store.assets ? 'Stored with your account.' : (store.db ? '' : 'Stored in this browser only.')}</span></div>`
-      : '<p class="sub">Photos can be added from a view with edit access.</p>'}
+      <div class="actions"><button class="btn primary" id="pSave">Save photo</button><span class="sub" id="pStatus">${store.assets ? 'Stored with your account.' : (store.db ? '' : 'Stored in this browser only.')}</span></div>` : '<p class="sub">Photos can be added from a view with edit access.</p>'}
     </div>
     ${first && last && first !== last ? `<h2>Then and now</h2><div class="compare">
       <div><img src="${photoSrc(state.photos[first])}" alt="${checkpointLabel(first)}"><div class="cap"><b>${checkpointLabel(first)}</b> · ${fShort(state.photos[first].taken || first)}${state.photos[first].kg ? ` · ${n1(state.photos[first].kg)} kg` : ''}</div></div>
@@ -1196,40 +837,25 @@ function renderPhotos() {
     </div>`;
   if (canUpload) $('pSave').addEventListener('click', savePhoto);
   document.querySelectorAll('[data-del-photo]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => {
-    const c = b.dataset.delPhoto, ph = state.photos[c];
-    delete state.photos[c];
-    await persist('photos');
+    const c = b.dataset.delPhoto, ph = state.photos[c]; delete state.photos[c]; await persist('photos');
     if (ph && ph.assetId && store.assets) { try { await store.assets.delete(ph.assetId); } catch (e) {} }
     toast('Photo deleted.'); renderPhotos();
   })));
-  // A photo card is a natural place to record the weight the day it was taken.
-  CHECKPOINTS.forEach(c => { const ph = state.photos[c]; if (ph && !ph.kg) { const k = kgAt(ph.taken || c); if (k) ph.kg = k; } });
 }
 async function savePhoto() {
   const file = $('pFile').files[0], slot = $('pSlot').value, taken = $('pDate').value || todayIso();
   if (!file) { toast('Choose a photo first.'); return; }
   const btn = $('pSave'); btn.disabled = true; $('pStatus').textContent = 'Preparing photo…';
   try {
-    const canvas = await shrinkImage(file, store.assets ? 1280 : 640, 0.85);
-    const near = Object.keys(state.bw).filter(x => Math.abs(diffDays(x, taken)) <= 3).sort((a, b) => Math.abs(diffDays(a, taken)) - Math.abs(diffDays(b, taken)))[0];
-    const entry = { taken, kg: near ? +state.bw[near].kg : null, notes: $('pNotes').value.trim() };
-    if (store.assets) {
-      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85));
-      $('pStatus').textContent = 'Uploading…';
-      const up = await store.assets.upload(blob, { type: 'image/jpeg' });
-      entry.assetId = up.id;
-    } else {
-      entry.dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-    }
-    const old = state.photos[slot];
-    state.photos[slot] = entry;
-    await persist('photos');
+    const canvas = await shrinkImage(file, store.assets ? 1280 : 640);
+    const entry = { taken, kg: kgNear(taken), notes: $('pNotes').value.trim() };
+    if (store.assets) { const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85)); $('pStatus').textContent = 'Uploading…'; entry.assetId = (await store.assets.upload(blob, { type: 'image/jpeg' })).id; }
+    else entry.dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    const old = state.photos[slot]; state.photos[slot] = entry; await persist('photos');
     if (old && old.assetId && store.assets && old.assetId !== entry.assetId) { try { await store.assets.delete(old.assetId); } catch (e) {} }
-    toast(`Photo saved for ${checkpointLabel(slot)}.`);
-    renderPhotos();
+    toast(`Photo saved for ${checkpointLabel(slot)}.`); renderPhotos();
   } catch (e) {
-    const code = e && e.code;
-    $('pStatus').textContent = '';
+    const code = e && e.code; $('pStatus').textContent = '';
     if (code === 'too_large') toast('That photo is too large even after shrinking. Try a smaller one.');
     else if (code === 'quota_or_state') toast('Photo storage is full. Delete an old photo first.');
     else if (code === 'unsupported_type') toast('That file type is not supported. Use a JPEG or PNG.');
@@ -1238,28 +864,15 @@ async function savePhoto() {
   }
 }
 
-/* ---------- Data (edit / delete) ---------- */
+/* ---------- Data ---------- */
 function renderData() {
-  const bw = bwSeries().slice().reverse();
-  const runs = [...state.runs].sort((a, b) => b.date.localeCompare(a.date));
-  const gym = Object.entries(state.gym).sort((a, b) => b[1].date.localeCompare(a[1].date));
+  const bw = bwSeries().slice().reverse(), gym = Object.entries(state.gym).sort((a, b) => b[1].date.localeCompare(a[1].date));
   $('view-data').innerHTML = `
-    ${sec('Plan settings')}
-    <div class="card">
-      <div class="row">
-        <div class="field"><label for="sMaintain">Maintain phase starts</label><input type="date" id="sMaintain" value="${state.settings.maintainStart || ''}" min="${weekDates(3)[0]}" max="${PLAN.end}"></div>
-        <div class="field"><button class="btn primary" id="sSave">Save</button></div>
-        <div class="field"><button class="btn" id="sClear" ${state.settings.maintainStart ? '' : 'disabled'}>Back to calendar (26 Oct)</button></div>
-      </div>
-      <p class="sub" style="margin:10px 0 0">The plan moves to Maintain on 26 Oct, but says to stay in Sharpen longer if you can't yet finish 8 intervals. Set the date you actually switch and the schedule, run targets, squat sets and tips follow it.</p>
-    </div>
-
     ${sec('Export')}
     <div class="card">
-      <div class="actions" style="margin-top:0"><button class="btn" data-export="bodyweight">Weigh-ins CSV</button><button class="btn" data-export="gym">Gym sets CSV</button><button class="btn" data-export="runs">Runs CSV</button><button class="btn" data-export="macros">Macros CSV</button></div>
+      <div class="actions" style="margin-top:0"><button class="btn" data-export="bodyweight">Weigh-ins CSV</button><button class="btn" data-export="gym">Gym sets CSV</button><button class="btn" data-export="macros">Macros CSV</button></div>
       <p class="sub" style="margin:10px 0 0">Plain CSV files that open in Excel or Numbers, and load straight into the Python version of this dashboard. Tip: add this page to your phone's home screen from the browser's share menu and it works like an app.</p>
     </div>
-
     ${sec('Your data')}
     <p class="sub">Everything you have logged. Delete a wrong entry here, then log it again. To change a gym session, open it and save again.</p>
     <h3 style="margin-top:18px">Gym sessions (${gym.length})</h3>
@@ -1267,48 +880,28 @@ function renderData() {
       ${gym.map(([id, s]) => `<tr><td>${fDay(s.date)}</td><td>${esc(s.session)}</td><td class="sub">${s.session === 'Rest' ? 'rest day' : `${(s.sets || []).length} sets · ${[...new Set((s.sets || []).map(x => x.exercise))].length} exercises`}</td><td class="num"><button class="btn small" data-open="${esc(id)}">Open</button> <button class="btn small danger" data-del-gym="${esc(id)}">Delete</button></td></tr>`).join('')}
     </tbody></table></div>` : '<p class="empty">No gym sessions yet.</p>'}
     <h3 style="margin-top:18px">Weigh-ins (${bw.length})</h3>
-    ${bw.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">kg</th><th>Notes</th><th></th></tr></thead><tbody>
-      ${bw.map(r => `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="sub">${esc(r.notes)}</td><td class="num"><button class="btn small danger" data-del-bw="${r.date}">Delete</button></td></tr>`).join('')}
-    </tbody></table></div>` : '<p class="empty">No weigh-ins yet.</p>'}
-    <h3 style="margin-top:18px">Runs (${runs.length})</h3>
-    ${runs.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th><th></th></tr></thead><tbody>
-      ${runs.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td><td class="num"><button class="btn small danger" data-del-run="${esc(r.id)}">Delete</button></td></tr>`).join('')}
-    </tbody></table></div>` : '<p class="empty">No runs yet.</p>'}`;
+    ${bw.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">kg</th><th class="num">Sleep</th><th>Macros</th><th>Notes</th><th></th></tr></thead><tbody>
+      ${bw.map(r => `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="num">${r.sleep != null ? r.sleep + ' h' : ''}</td><td>${state.macros[r.date] ? MACRO_WORD[state.macros[r.date]] : ''}</td><td class="sub">${esc(r.notes)}</td><td class="num"><button class="btn small danger" data-del-bw="${r.date}">Delete</button></td></tr>`).join('')}
+    </tbody></table></div>` : '<p class="empty">No weigh-ins yet.</p>'}`;
   const v = $('view-data');
-  $('sSave').addEventListener('click', async () => {
-    const d = $('sMaintain').value; if (!d) { toast('Pick a date.'); return; }
-    state.settings.maintainStart = d; try { await persist('settings'); } catch (e) { return; }
-    toast(`Maintain starts ${fDay(d)}.`); refresh(true);
-  });
-  $('sClear').addEventListener('click', async () => { state.settings.maintainStart = null; try { await persist('settings'); } catch (e) { return; } toast('Back to the calendar phases.'); refresh(true); });
   v.querySelectorAll('[data-export]').forEach(b => b.addEventListener('click', () => exportCsv(b.dataset.export)));
   v.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => { const s = state.gym[b.dataset.open]; gymForm.date = s.date; gymForm.session = s.session; built.gym = false; showTab('gym', true); }));
   v.querySelectorAll('[data-del-gym]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => { const id = b.dataset.delGym; delete state.gym[id]; await persist('gym', id); toast('Session deleted.'); renderData(); })));
   v.querySelectorAll('[data-del-bw]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => { delete state.bw[b.dataset.delBw]; await persist('bw'); toast('Weigh-in deleted.'); renderData(); })));
-  v.querySelectorAll('[data-del-run]').forEach(b => b.addEventListener('click', () => confirmRow(b, async () => { state.runs = state.runs.filter(r => r.id !== b.dataset.delRun); await persist('runs'); toast('Run deleted.'); renderData(); })));
 }
-// ---- CSV export ----
 function csvOf(kind) {
-  const q = v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
-  const line = arr => arr.map(q).join(',');
-  if (kind === 'bodyweight') return [line(['date', 'weight_kg', 'sleep_h', 'soreness', 'notes'])].concat(Object.keys(state.bw).sort().map(d => line([d, state.bw[d].kg, state.bw[d].sleep ?? '', state.bw[d].sore ?? '', state.bw[d].notes]))).join('\n');
+  const q = v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; }, line = arr => arr.map(q).join(',');
+  if (kind === 'bodyweight') return [line(['date', 'weight_kg', 'sleep_h', 'macros', 'notes'])].concat(Object.keys(state.bw).sort().map(d => line([d, state.bw[d].kg, state.bw[d].sleep ?? '', state.macros[d] ?? '', state.bw[d].notes]))).join('\n');
   if (kind === 'macros') return [line(['date', 'macros'])].concat(Object.keys(state.macros).sort().map(d => line([d, state.macros[d]]))).join('\n');
-  if (kind === 'runs') return [line(['date', 'run_type', 'duration_min', 'feel', 'reps_done', 'reps_planned', 'notes'])].concat([...state.runs].sort((a, b) => a.date.localeCompare(b.date)).map(r => line([r.date, r.type, r.min, r.feel, r.done ?? '', r.planned ?? '', r.notes]))).join('\n');
   const rows = [line(['date', 'session', 'exercise', 'set_number', 'weight_kg', 'reps'])];
   Object.values(state.gym).sort((a, b) => a.date.localeCompare(b.date)).forEach(sess => (sess.sets || []).forEach(x => rows.push(line([sess.date, sess.session, x.exercise, x.set, x.kg, x.reps]))));
   return rows.join('\n');
 }
 async function exportCsv(kind) {
-  const filename = { bodyweight: 'bodyweight.csv', gym: 'gym_sets.csv', runs: 'runs.csv', macros: 'macros.csv' }[kind], data = csvOf(kind);
-  if (store.downloads) {
-    try { await store.downloads.save({ filename, data }); toast(`Saved ${filename}.`); }
-    catch (e) { if (e && e.code === 'declined') return; toast(e && e.code === 'unavailable' ? 'Downloads are not available in this view.' : 'Could not save the file.'); }
-    return;
-  }
-  // Outside the Claude viewer: an ordinary browser download.
+  const filename = { bodyweight: 'bodyweight.csv', gym: 'gym_sets.csv', macros: 'macros.csv' }[kind], data = csvOf(kind);
+  if (store.downloads) { try { await store.downloads.save({ filename, data }); toast(`Saved ${filename}.`); } catch (e) { if (e && e.code === 'declined') return; toast(e && e.code === 'unavailable' ? 'Downloads are not available in this view.' : 'Could not save the file.'); } return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'text/csv' })); a.download = filename; document.body.appendChild(a); a.click(); a.remove();
 }
-// Two-tap delete: the first tap turns the button into "Confirm", the second deletes.
 function confirmRow(btn, fn) {
   if (btn.dataset.armed) { fn().catch(() => {}); return; }
   btn.dataset.armed = '1'; btn.textContent = 'Confirm delete';
@@ -1322,7 +915,6 @@ let startTab = location.hash.slice(1);
 if (!TABS.includes(startTab)) { try { startTab = localStorage.getItem(LS_KEY + '-tab') || 'dashboard'; } catch (e) { startTab = 'dashboard'; } }
 showTab(startTab, false);
 initStore();
-// Re-draw charts when the viewer's theme changes so colours follow the palette.
 const mq = window.matchMedia('(prefers-color-scheme: dark)');
 if (mq.addEventListener) mq.addEventListener('change', () => refresh());
 new MutationObserver(() => refresh()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

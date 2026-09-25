@@ -54,8 +54,7 @@ log_date = col1.date_input("Date", key="log_date", on_change=follow_date)
 session = col2.selectbox("Session", session_names, key="session", on_change=follow_session)
 planned = plan.gym_for_date(log_date)
 
-phase = plan.phase_for_date(log_date)
-st.caption(f"{log_date:%A %d %b} · {phase['name']} phase · planned session: {planned}")
+st.caption(f"{log_date:%A %d %b} · planned session: {planned}")
 
 # ---------------------------------------------------------------------------
 # Rest day: nothing to lift, but you can mark it done so the week shows complete.
@@ -90,7 +89,7 @@ source = already_saved if not already_saved.empty else last_time
 rows = []
 for exercise in plan.GYM_SESSIONS[session]:
     saved_sets = source[source["exercise"] == exercise]
-    n_sets = max(plan.default_sets(exercise, phase["name"]), len(saved_sets))
+    n_sets = max(plan.default_sets(exercise), len(saved_sets))
     for set_number in range(1, n_sets + 1):
         match = saved_sets[saved_sets["set_number"] == set_number]
         rows.append({

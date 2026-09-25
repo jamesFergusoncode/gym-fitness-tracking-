@@ -60,12 +60,10 @@ def bodyweight_chart(table):
         hovertemplate="%{y:.2f} kg<extra>Target</extra>",
     ))
 
-    # Mark where each phase starts so you can see the plan on the chart.
-    for name, start in plan.phase_starts():
-        fig.add_vline(x=start, line=dict(color=GRID, width=1))
-        fig.add_annotation(x=start, y=1, yref="paper", text=name,
-                           showarrow=False, xanchor="left", yanchor="bottom",
-                           font=dict(size=11, color=GREY))
+    # Mark the start of the plan.
+    fig.add_vline(x=plan.PLAN_START, line=dict(color=GRID, width=1))
+    fig.add_annotation(x=plan.PLAN_START, y=1, yref="paper", text="Plan starts",
+                       showarrow=False, xanchor="left", yanchor="bottom", font=dict(size=11, color=GREY))
 
     return _tidy(fig, "Bodyweight (kg)")
 

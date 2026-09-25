@@ -16,7 +16,6 @@ st.caption("Edit cells directly, use the + row at the bottom to add, or select r
 TABLES = {
     "Bodyweight": "bodyweight",
     "Gym sets": "gym",
-    "Runs": "runs",
 }
 
 tabs = st.tabs(list(TABLES.keys()))
@@ -31,9 +30,8 @@ for tab, (label, name) in zip(tabs, TABLES.items()):
         if name == "gym":
             column_config["session"] = st.column_config.SelectboxColumn(options=list(plan.GYM_SESSIONS) + ["Rest"])
             column_config["exercise"] = st.column_config.SelectboxColumn(options=plan.ALL_EXERCISES + ["Rest day"])
-        if name == "runs":
-            column_config["run_type"] = st.column_config.SelectboxColumn(options=plan.RUN_TYPES)
-            column_config["feel"] = st.column_config.NumberColumn(min_value=1, max_value=10, step=1)
+        if name == "bodyweight":
+            column_config["macros"] = st.column_config.SelectboxColumn(options=["hit", "mostly", "no"])
 
         edited = st.data_editor(
             df, num_rows="dynamic", hide_index=True, width="stretch",
