@@ -3,122 +3,186 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root{
-  --bg:#f4f3ef; --surface:#ffffff; --surface-2:#ebeae5; --text:#191b1f; --muted:#626a75; --border:#dedcd6;
+  --bg:#f4f3ef; --surface:#ffffff; --surface-2:#eceae4; --surface-3:#e2e0d9; --text:#191b1f; --muted:#666d78; --faint:#9298a2; --border:#e0ded8;
   --accent:#2a78d6; --accent-ink:#ffffff; --accent-soft:#e6f0fb;
-  --orange:#eb6834; --grey:#8a8983; --good:#0ca30c; --good-soft:#e5f5e5; --warn:#b45309; --warn-soft:#fbeedd; --bad:#d03b3b; --bad-soft:#fbe7e7;
-  --grid:rgba(25,27,31,.09); --aqua:#1baf7a;
+  --orange:#eb6834; --orange-soft:#fdeee7; --aqua:#1baf7a; --aqua-soft:#e3f6ee; --grey:#8a8983;
+  --good:#0ca30c; --good-soft:#e5f5e5; --warn:#b45309; --warn-soft:#fbeedd; --bad:#d03b3b; --bad-soft:#fbe7e7;
+  --grid:rgba(25,27,31,.09); --shadow:0 1px 2px rgba(25,27,31,.05);
   --display:'Barlow Condensed','Arial Narrow',Impact,sans-serif; --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){ color-scheme:dark;
-    --bg:#151618; --surface:#1e2023; --surface-2:#282b2f; --text:#f0efec; --muted:#a3a8b1; --border:#33363b;
-    --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#1d2d42; --orange:#d95926; --grey:#8f8e89;
-    --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); --aqua:#199e70; }
+    --bg:#141517; --surface:#1d1f22; --surface-2:#26292d; --surface-3:#31353a; --text:#f0efec; --muted:#a3a8b1; --faint:#737983; --border:#30343a;
+    --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#1c2b41; --orange:#d95926; --orange-soft:#3a2317; --aqua:#199e70; --aqua-soft:#15302a; --grey:#8f8e89;
+    --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); --shadow:none; }
 }
 :root[data-theme="dark"]{ color-scheme:dark;
-  --bg:#151618; --surface:#1e2023; --surface-2:#282b2f; --text:#f0efec; --muted:#a3a8b1; --border:#33363b;
-  --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#1d2d42; --orange:#d95926; --grey:#8f8e89;
-  --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); --aqua:#199e70; }
+  --bg:#141517; --surface:#1d1f22; --surface-2:#26292d; --surface-3:#31353a; --text:#f0efec; --muted:#a3a8b1; --faint:#737983; --border:#30343a;
+  --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#1c2b41; --orange:#d95926; --orange-soft:#3a2317; --aqua:#199e70; --aqua-soft:#15302a; --grey:#8f8e89;
+  --good:#3fbf3f; --good-soft:#1c2f1c; --warn:#f0a44a; --warn-soft:#3a2a15; --bad:#e66767; --bad-soft:#3b1f1f; --grid:rgba(240,239,236,.10); --shadow:none; }
 
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.45;padding-inline:16px}
-.wrap{max-width:1060px;margin:0 auto;padding-block:14px 56px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.45;padding-inline:16px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-block:16px 64px}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
-h1{font-size:38px;font-weight:700;text-transform:uppercase;letter-spacing:.01em}
-h2{font-size:26px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;margin-top:28px;margin-bottom:12px}
-h3{font-size:20px;font-weight:600;margin-bottom:8px}
+h1{font-size:42px;font-weight:700;text-transform:uppercase;letter-spacing:.01em}
+h2{font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+h3{font-size:20px;font-weight:600;letter-spacing:.01em}
 .sub{color:var(--muted);font-size:13px}
-.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 16px;margin-bottom:10px}
+.faint{color:var(--faint)}
+b{font-weight:600}
+
+/* Header + plan track */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 16px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:3px 10px;background:var(--surface)}
 .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--grey)}
 .chip.on .dot{background:var(--good)}
-nav.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--border);scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.trackwrap{margin:16px 0 4px}
+.track{position:relative;display:flex;gap:2px;height:12px;border-radius:6px;overflow:visible}
+.track .seg{flex:1;background:var(--surface-3);border-radius:2px}
+.track .seg.Build{background:color-mix(in srgb,var(--accent) 45%,var(--surface-3))}
+.track .seg.Sharpen{background:color-mix(in srgb,var(--orange) 45%,var(--surface-3))}
+.track .seg.Maintain{background:color-mix(in srgb,var(--aqua) 45%,var(--surface-3))}
+.track .seg.past{opacity:.55}
+.track .now{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--text);border-radius:2px;transform:translateX(-50%)}
+.tlegend{display:none;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+.tlegend span::before{content:'';display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.tlabels{display:flex;margin-top:6px;font-size:12px;color:var(--muted)}
+.tlabels span{display:flex;flex-direction:column;gap:0}
+.tlabels b{color:var(--text);font-weight:600}
+.tlabels .B{flex:2}.tlabels .S{flex:2}.tlabels .M{flex:10}
+
+/* Tabs */
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:10px 0 8px;margin-top:14px}
 nav.tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;padding:10px 14px;border:0;background:none;color:var(--muted);font:inherit;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
-.tab[aria-selected="true"]{color:var(--text);border-color:var(--accent)}
+nav.tabs .rail{display:flex;gap:2px;background:var(--surface-2);padding:4px;border-radius:10px}
+.tab{flex:0 0 auto;padding:7px 13px;border:0;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:500;cursor:pointer;border-radius:7px;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--text);background:var(--surface);box-shadow:var(--shadow)}
 .tab:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .view[hidden]{display:none}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:16px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.kpi .value{font-family:var(--display);font-size:34px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums;margin-top:4px}
-.kpi .value small{font-size:18px;color:var(--muted);font-weight:600}
-.kpi .delta{font-size:12px;color:var(--muted);margin-top:2px}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
-.card.soft{background:var(--surface-2);border-color:transparent}
-.note{border-radius:8px;padding:10px 12px;font-size:14px;background:var(--accent-soft)}
+
+/* Sections */
+.sec{display:flex;align-items:baseline;gap:12px;margin:34px 0 12px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);align-self:center}
+.sec h2{margin:0}
+.sec .sub{white-space:nowrap}
+.view > h2{margin:34px 0 12px}
+
+/* Tiles */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);min-width:0}
+.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.kpi .value{font-family:var(--display);font-size:32px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums;margin-top:4px;white-space:nowrap}
+.kpi .value small{font-size:17px;color:var(--muted);font-weight:600}
+.kpi .delta{font-size:12px;color:var(--muted);margin-top:3px}
+.kpi .delta.up{color:var(--good)} .kpi .delta.down{color:var(--bad)}
+.kpi canvas.spark{display:block;width:100%;height:26px;margin-top:6px}
+.kpi.tone-Build{border-top:3px solid var(--accent)} .kpi.tone-Sharpen{border-top:3px solid var(--orange)} .kpi.tone-Maintain{border-top:3px solid var(--aqua)}
+
+/* Cards, notes, pills */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.card.soft{background:var(--surface-2);border-color:transparent;box-shadow:none}
+.card .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.card .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.note{border-radius:10px;padding:10px 14px;font-size:14px;background:var(--accent-soft)}
 .note.good{background:var(--good-soft)} .note.warn{background:var(--warn-soft)} .note.bad{background:var(--bad-soft)}
 ul.plain{margin:6px 0 0;padding-left:18px}
 ul.plain li{margin:3px 0}
-.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+ul.ex{list-style:none;margin:0;padding:0}
+ul.ex li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
+ul.ex li:last-child{border-bottom:0}
+ul.ex li .sub{white-space:nowrap;font-variant-numeric:tabular-nums}
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:step}
+ol.steps li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:6px 0;font-size:14px;counter-increment:step}
+ol.steps li::before{content:counter(step);width:22px;height:22px;border-radius:50%;background:var(--surface-2);color:var(--muted);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+ol.steps li.main::before{background:var(--accent);color:var(--accent-ink)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);vertical-align:middle}
 .pill.good{background:var(--good-soft);color:var(--good)}
 .pill.accent{background:var(--accent-soft);color:var(--accent)}
+.pill.orange{background:var(--orange-soft);color:var(--orange)}
+.pill.aqua{background:var(--aqua-soft);color:var(--aqua)}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Macro split bar */
+.mbar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin-top:14px}
+.mbar i{display:block;height:100%}
+.mlegend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--muted)}
+.mlegend span::before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+
+/* Charts */
 .chart{position:relative;height:320px;max-width:100%}
 .chart.sm{height:220px}
+
+/* Tables */
 .tblwrap{overflow-x:auto}
 table.tbl{width:100%;border-collapse:collapse;font-size:14px}
-.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:8px;border-bottom:1px solid var(--border);white-space:nowrap}
-.tbl td{padding:8px;border-bottom:1px solid var(--border);vertical-align:middle}
-.tbl tr:last-child td{border-bottom:0}
+.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface-2)}
+.tbl th:first-child{border-radius:8px 0 0 0}.tbl th:last-child{border-radius:0 8px 0 0}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:0}
 .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
 .tbl tr.today td{background:var(--accent-soft)}
 .tbl tr.current td{font-weight:600}
 .tbl .exname{font-weight:500}
 .tbl input{width:88px;min-width:70px}
+.tbl tr.hint td{padding:4px 10px 10px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted)}
+.tbl tr.hint td b{color:var(--text)}
+.tbl tr.hint .apply{margin-left:6px;padding:1px 8px;font-size:12px}
+.card.table{padding:0;overflow:hidden}
+
+/* Forms */
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.field{display:flex;flex-direction:column;gap:4px;flex:1 1 160px}
+.field{display:flex;flex-direction:column;gap:5px;flex:1 1 160px}
 .field.grow{flex:2 1 240px}
-label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
-input,select{font:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);width:100%;font-variant-numeric:tabular-nums}
+label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+input,select{font:inherit;font-size:15px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);width:100%;font-variant-numeric:tabular-nums}
 input[type=range]{padding:0;border:0}
-.btn{font:inherit;font-weight:600;font-size:14px;padding:9px 16px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.btn{font:inherit;font-weight:600;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.small{padding:4px 10px;font-size:13px}
 .btn.danger{color:var(--bad)}
 .btn:disabled{opacity:.5;cursor:default}
 .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
-.stack{display:flex;flex-direction:column;gap:12px}
-.pb{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--good-soft)}
-.pb b{font-weight:600}
-.star{color:var(--good);font-size:18px;line-height:1}
-.exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
-.exhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
-.seg{display:inline-flex;border:1px solid var(--border);border-radius:7px;overflow:hidden}
-.seg button{font:inherit;font-size:13px;padding:6px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.empty{color:var(--muted);font-size:14px;padding:20px 0}
-details{margin-top:10px}
-summary{cursor:pointer;font-weight:500}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
-.toast.show{opacity:1}
-.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.slot{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
-.slot.due{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
-.slot .ph{aspect-ratio:3/4;max-width:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:8px}
-.slot img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
-.slot .meta{padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:2px}
-.slot .meta b{font-weight:600}
-.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.compare img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;display:block}
-.compare .cap{font-size:13px;color:var(--muted);margin-top:6px}
-.tbl tr.hint td{padding:2px 8px 10px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted)}
-.tbl tr.hint td b{color:var(--text);font-weight:600}
-.tbl tr.hint .apply{margin-left:6px;padding:1px 8px;font-size:12px}
-.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:calc(env(safe-area-inset-top,0px) + 42px);z-index:4;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-top:12px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:end}
+.quick .field{flex:none}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:calc(env(safe-area-inset-top,0px) + 54px);z-index:4;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-top:12px;box-shadow:var(--shadow)}
 .timer .clock{font-family:var(--display);font-size:26px;font-weight:700;min-width:64px;font-variant-numeric:tabular-nums}
 .timer.running .clock{color:var(--accent)}
 .timer.done .clock{color:var(--good)}
 .timer select{width:auto}
-.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:end}
-.quick .field{flex:none}
+.feel{display:flex;align-items:center;gap:10px}
+.feel output{font-family:var(--display);font-size:26px;font-weight:700;min-width:32px;text-align:center}
+details{margin-top:12px;border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--surface)}
+summary{cursor:pointer;font-weight:500;font-size:14px}
+.empty{color:var(--muted);font-size:14px;padding:20px 0}
+
+/* Bests, progress, adherence, photos */
+.pb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--good-soft)}
+.star{color:var(--good);font-size:18px;line-height:1}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.exhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;padding:6px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .adh{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .adh .bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:6px}
 .adh .bar i{display:block;height:100%;background:var(--accent)}
-.feel{display:flex;align-items:center;gap:10px}
-.feel output{font-family:var(--display);font-size:26px;font-weight:700;min-width:32px;text-align:center}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.slot{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.slot.due{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.slot .ph{aspect-ratio:3/4;max-width:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:8px}
+.slot img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.slot .meta{padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;display:block}
+.compare .cap{font-size:13px;color:var(--muted);margin-top:6px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){ .toast{transition:none} }
-@media (max-width:480px){ h1{font-size:32px} .kpi .value{font-size:28px} .chart{height:260px} }
+@media (max-width:560px){ h1{font-size:34px} h2{font-size:21px} .kpi .value{font-size:27px} .chart{height:260px} .card{padding:14px} .tlabels{display:none} .tlegend{display:flex} .top{align-items:flex-start} }
 </style>
 
 <div class="wrap">
@@ -129,8 +193,9 @@ summary{cursor:pointer;font-weight:500}
     </div>
     <span class="chip" id="storeChip"><span class="dot"></span><span id="storeText">Connecting…</span></span>
   </header>
+  <div class="trackwrap" id="track"></div>
 
-  <nav class="tabs" role="tablist" id="tabs">
+  <nav class="tabs" role="tablist" id="tabs"><div class="rail">
     <button class="tab" role="tab" data-tab="dashboard">Dashboard</button>
     <button class="tab" role="tab" data-tab="gym">Log gym</button>
     <button class="tab" role="tab" data-tab="weight">Log weight</button>
@@ -139,7 +204,7 @@ summary{cursor:pointer;font-weight:500}
     <button class="tab" role="tab" data-tab="weekly">Weekly review</button>
     <button class="tab" role="tab" data-tab="photos">Photos</button>
     <button class="tab" role="tab" data-tab="data">Data</button>
-  </nav>
+  </div></nav>
 
   <section class="view" id="view-dashboard"></section>
   <section class="view" id="view-gym" hidden></section>
@@ -544,36 +609,78 @@ function renderTab(name) {
 }
 
 /* ---------- Dashboard ---------- */
+// The 14-week track under the title: one segment per week, coloured by phase, with a marker for today.
+function renderTrack(today) {
+  const status = planStatus(today), wk = weekNumber(today);
+  const segs = Array.from({ length: PLAN.weeks }, (_, i) => { const [a, b] = weekDates(i + 1); return `<div class="seg ${phaseForDate(a).name} ${b < today ? 'past' : ''}" title="Week ${i + 1}: ${fShort(a)} – ${fShort(b)}"></div>`; }).join('');
+  const pct = Math.min(100, Math.max(0, 100 * (diffDays(today, PLAN.start) + 0.5) / (PLAN.weeks * 7)));
+  const label = status === 'before' ? `Starts in ${diffDays(PLAN.start, today)} days` : status === 'after' ? 'Done' : `Today · week ${wk}`;
+  const starts = phaseStarts();
+  $('track').innerHTML = `<div class="track">${segs}<div class="now" style="left:${pct}%" title="${label}"></div></div>
+    <div class="tlegend"><span style="--c:color-mix(in srgb,var(--accent) 45%,var(--surface-3))">Build ${fShort(starts[0].date)}</span><span style="--c:color-mix(in srgb,var(--orange) 45%,var(--surface-3))">Sharpen ${fShort(starts[1].date)}</span><span style="--c:color-mix(in srgb,var(--aqua) 45%,var(--surface-3))">Maintain ${fShort(starts[2].date)}</span><span style="--c:var(--text)">${label}</span></div>
+    <div class="tlabels"><span class="B"><b>Build</b>${fShort(starts[0].date)} · 5 runs/wk</span><span class="S"><b>Sharpen</b>${fShort(starts[1].date)} · 5 runs/wk</span><span class="M"><b>Maintain</b>${fShort(starts[2].date)} · 3 runs/wk · to ${fShort(PLAN.end)}</span></div>`;
+}
+// A tiny line for the last two weeks of weigh-ins inside the Latest tile.
+function spark(id, values) {
+  const c = $(id); if (!c || values.length < 2) return;
+  const w = c.clientWidth || 140, h = 26; c.width = w * 2; c.height = h * 2; const ctx = c.getContext('2d'); ctx.scale(2, 2);
+  const min = Math.min(...values), max = Math.max(...values), span = (max - min) || 1;
+  const pts = values.map((v, i) => [2 + i * (w - 4) / (values.length - 1), 2 + (h - 4) * (1 - (v - min) / span)]);
+  ctx.strokeStyle = css('--accent'); ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
+  const last = pts[pts.length - 1]; ctx.fillStyle = css('--accent'); ctx.beginPath(); ctx.arc(last[0], last[1], 2.5, 0, Math.PI * 2); ctx.fill();
+}
+const sec = (title, sub) => `<div class="sec"><h2>${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ''}</div>`;
+
 function renderDashboard() {
   const today = todayIso(), wk = weekNumber(today), phase = phaseForDate(today), status = planStatus(today);
-  const done = sessionsDone(), top = topSets(), pbs = recentPbs(top, today);
+  const done = sessionsDone(), top = topSets(), pbs = recentPbs(top, today), bests = allTimeBests(top);
   const session = gymFor(today), run = runFor(today);
   const gymDone = done.has(today + '|' + session), runDone = state.runs.some(r => r.date === today);
   const rows = bwSeries(), latest = rows[rows.length - 1];
   const sug = calorieSuggestion(today), proj = projection(rows, today), streak = weighStreak(today);
   const todayBw = state.bw[today] || {};
   const lastHard = run && run[0] !== 'Easy' ? lastRun(run[0]) : null;
-  $('subline').textContent = `28 Sep 2026 to 3 Jan 2027 · 14 weeks · today is ${fLong(today)}`;
+  $('subline').textContent = `28 Sep 2026 to 3 Jan 2027 · 14 weeks · ${fLong(today)}`;
+  renderTrack(today);
 
-  let kpis;
-  if (status === 'before') kpis = [['Phase', 'Not started'], ['Week', '–'], ['Plan starts in', `${diffDays(PLAN.start, today)} <small>days</small>`], ['Runs per week', `${phase.runs}`]];
-  else if (status === 'after') kpis = [['Phase', 'Finished'], ['Week', `14 <small>/ 14</small>`], ['Days to 3 Jan', '0'], ['Runs per week', `${phase.runs}`]];
-  else kpis = [['Phase', phase.name], ['Week', `${wk} <small>/ 14</small>`], ['Days to 3 Jan', `${diffDays(PLAN.end, today)}`], ['Runs per week', `${phase.runs}`]];
+  // Top row: where you are in the plan.
+  const kpis = status === 'before'
+    ? [['Phase', 'Not started', `first up: ${PLAN.phases[0].name}`], ['Starts in', `${diffDays(PLAN.start, today)} <small>days</small>`, `Mon ${fShort(PLAN.start)}`], ['Runs per week', `${phase.runs}`, 'in Build'], ['Target by 3 Jan', '89-90 <small>kg</small>', `from ${n1(PLAN.startKg)} kg`]]
+    : status === 'after'
+    ? [['Phase', 'Finished', 'plan complete'], ['Week', `14 <small>/ 14</small>`, ''], ['Days to 3 Jan', '0', ''], ['Target by 3 Jan', '89-90 <small>kg</small>', `from ${n1(PLAN.startKg)} kg`]]
+    : [['Phase', phase.name, `${phase.first === phase.last ? 'week ' + phase.first : 'weeks ' + phase.first + '-' + phase.last}`], ['Week', `${wk} <small>/ 14</small>`, `${fShort(weekDates(wk)[0])} – ${fShort(weekDates(wk)[1])}`], ['Days to 3 Jan', `${diffDays(PLAN.end, today)}`, `${Math.ceil(diffDays(PLAN.end, today) / 7)} weeks left`], ['Runs per week', `${phase.runs}`, phase.name === 'Maintain' ? 'Mon · Wed · Sun' : 'Mon · Tue · Wed · Fri · Sun']];
 
-  const monday = addDays(today, -weekday(today));
+  // This week's table plus the counts for its header.
+  const monday = addDays(today, -weekday(today)), sunday = addDays(monday, 6);
+  let gymPlanned = 0, gymHit = 0, runPlanned = 0, runHit = 0;
   const weekRows = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(monday, i), g = gymFor(d), r = runFor(d);
     const gd = done.has(d + '|' + g), rd = state.runs.some(x => x.date === d);
-    return `<tr class="${d === today ? 'today' : ''}"><td>${WD[i]} ${fShort(d)}${d === today ? ' <span class="pill accent">today</span>' : ''}</td><td>${g}</td><td>${gd ? '✅' : ''}</td><td>${r ? `${r[0]}: ${r[1]}` : '—'}</td><td>${rd ? '✅' : (r ? '' : '—')}</td></tr>`;
+    if (g !== 'Rest') { gymPlanned++; if (gd) gymHit++; } if (r) { runPlanned++; if (rd) runHit++; }
+    const state_ = d < today ? (gd || g === 'Rest' ? '' : '<span class="faint">missed</span>') : '';
+    return `<tr class="${d === today ? 'today' : ''}"><td><b>${WD[i]}</b> <span class="sub">${fShort(d)}</span>${d === today ? ' <span class="pill accent">today</span>' : ''}</td><td>${g}</td><td>${gd ? '✅' : state_}</td><td>${r ? `<b>${r[0]}</b> <span class="sub">${r[1]}</span>` : '<span class="faint">—</span>'}</td><td>${rd ? '✅' : (r ? (d < today ? '<span class="faint">missed</span>' : '') : '<span class="faint">—</span>')}</td></tr>`;
   }).join('');
 
+  // Exercise list with the sets × reps to work in and your last top set.
+  const bestOf = ex => bests.find(b => b.exercise === ex);
+  const lastTop = ex => top.filter(r => r.exercise === ex).sort((a, b) => b.date.localeCompare(a.date))[0];
+  const exList = session === 'Rest' ? '' : PLAN.sessions[session].map(e => {
+    const [lo, hi] = repRange(e), n = defaultSets(e, phase.name), lt = lastTop(e);
+    return `<li><span>${e}</span><span class="sub">${e === 'Bike' ? (phase.name === 'Maintain' ? '10 min' : 'skip') : `${n} × ${lo}-${hi}`}${lt ? ` · last ${n1(lt.kg)} × ${lt.reps}` : ''}</span></li>`;
+  }).join('');
+  const setCount = session === 'Rest' ? 0 : PLAN.sessions[session].reduce((s_, e) => s_ + (e === 'Bike' ? 0 : defaultSets(e, phase.name)), 0);
+
+  // Macro split by calories.
+  const P = PLAN.macros[1][1] * 4, F = PLAN.macros[2][1] * 9, C = PLAN.macros[3][1] * 4, T = P + F + C;
+  const weekAvg = avgBetween(addDays(today, -6), today), lastWeekAvg = avgBetween(addDays(today, -13), addDays(today, -7));
+
   $('view-dashboard').innerHTML = `
-    <div class="kpis">${kpis.map(([l, v]) => `<div class="kpi"><div class="label">${l}</div><div class="value">${v}</div></div>`).join('')}</div>
+    <div class="kpis">${kpis.map(([l, v, d]) => `<div class="kpi ${l === 'Phase' && status === 'during' ? 'tone-' + phase.name : ''}"><div class="label">${l}</div><div class="value">${v}</div>${d ? `<div class="delta">${d}</div>` : ''}</div>`).join('')}</div>
     ${status === 'before' ? `<p class="note" style="margin-top:12px">The plan starts on Monday ${fShort(PLAN.start)}. Log weigh-ins now so the chart has a baseline.</p>` : ''}
     ${state.settings.maintainStart ? `<p class="sub" style="margin-top:8px">Maintain phase set to start ${fDay(state.settings.maintainStart)} (change on the Data tab).</p>` : ''}
 
     <div class="card" style="margin-top:14px">
-      <div class="exhead"><h3 style="margin:0">Quick log · ${fDay(today)}</h3>${todayBw.kg ? '<span class="pill good">weighed in</span>' : ''}</div>
+      <div class="head"><h3>Quick log</h3><span class="sub">${fDay(today)}${todayBw.kg ? ' · <span class="pill good">weighed in</span>' : ''}</span></div>
       <div class="quick">
         <div class="field"><label for="qKg">Weight (kg)</label><input type="number" id="qKg" step="0.1" min="40" max="200" inputmode="decimal" value="${todayBw.kg ? n1(todayBw.kg) : (latest ? n1(latest.kg) : n1(PLAN.startKg))}"></div>
         <div class="field"><label for="qSleep">Sleep (h)</label><input type="number" id="qSleep" step="0.5" min="0" max="14" inputmode="decimal" value="${todayBw.sleep ?? ''}" placeholder="7.5"></div>
@@ -582,18 +689,23 @@ function renderDashboard() {
       </div>
     </div>
 
-    <h2>Today</h2>
+    ${sec('Today', fLong(today))}
     <div class="grid2">
       <div class="card">
-        <h3>Gym: ${session} ${gymDone ? '<span class="pill good">logged</span>' : ''}</h3>
-        ${session === 'Rest' ? `<p class="sub">Rest day. No lifting today.</p>${gymDone ? '' : '<div class="actions"><button class="btn" onclick="markRest(todayIso())">Mark rest day done</button></div>'}` : `<ul class="plain">${PLAN.sessions[session].map(e => `<li>${e}${e === 'Barbell squats' ? ` <span class="sub">${defaultSets(e, phase.name)} × 5-8</span>` : ''}</li>`).join('')}</ul>
-        <div class="actions"><button class="btn primary" onclick="showTab('gym', true)">Log this session</button></div>`}
+        <div class="head"><h3>Gym · ${session}</h3>${gymDone ? '<span class="pill good">logged</span>' : (session === 'Rest' ? '<span class="pill">rest</span>' : `<span class="pill">${PLAN.sessions[session].length} exercises · ${setCount} sets</span>`)}</div>
+        ${session === 'Rest' ? `<p class="sub" style="margin:0">Rest day. No lifting. ${runFor(today) ? 'Easy run only.' : ''}</p>${gymDone ? '' : '<div class="actions"><button class="btn" onclick="markRest(todayIso())">Mark rest day done</button></div>'}`
+        : `<ul class="ex">${exList}</ul>
+        <div class="foot"><span class="sub">${phase.name === 'Maintain' ? 'Full leg volume, push the lifts.' : 'Sets × reps to work in. Targets appear in the log.'}</span><button class="btn primary" onclick="showTab('gym', true)">${gymDone ? 'Open session' : 'Log this session'}</button></div>`}
       </div>
       <div class="card">
-        <h3>Run: ${run ? run[0] : 'none today'} ${runDone ? '<span class="pill good">logged</span>' : ''}</h3>
-        ${run ? `<p style="margin:4px 0 0;font-weight:600">${run[1]}</p><p class="sub" style="margin:4px 0 0">Warm-up 10 min easy jog + leg swings · cool-down 10 min easy jog</p>
-        ${lastHard ? `<p class="sub" style="margin:6px 0 0">Last ${lastHard.type.toLowerCase()} (${fShort(lastHard.date)}): ${lastHard.done != null ? `${lastHard.done}/${lastHard.planned} done · ` : ''}felt ${lastHard.feel}/10</p>` : ''}
-        <div class="actions"><button class="btn primary" onclick="showTab('run', true)">Log this run</button></div>` : '<p class="sub">No run planned. Legs get a break.</p>'}
+        <div class="head"><h3>Run · ${run ? run[0] : 'none'}</h3>${runDone ? '<span class="pill good">logged</span>' : (run ? `<span class="pill">${phase.name} · 30+ min</span>` : '')}</div>
+        ${run ? `<ol class="steps">
+          <li><span>Warm-up · <b>10 min</b> easy jog + leg swings</span></li>
+          <li class="main"><span><b>${run[1]}</b>${run[0] === 'Shuttles' || run[1].includes('shuttle') ? '<br><span class="sub">Shuttle round: sprint 10 m, turn, back, turn, 10 m</span>' : ''}${run[0] === 'Easy' ? '<br><span class="sub">If you can\'t chat, slow down</span>' : ''}</span></li>
+          <li><span>Cool-down · <b>10 min</b> easy jog</span></li>
+        </ol>
+        <div class="foot"><span class="sub">${lastHard ? `Last ${lastHard.type.toLowerCase()} ${fShort(lastHard.date)}: ${lastHard.done != null ? `${lastHard.done}/${lastHard.planned} done · ` : ''}felt ${lastHard.feel}/10` : 'Log reps done and how it felt.'}</span><button class="btn primary" onclick="showTab('run', true)">${runDone ? 'Log another' : 'Log this run'}</button></div>`
+        : '<p class="sub" style="margin:0">No run planned today. Legs get a break.</p>'}
       </div>
     </div>
     <details><summary>Tips for the ${phase.name} phase</summary>
@@ -602,38 +714,43 @@ function renderDashboard() {
       <ul class="plain">${PLAN.runNotes.map(t => `<li>${t}</li>`).join('')}</ul>
     </details>
 
-    <h2>Bodyweight</h2>
-    ${!latest ? '<p class="note">No weigh-ins yet. Use <b>Log weight</b> after your first morning weigh-in.</p>' : `
+    ${sec('Bodyweight', latest ? `${rows.length} weigh-ins · target +0.25 kg/week` : '')}
+    ${!latest ? '<p class="note">No weigh-ins yet. Use the quick log above after your first morning weigh-in.</p>' : `
     <div class="kpis" style="margin-top:0">
-      <div class="kpi"><div class="label">Latest</div><div class="value">${n1(latest.kg)} <small>kg</small></div><div class="delta">${fDay(latest.date)}</div></div>
-      <div class="kpi"><div class="label">7-day average</div><div class="value">${n2(latest.avg7)} <small>kg</small></div></div>
-      <div class="kpi"><div class="label">Target today</div><div class="value">${n2(targetKg(today))} <small>kg</small></div></div>
-      <div class="kpi"><div class="label">Avg vs target</div><div class="value">${signed(latest.avg7 - targetKg(today))} <small>kg</small></div></div>
+      <div class="kpi"><div class="label">Latest</div><div class="value">${n1(latest.kg)} <small>kg</small></div><div class="delta">${fDay(latest.date)}</div><canvas class="spark" id="bwSpark"></canvas></div>
+      <div class="kpi"><div class="label">7-day average</div><div class="value">${n2(latest.avg7)} <small>kg</small></div><div class="delta ${weekAvg != null && lastWeekAvg != null ? (weekAvg - lastWeekAvg >= 0 ? 'up' : 'down') : ''}">${weekAvg != null && lastWeekAvg != null ? `${signed(weekAvg - lastWeekAvg)} kg vs last week` : 'vs last week: not yet'}</div></div>
+      <div class="kpi"><div class="label">Target today</div><div class="value">${n2(targetKg(today))} <small>kg</small></div><div class="delta">${status === 'before' ? 'line starts 28 Sep' : `week ${wk} of the line`}</div></div>
+      <div class="kpi"><div class="label">Avg vs target</div><div class="value">${signed(latest.avg7 - targetKg(today))} <small>kg</small></div><div class="delta">${Math.abs(latest.avg7 - targetKg(today)) <= 0.5 ? 'within half a kilo' : (latest.avg7 > targetKg(today) ? 'ahead of the line' : 'behind the line')}</div></div>
       <div class="kpi"><div class="label">On pace for 3 Jan</div><div class="value">${proj ? n1(proj.final) + ' <small>kg</small>' : '–'}</div><div class="delta">${proj ? `${signed(proj.perWeek)} kg/week lately · plan says 89-90` : 'needs two weeks of data'}</div></div>
-      <div class="kpi"><div class="label">Weigh-in streak</div><div class="value">${streak} <small>days</small></div></div>
+      <div class="kpi"><div class="label">Weigh-in streak</div><div class="value">${streak} <small>days</small></div><div class="delta">${streak >= 7 ? 'weekly average is solid' : 'weigh every morning'}</div></div>
     </div>`}
     <div class="card" style="margin-top:12px"><div class="chart"><canvas id="bwChart"></canvas></div></div>
 
-    <h2>Macros</h2>
+    ${sec('Macros', 'lean bulk targets')}
     <div class="kpis" style="margin-top:0">
-      ${PLAN.macros.map(([l, v, u], i) => `<div class="kpi"><div class="label">${l}</div><div class="value">${(i === 0 ? sug.kcal : v).toLocaleString('en-GB')} <small>${u}</small></div>${i === 0 && sug.kcal !== v ? `<div class="delta">${sug.kcal > v ? '+' : ''}${sug.kcal - v} kcal vs plan</div>` : ''}</div>`).join('')}
+      ${PLAN.macros.map(([l, v, u], i) => `<div class="kpi"><div class="label">${l}</div><div class="value">${(i === 0 ? sug.kcal : v).toLocaleString('en-GB')} <small>${u}</small></div><div class="delta">${i === 0 ? (sug.kcal !== v ? `${sug.kcal > v ? '+' : ''}${sug.kcal - v} kcal vs plan` : 'as planned') : i === 1 ? `${(P / T * 100).toFixed(0)}% of calories` : i === 2 ? `${(F / T * 100).toFixed(0)}% of calories` : `${(C / T * 100).toFixed(0)}% of calories`}</div></div>`).join('')}
     </div>
-    <p class="note ${sug.tone}" style="margin-top:12px">${sug.icon} ${sug.msg}</p>
-    <p class="sub">Easy carb wins: ${PLAN.carbWins.join(' · ')}</p>
+    <div class="card" style="margin-top:12px">
+      <p class="note ${sug.tone}" style="margin:0">${sug.icon} ${sug.msg}</p>
+      <div class="mbar"><i style="flex:${P};background:var(--accent)"></i><i style="flex:${F};background:var(--orange)"></i><i style="flex:${C};background:var(--aqua)"></i></div>
+      <div class="mlegend"><span style="--c:var(--accent)">Protein ${PLAN.macros[1][1]} g · ${P} kcal</span><span style="--c:var(--orange)">Fat ${PLAN.macros[2][1]} g · ${F} kcal</span><span style="--c:var(--aqua)">Carbs ${PLAN.macros[3][1]} g · ${C.toLocaleString('en-GB')} kcal</span></div>
+      <div class="foot"><span class="sub">Easy carb wins: ${PLAN.carbWins.join(' · ')}</span><span class="sub">Gaining too fast: −200 kcal from carbs. No change in 2 weeks: +200 kcal.</span></div>
+    </div>
 
-    <h2>This week</h2>
-    <p class="sub" style="margin:-6px 0 10px">Mon ${fShort(monday)} to Sun ${fShort(addDays(monday, 6))}. Starts fresh every Monday.</p>
-    <div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Day</th><th>Gym</th><th>Done</th><th>Run</th><th>Done</th></tr></thead><tbody>${weekRows}</tbody></table></div>
+    ${sec('This week', `Mon ${fShort(monday)} – Sun ${fShort(sunday)}`)}
+    <div class="pills" style="margin-bottom:10px"><span class="pill ${gymHit === gymPlanned && gymPlanned ? 'good' : ''}">Gym ${gymHit} / ${gymPlanned}</span><span class="pill ${runHit === runPlanned && runPlanned ? 'good' : ''}">Runs ${runHit} / ${runPlanned}</span><span class="pill">${phase.name}</span></div>
+    <div class="card table tblwrap"><table class="tbl"><thead><tr><th>Day</th><th>Gym</th><th>Done</th><th>Run</th><th>Done</th></tr></thead><tbody>${weekRows}</tbody></table></div>
 
     ${(() => { const due = nextPhotoDue(today); if (!due) return ''; const n = diffDays(due, today);
       return n <= 0 ? `<p class="note" style="margin-top:14px">📷 Progress photo due now (${checkpointLabel(due)}). <a href="#photos" onclick="showTab('photos', true); return false;">Take it on the Photos tab.</a></p>`
         : (n <= 7 ? `<p class="sub" style="margin-top:14px">📷 Next progress photo: ${checkpointLabel(due)}, ${fDay(due)} (in ${n} days).</p>` : ''); })()}
 
-    <h2>New bests in the last 7 days</h2>
+    ${sec('New bests', 'last 7 days')}
     ${pbs.length ? `<div class="stack">${pbs.map(r => `<div class="pb"><span class="star">★</span><span><b>${esc(r.exercise)}</b> ${n1(r.kg)} kg × ${r.reps} on ${fDay(r.date)}</span></div>`).join('')}</div>`
       : '<p class="sub">None yet. New bests appear here automatically when a top set beats your previous best.</p>'}
   `;
   bodyweightChart('bwChart', rows);
+  spark('bwSpark', rows.slice(-14).map(r => r.kg));
   $('qSave').addEventListener('click', async () => {
     const kg = +$('qKg').value; if (!(kg > 0)) { toast('Enter a weight.'); return; }
     const entry = Object.assign({}, state.bw[today] || { notes: '' }, { kg: Math.round(kg * 10) / 10 });
@@ -656,7 +773,7 @@ function buildGymForm() {
   const planned = gymFor(gymForm.date);
   gymForm.session = gymForm.session || planned;
   $('view-gym').innerHTML = `
-    <h2>Log gym session</h2>
+    ${sec('Log gym session')}
     <div class="card">
       <div class="row">
         <div class="field"><label for="gDate">Date</label><input type="date" id="gDate" value="${gymForm.date}"></div>
@@ -803,7 +920,7 @@ async function saveGym() {
 function buildWeightForm() {
   const rows = bwSeries(), last = rows.length ? rows[rows.length - 1].kg : PLAN.startKg;
   $('view-weight').innerHTML = `
-    <h2>Log bodyweight</h2>
+    ${sec('Log bodyweight')}
     <div class="card">
       <p class="sub" style="margin:0 0 12px">Weigh in every morning and let the 7-day average do the talking. Saving a date again replaces it.</p>
       <div class="row">
@@ -832,7 +949,7 @@ function buildWeightForm() {
 }
 function renderWeightRecent() {
   const rows = bwSeries().slice(-7).reverse();
-  $('wRecent').innerHTML = rows.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">Sleep</th><th class="num">Sore</th><th>Notes</th></tr></thead><tbody>
+  $('wRecent').innerHTML = rows.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">Sleep</th><th class="num">Sore</th><th>Notes</th></tr></thead><tbody>
     ${rows.map(r => { const e = state.bw[r.date] || {}; return `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="num">${n2(r.avg7)}</td><td class="num">${n2(r.target)}</td><td class="num">${e.sleep != null ? e.sleep + ' h' : ''}</td><td class="num">${e.sore != null ? e.sore : ''}</td><td class="sub">${esc(r.notes)}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<p class="empty">No weigh-ins yet.</p>';
 }
@@ -840,7 +957,7 @@ function renderWeightRecent() {
 /* ---------- Log run ---------- */
 function buildRunForm() {
   $('view-run').innerHTML = `
-    <h2>Log run</h2>
+    ${sec('Log run')}
     <div class="card">
       <div class="row">
         <div class="field"><label for="rDate">Date</label><input type="date" id="rDate" value="${todayIso()}"></div>
@@ -889,7 +1006,7 @@ function renderRunRecent() {
   const thisWeek = state.runs.filter(r => r.date >= monday && r.date <= addDays(monday, 6)).length;
   const rows = [...state.runs].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
   $('rRecent').innerHTML = `<div class="kpis" style="margin:0 0 12px"><div class="kpi"><div class="label">Runs this week</div><div class="value">${thisWeek} <small>/ ${phase.runs}</small></div></div></div>` +
-    (rows.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Reps</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th></tr></thead><tbody>
+    (rows.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Reps</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th></tr></thead><tbody>
     ${rows.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.planned ? `${r.done}/${r.planned}` : '—'}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">No runs logged yet.</p>');
 }
 
@@ -900,12 +1017,12 @@ function renderProgress() {
   const bests = allTimeBests(top), recent = new Set(recentPbs(top, today).map(r => r.exercise));
   const exercises = PLAN.allExercises.filter(e => top.some(r => r.exercise === e));
   $('view-progress').innerHTML = `
-    <h2>All-time bests</h2>
-    <div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Exercise</th><th>Date</th><th class="num">Weight</th><th class="num">Reps</th><th class="num">Est. 1RM</th></tr></thead><tbody>
+    ${sec('All-time bests', `${bests.length} exercises`)}
+    <div class="card table tblwrap"><table class="tbl"><thead><tr><th>Exercise</th><th>Date</th><th class="num">Weight</th><th class="num">Reps</th><th class="num">Est. 1RM</th></tr></thead><tbody>
       ${bests.map(r => `<tr><td class="exname">${recent.has(r.exercise) ? '<span class="star">★</span> ' : ''}${esc(r.exercise)}</td><td>${fShort(r.date)}</td><td class="num">${n1(r.kg)} kg</td><td class="num">${r.reps}</td><td class="num">${n1(r.e1rm)} kg</td></tr>`).join('')}
     </tbody></table></div>
     <p class="sub">★ = new best in the last 7 days. Est. 1RM uses the Epley formula: weight × (1 + reps ÷ 30).</p>
-    <div class="exhead" style="margin-top:24px"><h2 style="margin:0">Top set over time</h2>
+    <div class="exhead" style="margin-top:30px"><h2>Top set over time</h2>
       <span class="seg"><button aria-pressed="${ui.metric === 'kg'}" data-m="kg">Top set weight</button><button aria-pressed="${ui.metric === 'e1rm'}" data-m="e1rm">Estimated 1RM</button></span></div>
     <div class="exgrid" style="margin-top:12px">
       ${exercises.map((e, i) => { const b = bests.find(x => x.exercise === e); return `<div class="card"><div class="exhead"><h3 style="margin:0">${esc(e)}</h3><span class="sub">best ${n1(b.kg)} kg × ${b.reps}${recent.has(e) ? ' · <span class="pill good">new best this week</span>' : ''}</span></div><div class="chart sm"><canvas id="ex${i}"></canvas></div></div>`; }).join('')}
@@ -922,14 +1039,14 @@ function renderWeekly() {
   const gymTotal = [...done].filter(k => inPlan(k.split('|')[0]) && k.split('|')[1] !== 'Rest').length, runTotal = state.runs.filter(r => inPlan(r.date)).length;
   const cell = v => v == null ? '<span class="sub">–</span>' : v;
   $('view-weekly').innerHTML = `
-    <h2>Weekly review</h2>
+    ${sec('Weekly review', 'all 14 weeks')}
     <div class="kpis" style="margin-top:0">
       <div class="kpi"><div class="label">Change since week 1</div><div class="value">${startAvg != null && latestAvg != null ? signed(latestAvg - startAvg) + ' <small>kg</small>' : '–'}</div></div>
       <div class="kpi"><div class="label">Gym sessions done</div><div class="value">${gymTotal}</div></div>
       <div class="kpi"><div class="label">Runs done</div><div class="value">${runTotal}</div></div>
       <div class="kpi"><div class="label">Current week</div><div class="value">${wk < 1 ? 'Not started' : (wk > PLAN.weeks ? 'Finished' : `${wk} <small>/ 14</small>`)}</div></div>
     </div>
-    <div class="card tblwrap" style="padding:0 8px;margin-top:14px"><table class="tbl"><thead><tr><th>Week</th><th>Dates</th><th>Phase</th><th class="num">Avg kg</th><th class="num">Change</th><th class="num">Target</th><th class="num">Gym</th><th class="num">Runs</th><th class="num">Run feel</th></tr></thead><tbody>
+    <div class="card table tblwrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Week</th><th>Dates</th><th>Phase</th><th class="num">Avg kg</th><th class="num">Change</th><th class="num">Target</th><th class="num">Gym</th><th class="num">Runs</th><th class="num">Run feel</th></tr></thead><tbody>
       ${review.map(r => `<tr class="${r.w === wk ? 'current' : ''}"><td>${r.w}${r.w === wk ? ' ◀' : ''}</td><td>${fShort(r.a)} – ${fShort(r.b)}</td><td>${r.phase}</td><td class="num">${cell(r.avg == null ? null : n2(r.avg))}</td><td class="num">${cell(r.change == null ? null : signed(r.change))}</td><td class="num">${n2(r.target)}</td><td class="num">${r.gymN} / 6</td><td class="num">${r.runN} / ${r.runPlan}</td><td class="num">${cell(r.feel == null ? null : n1(r.feel))}</td></tr>`).join('')}
     </tbody></table></div>
     <p class="sub">Gym sessions count once per day per session. Runs count against the phase's plan: 5 a week in Build and Sharpen, 3 in Maintain.</p>
@@ -983,7 +1100,7 @@ function renderPhotos() {
   const first = filled[0], last = filled[filled.length - 1];
   const kgAt = d => { const near = Object.keys(state.bw).filter(x => Math.abs(diffDays(x, d)) <= 3).sort((a, b) => Math.abs(diffDays(a, d)) - Math.abs(diffDays(b, d)))[0]; return near ? +state.bw[near].kg : null; };
   $('view-photos').innerHTML = `
-    <h2>Progress photos</h2>
+    ${sec('Progress photos', 'every two weeks')}
     <p class="sub" style="margin:-6px 0 12px">One photo every two weeks, same spot, same light, same pose. Bodyweight lies week to week; a fortnightly photo tells you whether the bulk is lean.</p>
     ${due ? `<p class="note ${diffDays(due, today) <= 0 ? 'good' : ''}">📷 ${diffDays(due, today) <= 0 ? `Photo due now: <b>${checkpointLabel(due)}</b> (${fDay(due)})` : `Next photo: <b>${checkpointLabel(due)}</b> on ${fDay(due)}, in ${diffDays(due, today)} days`}</p>` : '<p class="note good">All checkpoints have a photo. Nice work.</p>'}
     <div class="card" style="margin-top:12px">
@@ -1057,7 +1174,7 @@ function renderData() {
   const runs = [...state.runs].sort((a, b) => b.date.localeCompare(a.date));
   const gym = Object.entries(state.gym).sort((a, b) => b[1].date.localeCompare(a[1].date));
   $('view-data').innerHTML = `
-    <h2>Plan settings</h2>
+    ${sec('Plan settings')}
     <div class="card">
       <div class="row">
         <div class="field"><label for="sMaintain">Maintain phase starts</label><input type="date" id="sMaintain" value="${state.settings.maintainStart || ''}" min="${weekDates(3)[0]}" max="${PLAN.end}"></div>
@@ -1067,24 +1184,24 @@ function renderData() {
       <p class="sub" style="margin:10px 0 0">The plan moves to Maintain on 26 Oct, but says to stay in Sharpen longer if you can't yet finish 8 intervals. Set the date you actually switch and the schedule, run targets, squat sets and tips follow it.</p>
     </div>
 
-    <h2>Export</h2>
+    ${sec('Export')}
     <div class="card">
       <div class="actions" style="margin-top:0"><button class="btn" data-export="bodyweight">Weigh-ins CSV</button><button class="btn" data-export="gym">Gym sets CSV</button><button class="btn" data-export="runs">Runs CSV</button></div>
       <p class="sub" style="margin:10px 0 0">Plain CSV files that open in Excel or Numbers, and load straight into the Python version of this dashboard. Tip: add this page to your phone's home screen from the browser's share menu and it works like an app.</p>
     </div>
 
-    <h2>Your data</h2>
+    ${sec('Your data')}
     <p class="sub">Everything you have logged. Delete a wrong entry here, then log it again. To change a gym session, open it and save again.</p>
     <h3 style="margin-top:18px">Gym sessions (${gym.length})</h3>
-    ${gym.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th>Session</th><th>Sets</th><th></th></tr></thead><tbody>
+    ${gym.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Session</th><th>Sets</th><th></th></tr></thead><tbody>
       ${gym.map(([id, s]) => `<tr><td>${fDay(s.date)}</td><td>${esc(s.session)}</td><td class="sub">${s.session === 'Rest' ? 'rest day' : `${(s.sets || []).length} sets · ${[...new Set((s.sets || []).map(x => x.exercise))].length} exercises`}</td><td class="num"><button class="btn small" data-open="${esc(id)}">Open</button> <button class="btn small danger" data-del-gym="${esc(id)}">Delete</button></td></tr>`).join('')}
     </tbody></table></div>` : '<p class="empty">No gym sessions yet.</p>'}
     <h3 style="margin-top:18px">Weigh-ins (${bw.length})</h3>
-    ${bw.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th class="num">kg</th><th>Notes</th><th></th></tr></thead><tbody>
+    ${bw.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">kg</th><th>Notes</th><th></th></tr></thead><tbody>
       ${bw.map(r => `<tr><td>${fDay(r.date)}</td><td class="num">${n1(r.kg)}</td><td class="sub">${esc(r.notes)}</td><td class="num"><button class="btn small danger" data-del-bw="${r.date}">Delete</button></td></tr>`).join('')}
     </tbody></table></div>` : '<p class="empty">No weigh-ins yet.</p>'}
     <h3 style="margin-top:18px">Runs (${runs.length})</h3>
-    ${runs.length ? `<div class="card tblwrap" style="padding:0 8px"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th><th></th></tr></thead><tbody>
+    ${runs.length ? `<div class="card table tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th class="num">Min</th><th class="num">Feel</th><th>Notes</th><th></th></tr></thead><tbody>
       ${runs.map(r => `<tr><td>${fDay(r.date)}</td><td>${esc(r.type)}</td><td class="num">${r.min}</td><td class="num">${r.feel}/10</td><td class="sub">${esc(r.notes)}</td><td class="num"><button class="btn small danger" data-del-run="${esc(r.id)}">Delete</button></td></tr>`).join('')}
     </tbody></table></div>` : '<p class="empty">No runs yet.</p>'}`;
   const v = $('view-data');
